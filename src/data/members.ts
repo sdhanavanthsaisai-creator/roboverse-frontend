@@ -10,10 +10,9 @@ export type Member = {
 };
 
 /**
- * Seed for the 8 team members. Same shape as the Supabase `members` table
+ * Seed for the 9 team members. Same shape as the Supabase `members` table
  * (see supabase/schema.sql) — with env vars configured the app reads from
  * Supabase instead, so teammates can edit their own entries there.
- * Drop real photos in public/photos/member1.jpg … member8.jpg.
  */
 export const seedMembers: Member[] = [
   {
@@ -78,22 +77,32 @@ export const seedMembers: Member[] = [
   },
   {
     id: 7,
-    name: 'Member Seven',
-    role: 'Power & Electronics',
+    name: 'M. Swastii',
+    role: '1st YEAR ECE · CYBER PHYSICAL SYSTEMS',
+    instagram: 'mswastii_75',
+    github: 'm-swastii-murugesan-00717a429',
+    email: 'm.swastii@gmail.com',
     photo: 'photos/member7.jpg',
-    instagram: 'https://instagram.com/',
-    github: 'https://github.com/',
-    email: 'member7@teamroboto.dev',
-    bio: 'Battery, PCB, and keeping the magic smoke inside.',
+    bio: '1st year ECE — Cyber Physical Systems team member.',
   },
   {
     id: 8,
-    name: 'Member Eight',
-    role: 'Web & Documentation',
+    name: 'Ishani Garg',
+    role: 'SENSORS · PERCEPTION & FUSION',
+    instagram: 'stfuishani_',
+    github: 'ishani-garg-b1a339425',
+    email: 'ishanigarg2@gmail.com',
     photo: 'photos/member8.jpg',
-    instagram: 'https://instagram.com/',
-    github: 'https://github.com/',
-    email: 'member8@teamroboto.dev',
     bio: 'This website, the reports, and the slide deck.',
+  },
+  {
+    id: 9,
+    name: 'Dhanavanthsai',
+    role: 'ODOMETRY · SENSOR FUSION',
+    instagram: 'dhanavanth_17',
+    github: 'dhanavanth-sai-16a272414',
+    email: 'dhanavanthsai.s@gmail.com',
+    photo: 'photos/member8.jpg',
+    bio: 'Web & Documentation lead.',
   },
 ];
