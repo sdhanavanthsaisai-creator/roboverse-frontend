@@ -334,6 +334,56 @@ footer{border-top:1px solid var(--line);padding:44px 0 36px;background:var(--bg2
 .toast{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;background:#1B1D23;border:1px solid var(--line2);border-left:3px solid var(--acc);color:var(--txt);padding:11px 18px;opacity:0;transform:translateY(12px);transition:.35s}
 .toast.show{opacity:1;transform:none}
 
+/* hanging lanyard passes */
+.lany-rail{position:relative;display:flex;justify-content:space-between;max-width:880px;margin:72px auto 0;padding:0 10px 8px}
+.lany-bar{position:absolute;top:0;left:-30px;right:-30px;height:8px;border-radius:4px;background:linear-gradient(#2A2C34,#15161B);box-shadow:0 2px 0 rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.07)}
+.lany{width:74px;flex:0 0 auto;display:flex;justify-content:center;cursor:pointer}
+.lany-swing{position:relative;transform-origin:50% 0;will-change:transform}
+.lany-strap{display:block;width:7px;height:50px;margin:0 auto;border-radius:3px;background:linear-gradient(90deg,#101116,#20222A 45%,#0C0D10);box-shadow:0 0 0 1px rgba(255,255,255,.03)}
+.lany-clip{display:block;width:16px;height:9px;margin:-1px auto 0;border-radius:2px;background:linear-gradient(#3D404B,#23242B);box-shadow:0 1px 2px rgba(0,0,0,.6)}
+.lany-card{position:relative;width:72px;margin-top:-1px;padding:7px 6px 8px;background:linear-gradient(160deg,#1A1B21,#101116);border:1px solid var(--line2);border-radius:7px;box-shadow:0 10px 18px -8px rgba(0,0,0,.65)}
+.lany-card::before{content:'';position:absolute;top:3px;left:50%;transform:translateX(-50%);width:22px;height:4px;border-radius:2px;background:#0A0B0D;box-shadow:inset 0 1px 2px #000}
+.lany-card img{width:100%;height:50px;object-fit:cover;border-radius:4px;margin-top:6px;filter:saturate(.85)}
+.lany-org{display:block;text-align:center;font-family:var(--mono);font-size:6.5px;letter-spacing:.3em;color:var(--acc);margin-top:6px}
+.lany-name{display:block;text-align:center;font-family:var(--mono);font-size:6.5px;letter-spacing:.08em;color:var(--txt2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lany-bars{display:flex;align-items:flex-end;justify-content:center;gap:1px;height:10px;margin-top:6px}
+.lany-bars span{display:block;background:var(--txt2);opacity:.7;border-radius:.5px}
+
+/* enquiry form */
+.enq{display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;padding-top:64px;padding-bottom:34px}
+.enq-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--acc);margin-bottom:14px}
+.enq-head h2{font-family:var(--disp);font-size:clamp(26px,3.4vw,40px);line-height:1.08;letter-spacing:-.01em}
+.enq-sub{margin-top:14px;font-size:14.5px;color:var(--txt2);max-width:38ch}
+.enq-direct{margin-top:22px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mut)}
+.enq-direct a{color:var(--txt2);border-bottom:1px dashed var(--line2);transition:.2s}
+.enq-direct a:hover{color:var(--acc);border-color:var(--acc)}
+.enq-form{display:flex;flex-direction:column;gap:14px}
+.enq-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.enq-form label{display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--mut)}
+.enq-form input,.enq-form textarea{font-family:var(--body);font-size:14.5px;color:var(--txt);background:var(--panel);border:1px solid var(--line2);border-radius:8px;padding:12px 14px;transition:border-color .2s,box-shadow .2s;resize:vertical}
+.enq-form input:focus,.enq-form textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(255,90,31,.12)}
+.enq-form ::placeholder{color:#5A5C64}
+.hp-field{position:absolute;left:-9999px;width:0;height:0;opacity:0}
+.enq-btn{position:relative;margin-top:6px;height:54px;border-radius:10px;background:var(--acc);color:#140A05;overflow:hidden;font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.18em;transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,background .3s;box-shadow:0 10px 24px -10px rgba(255,90,31,.55)}
+.enq-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px -10px rgba(255,90,31,.65)}
+.enq-btn:active{transform:scale(.965)}
+.enq-btn:disabled{cursor:default}
+.eb-face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:9px;transition:opacity .25s,transform .35s cubic-bezier(.34,1.56,.64,1)}
+.eb-face svg{width:15px;height:15px}
+.eb-load,.eb-ok,.eb-err{opacity:0;transform:translateY(14px);pointer-events:none}
+.enq-btn.is-load .eb-idle,.enq-btn.is-ok .eb-idle,.enq-btn.is-err .eb-idle{opacity:0;transform:translateY(-14px)}
+.enq-btn.is-load .eb-load{opacity:1;transform:none}
+.enq-btn.is-ok .eb-ok{opacity:1;transform:none}
+.enq-btn.is-err .eb-err{opacity:1;transform:none}
+.enq-btn.is-ok{background:var(--ok);box-shadow:0 10px 24px -10px rgba(95,191,122,.5)}
+.enq-btn.is-err{background:var(--bad);color:#fff;box-shadow:0 10px 24px -10px rgba(229,72,77,.5)}
+.eb-spinner{width:15px;height:15px;border:2px solid rgba(20,10,5,.25);border-top-color:#140A05;border-radius:50%;animation:wspin .7s linear infinite}
+.eb-fly{position:absolute;left:50%;top:50%;width:24px;height:17px;transform:translate(-50%,-50%);opacity:0;pointer-events:none;color:#140A05}
+.eb-fly svg{width:100%;height:100%}
+.enq-btn.is-fly .eb-fly{animation:envfly .8s cubic-bezier(.3,.7,.3,1) forwards}
+@keyframes envfly{0%{opacity:0;transform:translate(-50%,60%) scale(.5) rotate(-8deg)}25%{opacity:1}70%{opacity:1;transform:translate(-50%,-170%) scale(1.05) rotate(5deg)}100%{opacity:0;transform:translate(-50%,-240%) scale(.5)}}
+.enq-note{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--mut);text-align:center;margin-top:2px}
+
 /* responsive */
 @media(max-width:1024px){
   .hero-grid{grid-template-columns:1fr;gap:20px}
@@ -341,6 +391,12 @@ footer{border-top:1px solid var(--line);padding:44px 0 36px;background:var(--bg2
   .prob-grid{grid-template-columns:1fr;gap:36px}
   .crew-grid{grid-template-columns:repeat(2,1fr)}
   .pg-grid{grid-template-columns:1fr}
+  .enq{grid-template-columns:1fr;gap:30px}
+  .lany-rail{flex-wrap:wrap;justify-content:center;gap:14px 18px}
+  .lany-bar{left:0;right:0}
+  .lany{width:64px}
+  .lany-card{width:62px}
+  .lany-card img{height:44px}
 }
 @media(max-width:640px){
   section{padding:90px 0}
@@ -656,13 +712,49 @@ footer{border-top:1px solid var(--line);padding:44px 0 36px;background:var(--bg2
     </div>
     <p class="sec-sub reveal">Tap a card to flip it — the humans behind the machine keep their details on the back.</p>
     <div class="crew-grid" id="crewGrid"><!-- cards injected by JS from the CREW array --></div>
+    <div class="lany-rail reveal" id="lanyRail" aria-label="Team lanyard passes — hover or tap to swing them">
+      <div class="lany-bar"></div>
+    </div>
   </div>
 </section>
 </main>
 
 <!-- ============ FOOTER ============ -->
 <footer>
-  <div class="wrap foot-grid">
+  <div class="wrap">
+    <div class="enq" id="enquiry">
+      <div class="enq-head">
+        <p class="enq-kicker">06 · ENQUIRY</p>
+        <h2>QUESTIONS?<br>DROP US A LINE.</h2>
+        <p class="enq-sub">Sponsorships, joining the crew, or just curious about the rover — send it over. Every message lands directly in the team inbox, and we reply fast.</p>
+        <p class="enq-direct">PREFER EMAIL? <a href="mailto:dhanavanthsai.s@gmail.com">DHANAVANTHSAI.S@GMAIL.COM</a></p>
+      </div>
+      <form class="enq-form" id="enqForm" action="https://formsubmit.co/ajax/dhanavanthsai.s@gmail.com" method="POST" novalidate>
+        <input type="hidden" name="_subject" value="New enquiry from the ROBOTO website">
+        <input type="hidden" name="_template" value="table">
+        <input type="text" class="hp-field" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="enq-row">
+          <label>NAME
+            <input type="text" name="name" placeholder="Your name" required maxlength="80">
+          </label>
+          <label>EMAIL
+            <input type="email" name="email" placeholder="you@example.com" required maxlength="120">
+          </label>
+        </div>
+        <label>MESSAGE
+          <textarea name="message" rows="4" placeholder="Ask us anything about the rover, the team, or the competition…" required maxlength="4000"></textarea>
+        </label>
+        <button type="submit" class="enq-btn" id="enqBtn">
+          <span class="eb-face eb-idle"><i data-lucide="send"></i>SEND MESSAGE</span>
+          <span class="eb-face eb-load"><span class="eb-spinner"></span>SENDING…</span>
+          <span class="eb-face eb-ok"><i data-lucide="check"></i>SENT — WE'LL REPLY SOON</span>
+          <span class="eb-face eb-err"><i data-lucide="alert-triangle"></i>COULDN'T SEND — TRY EMAIL</span>
+          <span class="eb-fly" aria-hidden="true"><svg viewBox="0 0 24 16" fill="none"><rect x="1" y="1" width="22" height="14" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M2 3l10 7L22 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <p class="enq-note" id="enqNote">NO SPAM. NO NEWSLETTERS. JUST AN ANSWER.</p>
+      </form>
+    </div>
+    <div class="foot-grid">
     <a class="brand" href="#hero">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <rect x="4" y="7" width="16" height="13" rx="4" stroke="#EDEAE4" stroke-width="1.8"/>
@@ -1602,7 +1694,126 @@ $$('.barcode').forEach(b => {
 /* icons after all dynamic HTML exists */
 if (window.lucide) lucide.createIcons();
 
-/* reveals need .js on <html> — added last so a JS failure never hides content */
+/* ================= LANYARD PASSES ================= */
+(function initLanyards(){
+  const rail = document.getElementById('lanyRail');
+  if (!rail || typeof CREW === 'undefined') return;
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 5 crew passes + 3 team passes (rover & code) = 8 hangers
+  const PASSES = CREW.concat([
+    { name: 'ROVER · RB-01',  img: 'https://picsum.photos/seed/roboto6/300/300' },
+    { name: 'PLANNER · A*',   img: 'https://picsum.photos/seed/roboto7/300/300' },
+    { name: 'FIRMWARE · INO', img: 'https://picsum.photos/seed/roboto8/300/300' }
+  ]);
+  PASSES.forEach((m, i) => {
+    const el = document.createElement('div');
+    el.className = 'lany';
+    el.tabIndex = 0;
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', m.name + ' — crew lanyard pass. Activate to swing.');
+    el.innerHTML =
+      '<div class="lany-swing">' +
+        '<span class="lany-strap"></span><span class="lany-clip"></span>' +
+        '<div class="lany-card">' +
+          '<img src="' + m.img + '" alt="" loading="lazy">' +
+          '<span class="lany-org">ROBOTO</span>' +
+          '<span class="lany-name">' + m.name + '</span>' +
+          '<span class="lany-bars" aria-hidden="true"></span>' +
+        '</div>' +
+      '</div>';
+    rail.appendChild(el);
+    const swing = el.querySelector('.lany-swing');
+    const bars = el.querySelector('.lany-bars');
+    for (let j = 0; j < 16; j++){
+      const s = document.createElement('span');
+      s.style.width = (1 + Math.floor(Math.random() * 3)) + 'px';
+      s.style.height = (4 + Math.random() * 6) + 'px';
+      if (Math.random() > 0.78) s.style.visibility = 'hidden';
+      bars.appendChild(s);
+    }
+    // pendulum: damped spring back to rest, draggable for a natural fling
+    let a = 0, va = 0, dragging = false, grabX = 0;
+    const rest = (i % 2 ? -0.045 : 0.045);
+    (function step(){
+      if (!dragging){
+        va += (rest - a) * 0.012;
+        va *= 0.965;
+        a += va;
+      }
+      swing.style.transform = 'rotate(' + (a * 57.2958).toFixed(3) + 'deg)';
+      requestAnimationFrame(step);
+    })();
+    const push = f => { va += f; };
+    el.addEventListener('pointerenter', () => { if (!REDUCED) push((i % 2 ? -1 : 1) * 0.028); });
+    el.addEventListener('pointerdown', e => {
+      if (REDUCED) return;
+      dragging = true; grabX = e.clientX;
+      try { el.setPointerCapture(e.pointerId); } catch (_){ }
+    });
+    el.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      a = Math.max(-0.9, Math.min(0.9, (e.clientX - grabX) / 90));
+      va = 0;
+    });
+    const release = () => { dragging = false; };
+    el.addEventListener('pointerup', release);
+    el.addEventListener('pointercancel', release);
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); push((i % 2 ? -1 : 1) * 0.05); }
+    });
+  });
+})();
+
+/* ================= ENQUIRY FORM ================= */
+(function initEnquiry(){
+  const form = document.getElementById('enqForm');
+  const btn = document.getElementById('enqBtn');
+  if (!form || !btn) return;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (btn.disabled) return;
+    if (form.elements['_honey'] && form.elements['_honey'].value) return; // honeypot: bot, silently dropped
+    const note = document.getElementById('enqNote');
+    const setState = (cls, msg) => {
+      btn.classList.remove('is-load', 'is-ok', 'is-err', 'is-fly');
+      if (cls) btn.classList.add(cls);
+      if (msg && note){ note.textContent = msg; }
+    };
+    btn.disabled = true;
+    setState('is-load');
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          name: form.elements['name'].value.trim(),
+          email: form.elements['email'].value.trim(),
+          message: form.elements['message'].value.trim(),
+          _subject: 'New enquiry from the ROBOTO website',
+          _template: 'table'
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && (data.success === 'true' || data.success === true)){
+        setState('is-fly');
+        setTimeout(() => setState('is-ok', 'MESSAGE SENT — CHECK YOUR INBOX FOR OUR REPLY.'), 650);
+        form.reset();
+      } else {
+        setState('is-err', 'SEND FAILED — EMAIL US DIRECTLY AT DHANAVANTHSAI.S@GMAIL.COM.');
+      }
+    } catch (_){
+      setState('is-err', 'NETWORK ERROR — EMAIL US DIRECTLY AT DHANAVANTHSAI.S@GMAIL.COM.');
+    } finally {
+      btn.disabled = false;
+      setTimeout(() => {
+        setState(null);
+        if (note) note.textContent = 'NO SPAM. NO NEWSLETTERS. JUST AN ANSWER.';
+      }, 5200);
+    }
+  });
+})();
+
+/* reveals need .js on <html>> — added last so a JS failure never hides content */
 document.documentElement.classList.add('js');
 observeReveals();
 
