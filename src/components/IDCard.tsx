@@ -15,6 +15,11 @@ const ICONS = {
       <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" />
     </svg>
   ),
+  linkedin: (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
+      <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.26 2.37 4.26 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45z" />
+    </svg>
+  ),
   email: (
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
       <rect x="3" y="5" width="18" height="14" rx="3" />
@@ -159,11 +164,12 @@ export default function IDCard({ member }: { member: Member }) {
             <div className="mt-5 flex flex-col gap-2 px-5">
               {(
                 [
-                  ['instagram', 'Instagram', member.instagram],
-                  ['github', 'GitHub', member.github],
-                  ['email', 'Email', member.email],
-                ] as const
-              ).map(([key, label, href]) => (
+                  member.instagram && { key: 'instagram', label: 'Instagram', href: member.instagram },
+                  member.github && { key: 'github', label: 'GitHub', href: member.github },
+                  member.linkedin && { key: 'linkedin', label: 'LinkedIn', href: member.linkedin },
+                  member.email && { key: 'email', label: 'Email', href: member.email },
+                ].filter(Boolean) as { key: keyof typeof ICONS; label: string; href: string }[]
+              ).map(({ key, label, href }) => (
                 <a
                   key={key}
                   href={key === 'email' ? `mailto:${href}` : href}

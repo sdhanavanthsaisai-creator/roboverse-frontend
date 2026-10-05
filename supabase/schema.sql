@@ -11,6 +11,7 @@ create table if not exists public.members (
   photo text not null default '',
   instagram text not null default '',
   github text not null default '',
+  linkedin text not null default '',
   email text not null default '',
   bio text not null default ''
 );
@@ -72,14 +73,11 @@ create policy "anyone can leave a message"
   on public.messages for insert
   with check (true);
 
--- ──────────────── optional: seed the 8 members ─────────────
-insert into public.members (id, name, role, photo, instagram, github, email, bio) values
-  (1, 'Member One',   'Team Lead · Navigation',   'photos/member1.jpg', 'https://instagram.com/', 'https://github.com/', 'member1@teamroboto.dev', 'Owns the planner stack and the daily commit streak.'),
-  (2, 'Member Two',   'Sensor Fusion',            'photos/member2.jpg', 'https://instagram.com/', 'https://github.com/', 'member2@teamroboto.dev', 'Kalman filters, ultrasonic rigs, and noisy data.'),
-  (3, 'Member Three', 'Embedded Systems',         'photos/member3.jpg', 'https://instagram.com/', 'https://github.com/', 'member3@teamroboto.dev', 'Firmware, motor drivers, and the 5 kg weight budget.'),
-  (4, 'Member Four',  'CAD & Mechanical',         'photos/member4.jpg', 'https://instagram.com/', 'https://github.com/', 'member4@teamroboto.dev', 'Chassis, mounts, and printable sensor brackets.'),
-  (5, 'Member Five',  'Computer Vision',          'photos/member5.jpg', 'https://instagram.com/', 'https://github.com/', 'member5@teamroboto.dev', 'Detecting walls, exits, and things that moved.'),
-  (6, 'Member Six',   'Reinforcement Learning',   'photos/member6.jpg', 'https://instagram.com/', 'https://github.com/', 'member6@teamroboto.dev', 'Q-learning so attempt 50 beats attempt 1.'),
-  (7, 'Member Seven', 'Power & Electronics',      'photos/member7.jpg', 'https://instagram.com/', 'https://github.com/', 'member7@teamroboto.dev', 'Battery, PCB, and keeping the magic smoke inside.'),
-  (8, 'Member Eight', 'Web & Documentation',      'photos/member8.jpg', 'https://instagram.com/', 'https://github.com/', 'member8@teamroboto.dev', 'This website, the reports, and the slide deck.')
+-- ──────────────── optional: seed the 5 members ─────────────
+insert into public.members (id, name, role, photo, instagram, github, linkedin, email, bio) values
+  (1, 'M. Swastii',     '1st Year ECE · Cyber Physical Systems',        'photos/member1.jpg', 'https://instagram.com/mswastii_75',   '',                         'https://www.linkedin.com/in/m-swastii-murugesan-00717a429', '',                          '1st year ECE — Cyber Physical Systems team member.'),
+  (2, 'Ishani Garg',    'Member · Team Roboto',                          'photos/member2.jpg', 'https://instagram.com/stfuishani_',   '',                         'https://www.linkedin.com/in/ishani-garg-b1a339425',         'ishanigarg2@gmail.com',     'Reports, slide deck, and keeping the crew on schedule.'),
+  (3, 'Dhanavanthsai',  'Web & Documentation',                           'photos/member3.jpg', 'https://instagram.com/dhanavanth_17', '',                         'https://www.linkedin.com/in/dhanavanth-sai-16a272414',      'dhanavanthsai.s@gmail.com', 'This website and the project documentation.'),
+  (4, 'Muhammed Nehan', 'Electronics & Computer Engineering (EKE)',      'photos/member4.jpg', 'https://instagram.com/nvm.nehan',     'https://github.com/K1llaloe', 'https://www.linkedin.com/in/muhammed-nehan-472694368',   'ciphertrooper@gmail.com',   'Electronics and computer engineering, class of 2030.'),
+  (5, 'Nipun Gaur',     '1st Year B.Tech CSE (IT)',                      'photos/member5.jpg', 'https://instagram.com/nipun2908',     '',                         'https://www.linkedin.com/in/nipun-gaur-b42408429',          'nipungaur2008@gmail.com',   '1st year B.Tech CSE (IT) team member.')
 on conflict (id) do nothing;

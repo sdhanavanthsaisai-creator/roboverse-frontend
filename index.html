@@ -284,7 +284,7 @@ section{padding:130px 0}
 .hljs-built_in,.hljs-type{color:#FFB454}
 
 /* crew */
-.crew-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:44px 22px;padding-bottom:44px}
+.crew-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:44px 22px;padding-bottom:44px}
 .crew-grid .idcard:nth-child(even){margin-top:34px}
 .idcard{perspective:1100px;height:374px;position:relative}
 .tilt{width:100%;height:100%;transform-style:preserve-3d;transition:transform .15s ease-out}
@@ -651,7 +651,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 36px;background:var(--bg2
       <span class="sec-no">05</span>
       <div>
         <p class="kicker">THE CREW</p>
-        <h2>Eight hands,<br>one rover.</h2>
+        <h2>Five hands,<br>one rover.</h2>
       </div>
     </div>
     <p class="sec-sub reveal">Tap a card to flip it — the humans behind the machine keep their details on the back.</p>
@@ -1516,15 +1516,19 @@ $('#copyBtn').addEventListener('click', async () => {
 
 /* ================= CREW ================= */
 const CREW = [
-  { name: 'Aarav Mehta',  role: 'TEAM LEAD · SYSTEM ARCHITECT', ig: 'roboto.aarav',  gh: 'roboto-aarav',  mail: 'aarav@roboto.dev', img: 'https://picsum.photos/seed/roboto1/300/300' },
-  { name: 'Sana Qureshi', role: 'SLAM · OCCUPANCY MAPPING',     ig: 'roboto.sana',   gh: 'roboto-sana',   mail: 'sana@roboto.dev',  img: 'https://picsum.photos/seed/roboto2/300/300' },
-  { name: 'Ravi Iyer',    role: 'PATH PLANNING · A*',           ig: 'roboto.ravi',   gh: 'roboto-ravi',   mail: 'ravi@roboto.dev',  img: 'https://picsum.photos/seed/roboto3/300/300' },
-  { name: 'Mira Das',     role: 'SENSOR FUSION · PERCEPTION',   ig: 'roboto.mira',   gh: 'roboto-mira',   mail: 'mira@roboto.dev',  img: 'https://picsum.photos/seed/roboto4/300/300' },
-  { name: 'Kabir Nair',   role: 'EMBEDDED · FIRMWARE',          ig: 'roboto.kabir',  gh: 'roboto-kabir',  mail: 'kabir@roboto.dev', img: 'https://picsum.photos/seed/roboto5/300/300' },
-  { name: 'Leena Roy',    role: 'CONTROL · PID TUNING',         ig: 'roboto.leena',  gh: 'roboto-leena',  mail: 'leena@roboto.dev', img: 'https://picsum.photos/seed/roboto6/300/300' },
-  { name: 'Dev Sharma',   role: 'MECHANICAL · CHASSIS ≤5 KG',   ig: 'roboto.dev',    gh: 'roboto-dev',    mail: 'dev@roboto.dev',   img: 'https://picsum.photos/seed/roboto7/300/300' },
-  { name: 'Aisha Khan',   role: 'ML · Q-LEARNING',              ig: 'roboto.aisha',  gh: 'roboto-aisha',  mail: 'aisha@roboto.dev', img: 'https://picsum.photos/seed/roboto8/300/300' }
+  { name: 'M. Swastii',     role: '1ST YEAR ECE · CYBER PHYSICAL SYSTEMS',      ig: 'mswastii_75',   gh: '',         li: 'https://www.linkedin.com/in/m-swastii-murugesan-00717a429', mail: '',                          img: 'https://picsum.photos/seed/roboto1/300/300' },
+  { name: 'Ishani Garg',    role: 'MEMBER · TEAM ROBOTO',                        ig: 'stfuishani_',   gh: '',         li: 'https://www.linkedin.com/in/ishani-garg-b1a339425',         mail: 'ishanigarg2@gmail.com',     img: 'https://picsum.photos/seed/roboto2/300/300' },
+  { name: 'Dhanavanthsai',  role: 'WEB & DOCUMENTATION',                         ig: 'dhanavanth_17', gh: '',         li: 'https://www.linkedin.com/in/dhanavanth-sai-16a272414',      mail: 'dhanavanthsai.s@gmail.com', img: 'https://picsum.photos/seed/roboto3/300/300' },
+  { name: 'Muhammed Nehan', role: '1ST YEAR EKE · ELECTRONICS & COMPUTER ENG',   ig: 'nvm.nehan',     gh: 'K1llaloe', li: 'https://www.linkedin.com/in/muhammed-nehan-472694368',      mail: 'ciphertrooper@gmail.com',   img: 'https://picsum.photos/seed/roboto4/300/300' },
+  { name: 'Nipun Gaur',     role: '1ST YEAR B.TECH CSE (IT)',                    ig: 'nipun2908',     gh: '',         li: 'https://www.linkedin.com/in/nipun-gaur-b42408429',          mail: 'nipungaur2008@gmail.com',   img: 'https://picsum.photos/seed/roboto5/300/300' }
 ];
+const IG_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>';
+const GH_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>';
+const LI_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.26 2.37 4.26 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45z"/></svg>';
+const igLink = m => m.ig  ? '<li><a href="https://instagram.com/' + m.ig + '" target="_blank" rel="noopener">' + IG_ICON + '<span>INSTAGRAM</span><b>@' + m.ig + '</b></a></li>' : '';
+const ghLink = m => m.gh  ? '<li><a href="https://github.com/' + m.gh + '" target="_blank" rel="noopener">' + GH_ICON + '<span>GITHUB</span><b>' + m.gh + '</b></a></li>' : '';
+const liLink = m => m.li  ? '<li><a href="' + m.li + '" target="_blank" rel="noopener">' + LI_ICON + '<span>LINKEDIN</span><b>' + m.li.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '').replace(/\/$/, '') + '</b></a></li>' : '';
+const mailLink = m => m.mail ? '<li><a href="mailto:' + m.mail + '"><i data-lucide="mail"></i><span>EMAIL</span><b>' + m.mail + '</b></a></li>' : '';
 const crewGrid = $('#crewGrid');
 CREW.forEach((m, i) => {
   const num = String(i + 1).padStart(2, '0');
@@ -1553,9 +1557,7 @@ CREW.forEach((m, i) => {
           '<span class="back-role">' + m.role + '</span>' +
         '</div>' +
         '<ul class="back-links">' +
-          '<li><a href="https://instagram.com/' + m.ig + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>INSTAGRAM</span><b>@' + m.ig + '</b></a></li>' +
-          '<li><a href="https://github.com/' + m.gh + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg><span>GITHUB</span><b>' + m.gh + '</b></a></li>' +
-          '<li><a href="mailto:' + m.mail + '"><i data-lucide="mail"></i><span>EMAIL</span><b>' + m.mail + '</b></a></li>' +
+          igLink(m) + ghLink(m) + liLink(m) + mailLink(m) +
         '</ul>' +
         '<p class="flip-back">TAP TO FLIP BACK</p>' +
       '</div>' +
