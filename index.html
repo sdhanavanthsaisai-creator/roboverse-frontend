@@ -4,8 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#05070A">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://webdev-team-3.vercel.app/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%2305070A'/><rect x='26' y='4' width='12' height='10' fill='%23F59E0B'/><rect x='12' y='16' width='40' height='30' fill='none' stroke='%2322D3EE' stroke-width='4'/><circle cx='24' cy='31' r='4' fill='%2322D3EE'/><circle cx='40' cy='31' r='4' fill='%2322D3EE'/><circle cx='20' cy='54' r='6' fill='%2322D3EE'/><circle cx='44' cy='54' r='6' fill='%2322D3EE'/></svg>">
 <title>Team Roboto® RB/25 — Autonomous Maze Explorer | 3D Showcase</title>
 <meta name="description" content="Team Roboto / Roboverse — single-file 3D showcase: exploded ESP32 holonomic maze rover, interactive A* maze simulator with live replanning, SLAM math engine, firmware viewer, real crew ID cards and enquiry form.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://webdev-team-3.vercel.app/">
+<meta property="og:title" content="Team Roboto® RB/25 — Autonomous Maze Explorer">
+<meta property="og:description" content="Interactive 3D showcase: exploded ESP32 holonomic maze rover, live-replanning A* maze simulator, SLAM math engine, firmware viewer and the real 5-member crew.">
+<meta property="og:site_name" content="Team Roboto · Roboverse">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Team Roboto® RB/25 — Autonomous Maze Explorer">
+<meta name="twitter:description" content="Interactive 3D showcase: exploded rover, A* maze simulator, SLAM math, firmware and the real crew.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +25,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" defer></script>
+<script src="./crew.js"></script> <!-- crew roster: single source, must load before inline builders -->
 <script src="./showcase.js" defer></script>
 
 <style>
@@ -485,14 +497,9 @@ setTimeout(function(){
 })();
 
 /* ============ CREW ROSTER — big themed flip ID cards (real members only) ============ */
-/* NOTE: mirrored in public/showcase.js (3D badges). Update BOTH when the crew changes. */
-const CREW_DATA=[
-  {n:'M. Swastii',      r:'1st year ECE · Cyber Physical Systems',      ig:'mswastii_75',     gh:'',       li:'m-swastii-murugesan-00717a429', em:''},
-  {n:'Ishani Garg',     r:'Member · Team Roboto',                       ig:'stfuishani_',     gh:'',       li:'ishani-garg-b1a339425',         em:'ishanigarg2@gmail.com'},
-  {n:'Dhanavanthsai',   r:'Web & Documentation',                        ig:'dhanavanth_17',   gh:'',       li:'dhanavanth-sai-16a272414',      em:'dhanavanthsai.s@gmail.com'},
-  {n:'Muhammed Nehan',  r:'1st year EKE · Electronics & Computer Eng',  ig:'nvm.nehan',       gh:'K1llaloe', li:'muhammed-nehan-472694368',    em:'ciphertrooper@gmail.com'},
-  {n:'Nipun Gaur',      r:'1st year B.Tech CSE (IT)',                   ig:'nipun2908',       gh:'',       li:'nipun-gaur-b42408429',          em:'nipungaur2008@gmail.com'},
-];
+/* Single source of truth lives in public/crew.js (window.ROBO_CREW) —
+   shared with public/showcase.js (3D island badges). Update crew.js only. */
+const CREW_DATA = window.ROBO_CREW || [];
 (function buildBadges(){
   var host=document.getElementById('badges');
   if(!host) return;

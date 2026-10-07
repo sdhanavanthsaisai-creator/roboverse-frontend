@@ -30,12 +30,12 @@ State flow: `idle → load → ok|err → idle`, driven entirely by `data-state`
 
 ## Crew data — single source of truth
 
-The five real members are defined in **two places** (DOM cards + 3D badges):
+The five real members are defined **once**, in `public/crew.js` (`window.ROBO_CREW`):
 
-- `index.html` → `const CREW_DATA = [...]`
-- `public/showcase.js` → `const CREW = [...]`
+- `index.html` consumes it as `const CREW_DATA = window.ROBO_CREW` (DOM flip ID cards)
+- `public/showcase.js` maps it to the 3D badge array (crew island)
 
-> ⚠️ If the crew changes, update **both** arrays. Never fabricate emails — an empty `em:` simply hides the row.
+> ⚠️ If the crew changes, update **only `public/crew.js`**. Never fabricate emails — an empty `em:` simply hides the row.
 > Photos: drop real portraits into `public/photos/member1.jpg … member5.jpg` (currently template placeholders; the layout falls back to an initial letter if a file is missing).
 
 ## Sharp edges

@@ -584,15 +584,10 @@ setTimeout(function () {
     }
 
     /* ============ TEAM ISLAND — themed flip ID badges ============ */
-    /* Real Team Roboto / Roboverse crew (order mirrors the crew section).
-       [ name, role, instagram, github, linkedin-slug, email ] — no fake data. */
-    const CREW = [
-      ['Swastii', '1st year ECE · Cyber Physical Systems', 'mswastii_75', '', 'm-swastii-murugesan-00717a429', ''],
-      ['Ishani Garg', 'Member · Team Roboto', 'stfuishani_', '', 'ishani-garg-b1a339425', 'ishanigarg2@gmail.com'],
-      ['Dhanavanthsai', 'Web & Documentation', 'dhanavanth_17', '', 'dhanavanth-sai-16a272414', 'dhanavanthsai.s@gmail.com'],
-      ['Muhammed Nehan', '1st year EKE · Electronics & Computer Eng', 'nvm.nehan', 'K1llaloe', 'muhammed-nehan-472694368', 'ciphertrooper@gmail.com'],
-      ['Nipun Gaur', '1st year B.Tech CSE (IT)', 'nipun2908', '', 'nipun-gaur-b42408429', 'nipungaur2008@gmail.com'],
-    ];
+    /* Real Team Roboto / Roboverse crew — single source of truth is
+       public/crew.js (window.ROBO_CREW), shared with the DOM cards in
+       index.html. Mapped here to the legacy [name,role,ig,gh,li,email] shape. */
+    const CREW = (window.ROBO_CREW || []).map(m => [m.n, m.r, m.ig, m.gh, m.li, m.em]);
     {
       const d2 = new THREE.Mesh(new THREE.CircleGeometry(7.5, 48), new THREE.MeshStandardMaterial({ color: 0x0a0e14, roughness: .9, metalness: .2 }));
       d2.rotation.x = -Math.PI / 2; d2.rotation.z = 0; d2.position.set(TEAM.x, .02, TEAM.z); scene.add(d2);
@@ -621,7 +616,7 @@ setTimeout(function () {
         rr(56, 76, 144, 144); g.fillStyle = '#131922'; g.fill();
         g.save(); g.beginPath(); g.roundRect(56, 76, 144, 144, 8); g.clip();
         if (m._img) g.drawImage(m._img, 56, 76, 144, 144);
-        else { g.fillStyle = '#1a2230'; g.fillRect(56, 76, 144, 144); g.fillStyle = '#22D3EE'; g.font = '700 44px sans-serif'; g.fillText(m[0][0], 128, 158); }
+        else { g.fillStyle = '#1a2230'; g.fillRect(56, 76, 144, 144); g.fillStyle = '#22D3EE'; g.font = '700 44px sans-serif'; g.fillText(m[0].replace(/^M\.\s*/i, '')[0].toUpperCase(), 128, 158); }
         g.restore();
         g.fillStyle = '#E6EDF3'; g.font = '700 22px "Space Grotesk", sans-serif'; g.fillText(m[0], 128, 252);
         g.fillStyle = '#7C8894'; g.font = '400 10px monospace'; g.fillText(m[1].toUpperCase(), 128, 272);
