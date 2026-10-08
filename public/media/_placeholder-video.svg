@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480">
+  <rect width="640" height="480" fill="#0a0f16"/>
+  <rect x="10" y="10" width="620" height="460" fill="none" stroke="#F59E0B" stroke-opacity=".3" stroke-width="2"/>
+  <text x="320" y="150" text-anchor="middle" font-family="monospace" font-size="15" fill="#F59E0B" letter-spacing="4">ROBOTO · RB/25</text>
+  <text x="320" y="180" text-anchor="middle" font-family="monospace" font-size="10" fill="#7C8894" letter-spacing="3">VIDEO SLOT — AWAITING FILE</text>
+  <g transform="translate(292,222)">
+    <rect x="0" y="0" width="52" height="36" fill="none" stroke="#7C8894" stroke-width="1.5"/>
+    <path d="M52 8l20-8v36l-20-8z" fill="none" stroke="#7C8894" stroke-width="1.5"/>
+    <path d="M22 11l12 7-12 7z" fill="#22D3EE"/>
+  </g>
+  <text x="320" y="310" text-anchor="middle" font-family="monospace" font-size="10" fill="#67E8F9" letter-spacing="2">DROP YOUR CLIP IN public/media/</text>
+  <text x="320" y="335" text-anchor="middle" font-family="monospace" font-size="9" fill="#7C8894" letter-spacing="1">MP4 RECOMMENDED · LIST IT IN manifest.json</text>
+</svg>

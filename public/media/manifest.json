@@ -1,0 +1,8 @@
+[
+  { "src": "build-01.jpg", "type": "img",   "cap": "CHASSIS BUILD — DAY 1" },
+  { "src": "build-02.jpg", "type": "img",   "cap": "WIRING & SOLDERING" },
+  { "src": "build-03.jpg", "type": "img",   "cap": "LIDAR CALIBRATION" },
+  { "src": "run-01.jpg",   "type": "img",   "cap": "FIRST MAZE RUN" },
+  { "src": "demo-01.mp4",  "type": "video", "cap": "WORKSHOP DEMO" },
+  { "src": "comp-01.mp4",  "type": "video", "cap": "COMPETITION RUN" }
+]

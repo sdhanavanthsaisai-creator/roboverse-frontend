@@ -187,6 +187,32 @@ footer .mail:hover{background:var(--cy);border-color:var(--cy);color:#04222a}
 /* ============ CREW ROSTER — big flip ID cards (no hanging lanyards) ============ */
 .crew-sec{padding-bottom:90px}
 .crew-sec .sub{margin-bottom:0}
+/* ============ GALLERY — project photos & videos ============ */
+.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:46px;max-width:1280px;width:100%}
+.g-tile{position:relative;aspect-ratio:4/3;border:1px solid rgba(103,232,249,.16);background:#0a0f16;overflow:hidden;cursor:pointer;transition:border-color .3s,transform .3s}
+.g-tile:hover{border-color:rgba(103,232,249,.65);transform:translateY(-3px)}
+.g-tile img,.g-tile video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.g-tag{position:absolute;left:0;bottom:0;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:#05070A;background:var(--cy);padding:4px 9px;z-index:2}
+.g-play{position:absolute;inset:0;display:grid;place-items:center;z-index:1}
+.g-play i{width:44px;height:44px;border:1px solid rgba(103,232,249,.7);background:rgba(5,7,10,.55);display:grid;place-items:center;color:var(--cy2);font-style:normal;font-size:15px;padding-left:3px}
+.g-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;border:1px dashed rgba(124,136,148,.38);color:var(--mut);font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-align:center;padding:14px;cursor:default}
+.g-empty b{color:var(--cy2);font-weight:600;word-break:break-all}
+.g-empty svg{width:30px;height:30px;opacity:.5;stroke:var(--mut)}
+@media(max-width:900px){.gal{grid-template-columns:repeat(2,1fr)}}
+/* gallery lightbox (terminal-styled, images + video) */
+#lb{position:fixed;inset:0;z-index:95;background:rgba(3,5,8,.93);display:none;place-items:center;padding:4vmin}
+#lb.open{display:grid}
+#lb figure{position:relative;max-width:min(1100px,94vw);border:1px solid var(--gb);background:#0d1117;padding:14px;display:flex;flex-direction:column;gap:10px;margin:0}
+#lb img,#lb video{max-width:100%;max-height:76vh;object-fit:contain;display:block}
+#lb figcaption{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--mut);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+#lb figcaption b{color:var(--cy2);font-weight:600}
+#lbX,#lbPrev,#lbNext{position:absolute;width:34px;height:34px;border:1px solid var(--gb);background:#05070A;color:var(--cy);font-family:var(--mono);font-size:14px;cursor:pointer;transition:.25s;display:grid;place-items:center}
+#lbX:hover,#lbPrev:hover,#lbNext:hover{background:var(--cy);color:#05070A}
+#lbX{top:-14px;right:-14px}
+#lbPrev{left:-14px;top:50%;transform:translateY(-50%)}
+#lbNext{right:-14px;top:50%;transform:translateY(-50%)}
+@media(max-width:640px){#lbPrev{left:4px}#lbNext{right:4px}}
+
 .badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:22px;margin-top:48px;perspective:1600px;max-width:1280px}
 .badge{position:relative;aspect-ratio:2/3;cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
 .badge-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .8s var(--ease)}
@@ -308,7 +334,7 @@ a.b-row:hover{border-color:var(--cy)}
   <a class="logo" href="#hero">Roboto<sup>®</sup></a>
   <nav>
     <a href="#hardware">HARDWARE</a><a href="#math">MATH</a><a href="#game">SIMULATOR</a>
-    <a href="#code">FIRMWARE</a><a href="#team">CREW</a><a href="#crew">ID CARDS</a>
+    <a href="#code">FIRMWARE</a><a href="#gallery">MEDIA</a><a href="#team">CREW</a><a href="#crew">ID CARDS</a>
   </nav>
   <button id="sndBtn" aria-pressed="true" title="Toggle sound">SOUND ON</button>
   <span class="live"><i></i>RB/25 ONLINE</span>
@@ -407,9 +433,17 @@ a.b-row:hover{border-color:var(--cy)}
   </div>
 </section>
 
+<!-- Gallery: project photos & videos — auto-loads public/media/manifest.json -->
+<section class="sec" id="gallery" data-mode="footer">
+  <p class="kick" data-reveal>05 — MEDIA</p>
+  <h2 data-reveal>Proof of<br><span class="ol">work.</span></h2>
+  <p class="sub" data-reveal>Build logs, test runs and competition footage — straight from the workshop floor.</p>
+  <div class="gal" id="gal"></div>
+</section>
+
 <section class="sec" id="team" data-mode="team">
   <div class="sec-inner">
-    <p class="kick" data-reveal>05 — THE CREW</p>
+    <p class="kick" data-reveal>06 — THE CREW</p>
     <h2 data-reveal>Five hands,<br><span class="ol">one rover.</span></h2>
     <p class="sub" data-reveal>Every badge on the display deck belongs to a real member of Team Roboto — click one to flip it and read its contact side.</p>
   </div>
@@ -425,7 +459,7 @@ a.b-row:hover{border-color:var(--cy)}
 
   <div class="enq-wrap" id="enquiry">
     <div class="enq-copy" data-reveal>
-      <p class="kick">06 — ENQUIRY FORM</p>
+      <p class="kick">07 — ENQUIRY FORM</p>
       <h3>Invite Roboto<br>to your arena.</h3>
       <p>Workshops, demos, competition collabs or sponsorships — write to us and the crew gets back to you.</p>
     </div>
@@ -474,6 +508,9 @@ a.b-row:hover{border-color:var(--cy)}
 </footer>
 
 <div id="toasts" aria-live="polite"></div>
+
+<!-- gallery lightbox -->
+<div id="lb" aria-hidden="true"><figure></figure></div>
 <noscript><p style="position:fixed;inset:0;display:grid;place-items:center;z-index:99;background:#05070A;font-family:monospace">JavaScript is required.</p></noscript>
 
 <script>
@@ -541,6 +578,89 @@ const CREW_DATA = window.ROBO_CREW || [];
     host.appendChild(el);
   });
 })();
+
+/* ============ GALLERY — project photos & videos (public/media/) ============ */
+/* Drop files into public/media/ and list them in manifest.json — tiles render
+   automatically; missing entries show a themed placeholder with the expected
+   filename. manifest format: [{"src":"rover.jpg","type":"img","cap":"..."}, …] */
+(function buildGallery(){
+  var host=document.getElementById('gal');
+  if(!host) return;
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  var MEDIA=[];
+  var PLACEHOLDERS=[
+    {src:'build-01.jpg',type:'img',cap:'CHASSIS BUILD — DAY 1'},
+    {src:'build-02.jpg',type:'img',cap:'WIRING & SOLDERING'},
+    {src:'build-03.jpg',type:'img',cap:'LIDAR CALIBRATION'},
+    {src:'run-01.jpg',type:'img',cap:'FIRST MAZE RUN'},
+    {src:'demo-01.mp4',type:'video',cap:'WORKSHOP DEMO'},
+    {src:'comp-01.mp4',type:'video',cap:'COMPETITION RUN'}
+  ];
+  fetch('./media/manifest.json').then(function(r){ return r.ok ? r.json() : Promise.reject(); }).catch(function(){ return PLACEHOLDERS; }).then(function(items){
+    MEDIA=items||PLACEHOLDERS;
+    MEDIA.forEach(function(m,idx){
+      var tile=document.createElement('figure');
+      tile.className='g-tile'; tile.tabIndex=0;
+      tile.setAttribute('role','button');
+      tile.setAttribute('aria-label',(m.type==='video'?'Play video':'View photo')+': '+m.cap);
+      var inner;
+      if(m.type==='video')
+        inner='<video src="./media/'+encude(m.src)+'" muted playsinline preload="metadata"></video><span class="g-play"><i>▶</i></span>';
+      else
+        inner='<img src="./media/'+encude(m.src)+'" alt="'+esc(m.cap)+'" loading="lazy">';
+      tile.innerHTML=inner+'<span class="g-tag">'+esc(m.cap)+'</span>';
+      function open(){ openLightbox(MEDIA,idx); }
+      tile.addEventListener('click',open);
+      tile.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+      tile.querySelector('img,video').addEventListener('error',function onerr(){
+        tile.className='g-tile g-empty'; tile.removeAttribute('role'); tile.removeAttribute('tabindex');
+        tile.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="5" width="18" height="14"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="9" cy="9" r="1.6"/></svg>'+
+          '<span>DROP FILE</span><b>public/media/'+esc(m.src)+'</b>';
+      });
+      host.appendChild(tile);
+    });
+  });
+  function encude(s){ return encodeURIComponent(s); }
+})();
+
+/* gallery lightbox — terminal-styled, handles photos and videos */
+var LB={items:[],i:0};
+function openLightbox(items,i){
+  LB.items=items; LB.i=i;
+  var lb=document.getElementById('lb');
+  if(!lb) return;
+  renderLB();
+  lb.classList.add('open');
+  document.addEventListener('keydown',lbKeys);
+}
+function renderLB(){
+  var m=LB.items[LB.i], lb=document.getElementById('lb'); if(!m) return;
+  var body=m.type==='video'
+    ? '<video src="./media/'+encodeURIComponent(m.src)+'" controls autoplay playsinline></video>'
+    : '<img src="./media/'+encodeURIComponent(m.src)+'" alt="'+m.cap+'">';
+  lb.querySelector('figure').innerHTML=
+    body+
+    '<figcaption><span><b>'+(LB.i+1)+'/'+LB.items.length+'</b> — '+m.cap+'</span><span>ROBOTO® RB/25 · '+m.src+'</span></figcaption>'+
+    '<button id="lbX" aria-label="Close">✕</button><button id="lbPrev" aria-label="Previous">‹</button><button id="lbNext" aria-label="Next">›</button>';
+  document.getElementById('lbX').onclick=closeLB;
+  document.getElementById('lbPrev').onclick=function(){ LB.i=(LB.i-1+LB.items.length)%LB.items.length; renderLB(); };
+  document.getElementById('lbNext').onclick=function(){ LB.i=(LB.i+1)%LB.items.length; renderLB(); };
+}
+function closeLB(){
+  var lb=document.getElementById('lb'); lb.classList.remove('open'); lb.querySelector('figure').innerHTML='';
+  document.removeEventListener('keydown',lbKeys);
+}
+function lbKeys(e){
+  if(e.key==='Escape') closeLB();
+  else if(e.key==='ArrowLeft') document.getElementById('lbPrev').click();
+  else if(e.key==='ArrowRight') document.getElementById('lbNext').click();
+  var lb=document.getElementById('lb');
+  if(lb && e.target===lb) closeLB(); /* click on backdrop */
+}
+document.addEventListener('click',function(e){
+  var lb=document.getElementById('lb');
+  if(lb && lb.classList.contains('open') && e.target===lb) closeLB();
+});
 
 /* ============ ENQUIRY FORM — states drive the 3D letter animation ============ */
 /* idle → (submit) load [letter flies, flag rises] → ok|err → (3.4 s) idle [stage auto-disappears] */
