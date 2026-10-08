@@ -102,6 +102,64 @@ setTimeout(function () {
       setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 2400);
     }
 
+    /* ============ SFX — synthesized sound design (Web Audio, zero files) ============
+       Boot chime, servo sweep tied to explode progress, wall ticks, replan blips,
+       arrival arpeggio, record fanfare, ambient hum that opens with scroll speed.
+       AudioContext is created/resumed on the first user gesture (autoplay policy). */
+    const SFX = (() => {
+      let ctx = null, master = null, humFilter = null;
+      let muted = false;
+      try { muted = localStorage.getItem('rb25_mute') === '1'; } catch (e) {}
+      let chimed = false;
+      function ensure() {
+        if (ctx) { if (ctx.state === 'suspended') ctx.resume().catch(() => {}); return true; }
+        try {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return false;
+          ctx = new AC();
+          master = ctx.createGain(); master.gain.value = muted ? 0 : .4; master.connect(ctx.destination);
+          const humOsc = ctx.createOscillator(); humOsc.type = 'sawtooth'; humOsc.frequency.value = 42;
+          humFilter = ctx.createBiquadFilter(); humFilter.type = 'lowpass'; humFilter.frequency.value = 90; humFilter.Q.value = 6;
+          const humLvl = ctx.createGain(); humLvl.gain.value = .05;
+          humOsc.connect(humFilter); humFilter.connect(humLvl); humLvl.connect(master); humOsc.start();
+          return true;
+        } catch (e) { ctx = null; return false; }
+      }
+      function tone(f, dur, type, vol, when, slide) {
+        if (!ctx || muted) return;
+        try {
+          const t0 = ctx.currentTime + (when || 0);
+          const o = ctx.createOscillator(), g = ctx.createGain();
+          o.type = type || 'sine'; o.frequency.setValueAtTime(f, t0);
+          if (slide) o.frequency.exponentialRampToValueAtTime(slide, t0 + dur);
+          g.gain.setValueAtTime(0, t0);
+          g.gain.linearRampToValueAtTime(vol || .15, t0 + .012);
+          g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+          o.connect(g); g.connect(master); o.start(t0); o.stop(t0 + dur + .05);
+        } catch (e) {}
+      }
+      return {
+        get muted() { return muted; },
+        toggle() {
+          muted = !muted;
+          try { localStorage.setItem('rb25_mute', muted ? '1' : '0'); } catch (e) {}
+          if (master) master.gain.value = muted ? 0 : .4;
+          return muted;
+        },
+        unlock() { if (!chimed && ensure()) { chimed = true; [523, 659, 784, 1047].forEach((f, i) => tone(f, .5, 'sine', .12, i * .09)); tone(65, 1.2, 'sine', .1); } },
+        tick() { tone(1400, .06, 'square', .07); tone(700, .05, 'square', .05, .02); },
+        blip() { tone(880, .09, 'triangle', .1); },
+        servo(p) { tone(180 + 420 * p, .12, 'sawtooth', .05, 0, 240 + 900 * p); },
+        replan() { [330, 440].forEach((f, i) => tone(f, .14, 'triangle', .09, i * .08)); },
+        arrive() { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, .4, 'sine', .12, i * .1)); tone(78, 1.4, 'sine', .08); },
+        record() { [659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, .35, 'triangle', .11, i * .09)); },
+        hum(v) { if (humFilter && ctx && ctx.state === 'running') humFilter.frequency.value = 90 + v * 500; },
+      };
+    })();
+    addEventListener('pointerdown', () => SFX.unlock(), { passive: true });
+    addEventListener('keydown', () => SFX.unlock(), { passive: true });
+    window.__sfx = SFX; /* debug hook */
+
     const state = { mode: 'explore', e: 0, teamE: 0, time: 0, mouse: { x: 0, y: 0 }, heroDriving: false, hover: null, hoverCell: null };
     const GM = { x: 34, z: -18 };
     const TEAM = { x: 0, z: -58 };
@@ -360,7 +418,7 @@ setTimeout(function () {
       _d.position.set(w.x, .45 * s, w.z); _d.scale.setScalar(Math.max(.001, s)); _d.updateMatrix();
       wallsIM.setMatrixAt(i, _d.matrix);
     }
-    function refreshWalls() { for (let i = 0; i < G * G; i++) wallScale(i, gameGrid[i] ? 1 : .001); wallsIM.instanceMatrix.needsUpdate = true; }
+    function refreshWalls() { for (let i = 0; i < G * G; i++) wallScale(i, gameGrid[i] && fog[i] ? 1 : .001); wallsIM.instanceMatrix.needsUpdate = true; }
     function marker(cell, color) {
       const m = new THREE.Mesh(new THREE.RingGeometry(.3, .44, 40), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .85, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, depthWrite: false }));
       const w = cellW(cell.x, cell.y); m.rotation.x = -Math.PI / 2; m.position.set(w.x, .1, w.z); scene.add(m); return m;
@@ -405,6 +463,40 @@ setTimeout(function () {
     const hits = new THREE.Points(hitGeo, new THREE.PointsMaterial({ map: glow, color: 0x67e8f9, size: .22, transparent: true, opacity: .9, blending: THREE.AdditiveBlending, depthWrite: false }));
     hits.visible = false; scene.add(hits);
     const rayCaster = new THREE.Raycaster(); rayCaster.far = 5.5;
+
+    /* ---- LIDAR FOG-OF-WAR: the maze starts unseen. Cells materialize only where
+       the bot's ray sweep has passed and persist as a dim point-cloud memory —
+       you watch SLAM build the map in real time. ---- */
+    const fog = new Uint8Array(G * G);
+    const fogGeo = new THREE.BufferGeometry();
+    fogGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(G * G * 3), 3));
+    const fogPos = fogGeo.attributes.position.array;
+    for (let i = 0; i < G * G; i++) fogPos[i * 3 + 1] = -99;
+    const fogPts = new THREE.Points(fogGeo, new THREE.PointsMaterial({ map: glow, color: 0x67e8f9, size: .16, transparent: true, opacity: .4, blending: THREE.AdditiveBlending, depthWrite: false }));
+    fogPts.frustumCulled = false; fogPts.visible = false; scene.add(fogPts);
+    function seeCell(cx, cy) {
+      if (cx < 0 || cy < 0 || cx >= G || cy >= G) return;
+      const i = gi(cx, cy);
+      if (fog[i]) return;
+      fog[i] = 1;
+      if (gameGrid[i]) { wallScale(i, 1); wallsIM.instanceMatrix.needsUpdate = true; }
+      const w = cellW(cx, cy), k = i * 3;
+      fogPos[k] = w.x; fogPos[k + 1] = .05; fogPos[k + 2] = w.z;
+      fogGeo.attributes.position.needsUpdate = true;
+    }
+    function fogReset() {
+      fog.fill(0);
+      for (let i = 0; i < G * G; i++) fogPos[i * 3 + 1] = -99;
+      fogGeo.attributes.position.needsUpdate = true;
+      seeCell(START.x, START.y);
+    }
+    function seeAlongRay(dir, dist) {
+      const step = CS * .34, n = Math.floor(dist / step);
+      for (let s = 1; s <= n; s++) {
+        const px = bot.position.x + dir.x * s * step, pz = bot.position.z + dir.z * s * step;
+        seeCell(Math.round((px - GM.x) / CS + (G - 1) / 2), Math.round((pz - GM.z) / CS + (G - 1) / 2));
+      }
+    }
     const hoverBox = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CS * .96, .94, CS * .96)), new THREE.LineBasicMaterial({ color: 0x67e8f9 }));
     hoverBox.visible = false; scene.add(hoverBox);
 
@@ -471,12 +563,14 @@ setTimeout(function () {
     }
     function toggleWall(cx, cy) {
       if (isBorder(cx, cy) || (cx === START.x && cy === START.y) || (cx === GOAL.x && cy === GOAL.y)) return;
-      const i = gi(cx, cy); gameGrid[i] ^= 1; wallScale(i, gameGrid[i] ? 1 : .001); wallsIM.instanceMatrix.needsUpdate = true;
+      const i = gi(cx, cy); gameGrid[i] ^= 1; fog[i] = 1; wallScale(i, gameGrid[i] ? 1 : .001); wallsIM.instanceMatrix.needsUpdate = true;
+      SFX.tick();
       if (game.running) {
         const rem = game.path.slice(game.idx);
         if (rem.some(c => c.x === cx && c.y === cy)) {
           game.replans++; gReplans.textContent = game.replans;
           gstat('WALL DETECTED — replanning from cell ' + cx + ',' + cy);
+          SFX.replan();
           planFrom(botCell(), true);
         }
       } else if (game.path) { clearPath('Edited — run again to replan.'); gCost.textContent = '—'; }
@@ -495,14 +589,41 @@ setTimeout(function () {
     function resetRun() {
       clearPath(); game.replans = 0; game.moves = 0;
       gReplans.textContent = 0; gMoves.textContent = 0; gCost.textContent = '—';
+      if (gTime) gTime.textContent = '—';
+      fogReset();
       const w = cellW(START.x, START.y); bot.position.set(w.x, .22, w.z); bot.rotation.y = Math.PI;
       gstat('Idle — toggle walls, then run.');
     }
+    /* ---- speedrun timer + local leaderboard ---- */
+    const gTime = $('#gTime'), gBest = $('#gBest');
+    let bestRun = null;
+    try { bestRun = JSON.parse(localStorage.getItem('rb25_best') || 'null'); } catch (e) {}
+    if (gBest) gBest.textContent = bestRun ? bestRun.t.toFixed(1) + 's' : '—';
+    function stopTimerAndRecord() {
+      const secs = (performance.now() - game.t0) / 1000;
+      const eff = game.optimal ? Math.round(game.optimal / Math.max(1, game.moves) * 100) : 100;
+      SFX.arrive();
+      if (!bestRun || secs < bestRun.t) {
+        bestRun = { t: secs, eff };
+        try { localStorage.setItem('rb25_best', JSON.stringify(bestRun)); } catch (e) {}
+        if (gBest) gBest.textContent = secs.toFixed(1) + 's';
+        toast('NEW RECORD — ' + secs.toFixed(1) + 's · ' + eff + '% optimal');
+        SFX.record();
+      } else {
+        toast('Goal reached — ' + secs.toFixed(1) + 's · ' + eff + '% optimal');
+      }
+      return secs;
+    }
     $('#gRun').addEventListener('click', () => {
       if (game.running) return toast('Already executing.');
-      if (planFrom(START)) { game.running = true; }
+      if (planFrom(START)) {
+        game.running = true;
+        game.t0 = performance.now();
+        game.optimal = game.path.length - 1;
+        SFX.blip();
+      }
     });
-    $('#gShuffle').addEventListener('click', shuffle);
+    $('#gShuffle').addEventListener('click', () => { SFX.tick(); shuffle(); });
     $('#gReset').addEventListener('click', () => {
       for (let y = 1; y < G - 1; y++) for (let x = 1; x < G - 1; x++) gameGrid[gi(x, y)] = 0;
       refreshWalls(); resetRun(); toast('Grid cleared.');
@@ -515,15 +636,15 @@ setTimeout(function () {
     }
     function updateGame(dt) {
       const active = state.mode === 'game';
-      rays.visible = active; hits.visible = active;
+      rays.visible = active; hits.visible = active; fogPts.visible = active;
       startMk.scale.setScalar(1 + Math.sin(state.time * 3) * .1);
       goalMk.scale.setScalar(1 + Math.sin(state.time * 3 + 1.3) * .1);
       if (game.running && game.path) {
         const tgt = game.path[game.idx + 1];
         if (!tgt) {
           game.running = false;
-          gstat('Arrived — ' + game.moves + ' moves · ' + game.replans + ' replans.');
-          toast('Goal reached.');
+          const secs = stopTimerAndRecord();
+          gstat('Arrived — ' + game.moves + ' moves · ' + game.replans + ' replans · ' + secs.toFixed(1) + 's · ' + (game.optimal ? Math.round(game.optimal / Math.max(1, game.moves) * 100) : 100) + '% optimal.');
         } else {
           const w = cellW(tgt.x, tgt.y);
           if (gameGrid[gi(tgt.x, tgt.y)]) {
@@ -540,6 +661,7 @@ setTimeout(function () {
             } else bot.position.add(new THREE.Vector3(dx / d * step, 0, dz / d * step));
           }
         }
+        if (gTime) gTime.textContent = ((performance.now() - game.t0) / 1000).toFixed(1) + 's';
       }
       dots.forEach((d, i) => {
         if (game.curve && game.path) {
@@ -562,6 +684,8 @@ setTimeout(function () {
           pos[i * 6 + 3] = bot.position.x + dir.x * d; pos[i * 6 + 4] = .3; pos[i * 6 + 5] = bot.position.z + dir.z * d;
           if (hit) { hp[i * 3] = pos[i * 6 + 3]; hp[i * 3 + 1] = .3; hp[i * 3 + 2] = pos[i * 6 + 5]; }
           else { hp[i * 3] = 0; hp[i * 3 + 1] = -99; hp[i * 3 + 2] = 0; }
+          seeAlongRay(dir, d); /* fog-of-war: LiDAR sweep builds the map */
+          if (hit) seeCell(Math.round((pos[i * 6 + 3] - GM.x) / CS + (G - 1) / 2), Math.round((pos[i * 6 + 5] - GM.z) / CS + (G - 1) / 2));
         }
         rayGeo.attributes.position.needsUpdate = true;
         hitGeo.attributes.position.needsUpdate = true;
@@ -774,7 +898,12 @@ setTimeout(function () {
       const tm = $('#team').getBoundingClientRect();
       state.teamE = clamp01(-tm.top / Math.max(1, tm.height - innerHeight));
     }
-    addEventListener('scroll', () => requestAnimationFrame(computeMode), { passive: true });
+    let humV = 0, lastSY = scrollY;
+    addEventListener('scroll', () => {
+      const sy = scrollY;
+      humV = clamp01(Math.abs(sy - lastSY) / 60); lastSY = sy;
+      requestAnimationFrame(computeMode);
+    }, { passive: true });
     computeMode();
     {
       const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .15 });
@@ -924,6 +1053,14 @@ bool Planner::plan(int start, int goal, const uint8_t* occ) {
     /* ============ MAIN LOOP ============ */
     const explodeTagB = $('#explodeTag').querySelector('b');
     const clock = new THREE.Clock();
+    let lastServoE = -1;
+    /* header sound toggle — persisted in localStorage via SFX */
+    const sndBtn = $('#sndBtn');
+    if (sndBtn) {
+      const paintSnd = () => { sndBtn.textContent = SFX.muted ? 'SOUND OFF' : 'SOUND ON'; sndBtn.setAttribute('aria-pressed', String(!SFX.muted)); };
+      paintSnd();
+      sndBtn.addEventListener('click', () => { SFX.unlock(); SFX.toggle(); paintSnd(); if (!SFX.muted) SFX.blip(); });
+    }
     function loop() {
       const dt = Math.min(.05, clock.getDelta());
       state.time += dt;
@@ -965,6 +1102,8 @@ bool Planner::plan(int start, int goal, const uint8_t* occ) {
           p.el.style.opacity = wv.z < 1 ? 1 : 0;
         });
       }
+      if (state.mode === 'hardware' && Math.abs(state.e - lastServoE) > .06) { lastServoE = state.e; SFX.servo(state.e); }
+      humV = lerp(humV, 0, .05); SFX.hum(humV);
       updateGame(dt);
       updateTeam(dt);
       state._pts.rotation.y += dt * .01;
@@ -979,6 +1118,8 @@ bool Planner::plan(int start, int goal, const uint8_t* occ) {
       computeMode();
     });
     window.__ok = true;
+    window.__tickGame = updateGame;   /* debug hooks, same pattern as __stage/__ok */
+    window.__dbg = { state, game, fog, cellW };
     setStage('Live — RB/25 online');
 
   } catch (err) {

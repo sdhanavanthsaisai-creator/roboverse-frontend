@@ -76,9 +76,11 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .hdr .logo{font-weight:700;font-size:17px}.hdr .logo sup{font-size:9px}
 .hdr nav{margin-left:auto;display:flex;gap:20px}
 .hdr nav a{font-family:var(--mono);font-size:10px;letter-spacing:.2em;opacity:.6;transition:.3s}
-.hdr nav a:hover{opacity:1}
-.hdr .live{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9px;letter-spacing:.24em}
-.hdr .live i{width:6px;height:6px;background:#4ade80;animation:blink 2s infinite}
+.hdr nav a:hover{opacity:1}.hdr .live{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9px;letter-spacing:.24em}
+  .hdr .live i{width:6px;height:6px;background:#4ade80;animation:blink 2s infinite}
+  #sndBtn{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:#fff;border:1px solid rgba(255,255,255,.4);padding:6px 11px;cursor:pointer;transition:.25s}
+  #sndBtn:hover{background:#fff;color:#000}
+  #sndBtn[aria-pressed="false"]{opacity:.55}
 @keyframes blink{50%{opacity:.25}}
 @media(max-width:880px){.hdr nav{display:none}}
 
@@ -308,6 +310,7 @@ a.b-row:hover{border-color:var(--cy)}
     <a href="#hardware">HARDWARE</a><a href="#math">MATH</a><a href="#game">SIMULATOR</a>
     <a href="#code">FIRMWARE</a><a href="#team">CREW</a><a href="#crew">ID CARDS</a>
   </nav>
+  <button id="sndBtn" aria-pressed="true" title="Toggle sound">SOUND ON</button>
   <span class="live"><i></i>RB/25 ONLINE</span>
 </header>
 
@@ -380,9 +383,9 @@ a.b-row:hover{border-color:var(--cy)}
         <button class="btn" id="gShuffle">NEW MAZE</button>
         <button class="btn" id="gReset">CLEAR</button>
       </div>
-      <div class="gstats"><span>COST <b id="gCost">—</b></span><span>MOVES <b id="gMoves">0</b></span><span>REPLANS <b id="gReplans">0</b></span></div>
+      <div class="gstats"><span>COST <b id="gCost">—</b></span><span>MOVES <b id="gMoves">0</b></span><span>REPLANS <b id="gReplans">0</b></span><span>TIME <b id="gTime">—</b></span><span>BEST <b id="gBest">—</b></span></div>
       <p id="gStatus">Click cells to toggle walls, then run the route.</p>
-      <p class="hint">DRAG — ORBIT LOOK · CLICK — TOGGLE WALL<br>WALLS PLACED ON THE LIVE PATH FORCE AN INSTANT REPLAN</p>
+      <p class="hint">DRAG — ORBIT LOOK · CLICK — TOGGLE WALL<br>LIDAR FOG — THE MAP ONLY EXISTS WHERE THE BOT HAS SWEPT<br>WALLS ON THE LIVE PATH FORCE AN INSTANT REPLAN · FASTEST RUN IS SAVED</p>
     </div>
   </div>
 </section>
