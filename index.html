@@ -92,13 +92,35 @@ img{display:block}
 .hdr{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;gap:var(--s11);padding:var(--s8) var(--pad);mix-blend-mode:difference;color:var(--paper)}
 .hdr .logo{font-weight:500;font-size:var(--t-base)}
 .hdr .logo sup{font-size:var(--t-xs)}
-.hdr nav{margin-left:auto;display:flex;gap:var(--s9)}
-.hdr nav a{font-family:var(--mono);font-size:var(--t-xs);opacity:.7;transition:opacity .25s ease-in-out}
-.hdr nav a:hover{opacity:1}
+.hdr nav{margin-left:auto}
+.hdr nav a{font-family:var(--mono);font-size:var(--t-xs)}
+/* ================= GOOEY NAV (React Bits port) ================= */
+.gooey-nav-container{--color-1:#fff;--color-2:#fff;--color-3:#c9c9c9;--color-4:#f1f1f1;position:relative;margin-left:auto}
+.gooey-nav-container nav{display:flex;position:relative;transform:translate3d(0,0,.01px)}
+.gooey-nav-container nav ul{display:flex;gap:.4em;list-style:none;padding:0;margin:0;position:relative;z-index:3;color:var(--paper)}
+.gooey-nav-container nav ul li{border-radius:100vw;position:relative;cursor:pointer;transition:color .3s ease,box-shadow .3s ease;box-shadow:0 0 .5px 1.5px transparent;color:var(--paper)}
+.gooey-nav-container nav ul li a{display:inline-block;padding:.55em .95em;color:inherit}
+.gooey-nav-container nav ul li:focus-within:has(:focus-visible){box-shadow:0 0 .5px 1.5px #fff}
+.gooey-nav-container nav ul li::after{content:'';position:absolute;inset:0;border-radius:100vw;background:#fff;opacity:0;transform:scale(0);transition:opacity .3s ease,transform .3s ease;z-index:-1}
+.gooey-nav-container nav ul li.active{color:#000}
+.gooey-nav-container nav ul li.active::after{opacity:1;transform:scale(1)}
+.gooey-nav-container .effect{position:absolute;left:0;top:0;width:0;height:0;opacity:1;pointer-events:none;display:grid;place-items:center;z-index:1;font-family:var(--mono);font-size:var(--t-xs);white-space:nowrap}
+.gooey-nav-container .effect.text{color:var(--paper);transition:color .3s ease}
+.gooey-nav-container .effect.text.active{color:#000}
+.gooey-nav-container .effect.filter{filter:blur(7px) contrast(100) blur(0);mix-blend-mode:lighten}
+.gooey-nav-container .effect.filter::before{content:'';position:absolute;inset:-75px;z-index:-2;background:#000}
+.gooey-nav-container .effect.filter::after{content:'';position:absolute;inset:0;background:#fff;transform:scale(0);opacity:0;z-index:-1;border-radius:100vw}
+.gooey-nav-container .effect.active::after{animation:gooPill .3s ease both}
+@keyframes gooPill{to{transform:scale(1);opacity:1}}
+.gooey-nav-container .particle,.gooey-nav-container .point{display:block;opacity:0;width:20px;height:20px;border-radius:100%;transform-origin:center}
+.gooey-nav-container .particle{--time:5s;position:absolute;top:calc(50% - 8px);left:calc(50% - 8px);animation:gooParticle calc(var(--time)) ease 1 -350ms}
+.gooey-nav-container .point{background:var(--color);opacity:1;animation:gooPoint calc(var(--time)) ease 1 -350ms}
+@keyframes gooParticle{0%{transform:rotate(0deg) translate(calc(var(--start-x)),calc(var(--start-y)));opacity:1;animation-timing-function:cubic-bezier(.55,0,1,.45)}70%{transform:rotate(calc(var(--rotate) * .5)) translate(calc(var(--end-x) * 1.2),calc(var(--end-y) * 1.2));opacity:1;animation-timing-function:ease}85%{transform:rotate(calc(var(--rotate) * .66)) translate(calc(var(--end-x)),calc(var(--end-y)));opacity:1}100%{transform:rotate(calc(var(--rotate) * 1.2)) translate(calc(var(--end-x) * .5),calc(var(--end-y) * .5));opacity:1}}
+@keyframes gooPoint{0%{transform:scale(0);opacity:0;animation-timing-function:cubic-bezier(.55,0,1,.45)}25%{transform:scale(calc(var(--scale) * .25))}38%{opacity:1}65%{transform:scale(var(--scale));opacity:1;animation-timing-function:ease}85%{transform:scale(var(--scale));opacity:1}100%{transform:scale(0);opacity:0}}
 .hdr .live{display:flex;align-items:center;gap:var(--s2);font-family:var(--mono);font-size:var(--t-xs);opacity:.7}
 .hdr .live i{width:5px;height:5px;border-radius:var(--r-6);background:var(--paper);animation:looperino 2s linear infinite}
 @keyframes looperino{50%{opacity:.25}}
-@media(max-width:760px){.hdr nav{display:none}}
+@media(max-width:760px){.hdr nav,#gooeyNav{display:none}}
 .hdr nav a[aria-current="location"]{opacity:1;text-decoration:underline;text-underline-offset:4px}
 
 /* ================= SECTIONS ================= */
@@ -127,10 +149,10 @@ main{position:relative;z-index:2}
 #sectionWheel .wheel-caption{position:absolute;left:18px;right:10px;bottom:12px;color:rgba(0,0,0,.36);font:8px var(--mono);letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
 @media(max-width:760px){#sectionWheel{right:8px;width:116px;height:min(300px,44vh);border-radius:13px}#sectionWheel .wheel-item{left:14px;right:4px;font-size:9px;letter-spacing:-.05em}#sectionWheel .wheel-caption{left:14px;font-size:7px}#sectionWheel .wheel-item[aria-selected="true"]::before{left:-8px}}
 .eq.border-glow-card{position:relative;isolation:isolate;overflow:visible;--glow-angle:0deg;transition:transform .25s var(--e-out),border-color .25s}
-.eq.border-glow-card::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:conic-gradient(from var(--glow-angle),transparent 0 68%,var(--acid) 82%,#fff 88%,transparent 96%);opacity:0;z-index:-1;transition:opacity .2s;pointer-events:none;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
-.eq.border-glow-card::after{content:"";position:absolute;inset:-12px;border-radius:inherit;background:conic-gradient(from var(--glow-angle),transparent 0 70%,color-mix(in srgb,var(--acid) 45%,transparent) 86%,transparent 97%);filter:blur(16px);opacity:0;z-index:-2;transition:opacity .2s;pointer-events:none}
+.eq.border-glow-card::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:conic-gradient(from var(--glow-angle),transparent 0 68%,rgba(255,255,255,.9) 82%,#fff 88%,transparent 96%);opacity:0;z-index:-1;transition:opacity .2s;pointer-events:none;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.eq.border-glow-card::after{content:"";position:absolute;inset:-12px;border-radius:inherit;background:conic-gradient(from var(--glow-angle),transparent 0 70%,rgba(160,165,178,.45) 86%,transparent 97%);filter:blur(16px);opacity:0;z-index:-2;transition:opacity .2s;pointer-events:none}
 .eq.border-glow-card:hover::before,.eq.border-glow-card:focus-within::before,.eq.border-glow-card:hover::after,.eq.border-glow-card:focus-within::after{opacity:1}
-.eq.border-glow-card:hover{border-color:color-mix(in srgb,var(--acid) 65%,transparent);transform:translateY(-2px)}
+.eq.border-glow-card:hover{border-color:rgba(255,255,255,.35);transform:translateY(-2px)}
 .eq.border-glow-card .tag{position:relative}
 #sectionWheel .wheel-caption{position:absolute;left:18px;right:10px;bottom:12px;color:rgba(0,0,0,.36);font:8px var(--mono);letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
 @media(max-width:760px){#sectionWheel{right:8px;width:116px;height:min(300px,44vh);border-radius:13px}#sectionWheel .wheel-item{left:14px;right:4px;font-size:9px;letter-spacing:-.05em}#sectionWheel .wheel-caption{left:14px;font-size:7px}#sectionWheel .wheel-item[aria-selected="true"]::before{left:-8px}}
@@ -170,13 +192,17 @@ h2 .ol{color:transparent;-webkit-text-stroke:1.2px var(--ink)}
 #math .prob{max-width:72ch;color:var(--t2);line-height:1.75;font-size:var(--t-base);margin:var(--s6) 0 var(--s2)}
 #math blockquote{border-left:2px solid var(--ink);padding:var(--s1) 0 var(--s1) var(--s7);margin:var(--s10) 0 var(--s2);font-size:clamp(var(--t-xl),2.4vw,var(--t-2xl));font-weight:500;line-height:1.3;max-width:34ch}
 .eqs{display:grid;grid-template-columns:1fr 1fr;gap:var(--s8);margin-top:var(--s16)}
-.eq{border:1px solid var(--line2);border-radius:var(--r-lg);padding:var(--s11);background:var(--paper);transition:border-color .5s var(--e-io)}
-.eq:hover{border-color:rgba(0,0,0,.35)}
-.eq .tag{font-family:var(--mono);font-size:var(--t-xs);color:var(--t3);display:block;margin-bottom:var(--s5)}
-.eq h3{font-size:var(--t-base);font-weight:500;margin-bottom:var(--s6)}
-.eq .tex{overflow-x:auto;color:var(--ink)}
-.eq .tex .katex{font-size:1.05em}
-.eq p{font-size:var(--t-sm);color:var(--t2);line-height:1.65;margin-top:var(--s6)}
+.eq{border:1px solid rgba(255,255,255,.08);border-radius:var(--r-lg);padding:var(--s11);background:#111111;color:#EDEDED;position:relative;isolation:isolate;overflow:hidden;box-shadow:0 24px 48px -24px rgba(0,0,0,.6);transition:border-color .5s var(--e-io),transform .25s var(--e-out)}
+.eq:hover{border-color:rgba(255,255,255,.28);transform:translateY(-2px)}
+.eq .tag{font-family:var(--mono);font-size:var(--t-xs);color:rgba(255,255,255,.48);display:block;margin-bottom:var(--s5)}
+.eq h3{font-size:var(--t-base);font-weight:500;margin-bottom:var(--s6);color:#fff}
+.eq .tex{overflow-x:auto;color:#fff}
+.eq .tex .katex{font-size:1.05em;color:#fff}
+.eq p{font-size:var(--t-sm);color:rgba(255,255,255,.62);line-height:1.65;margin-top:var(--s6)}
+.eq .spotlight-card__light,.eq .spotlight-card__edge{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0}
+.eq .spotlight-card__light{z-index:0}
+.eq .spotlight-card__edge{z-index:2;padding:1px;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.eq .tag,.eq h3,.eq .tex,.eq p{position:relative;z-index:1}
 .eq.wide{grid-column:1/-1}
 @media(max-width:860px){.eqs{grid-template-columns:1fr}}
 
@@ -331,15 +357,21 @@ footer .mail:active{transform:scale(.98)}
 
 <header class="hdr">
   <a class="logo" href="#hero">Roboto<sup>®</sup></a>
-  <nav aria-label="Primary">
-    <a href="#hero">Intro</a>
-    <a href="#hardware">Hardware</a>
-    <a href="#math">Math</a>
-    <a href="#game">Simulator</a>
-    <a href="#code">Firmware</a>
-    <a href="#team">Crew</a>
-    <a href="#contact">Contact</a>
-  </nav>
+  <div class="gooey-nav-container" id="gooeyNav">
+    <nav aria-label="Primary">
+      <ul id="gooeyList">
+        <li class="active"><a href="#hero">Intro</a></li>
+        <li><a href="#hardware">Hardware</a></li>
+        <li><a href="#math">Math</a></li>
+        <li><a href="#game">Simulator</a></li>
+        <li><a href="#code">Firmware</a></li>
+        <li><a href="#team">Crew</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <span class="effect filter" id="gooeyFilter" aria-hidden="true"></span>
+    <span class="effect text" id="gooeyText" aria-hidden="true"></span>
+  </div>
   <span class="live"><i aria-hidden="true"></i>RB/25 online</span>
 </header>
 
@@ -391,7 +423,7 @@ footer .mail:active{transform:scale(.98)}
   <div class="stick"><div style="margin-top:auto;max-width:640px">
     <p class="kick" data-reveal>01 — The hardware</p>
     <h2 data-reveal>Every part, <span class="ol">exploded.</span></h2>
-    <p class="sub" data-reveal>Scroll pulls the stack apart layer by layer — drive, power, control, sensing. Rest on any component in the scene and its specification appears.</p>
+    <p class="sub" data-reveal>Scroll pulls the real assembly apart layer by layer — drivetrain, decks and caster. Rest on any component in the scene and its specification appears.</p>
   </div></div>
 </section>
 
@@ -547,11 +579,29 @@ async function loadThree(){
     try{
       setStage('loading three.js — '+new URL(url).host);
       const mod=await import(/* @vite-ignore */ url);
-      if(mod && mod.WebGLRenderer) return mod;
+      if(mod && mod.WebGLRenderer){window.__threeURL=url;return mod;}
       throw new Error('module loaded but WebGLRenderer missing');
     }catch(e){ lastErr=e; }
   }
   throw new Error('All three.js CDNs failed. Last error: '+(lastErr&&lastErr.message));
+}
+/* GLTFLoader resolved from the same CDN copy of three.js, so the loader
+   and the scene share one THREE instance (no import map needed). */
+async function loadGLTFLoader(){
+  const base=window.__threeURL||'';
+  if(base.indexOf('/build/three.module.js')>=0){
+    const file=base.replace('/build/three.module.js','/examples/jsm/loaders/GLTFLoader.js');
+    const fix3=p=>p.replace(/from\s+['"]three['"]/g,'from \''+base+'\'');
+    /* GLTFLoader also pulls ../utils/BufferGeometryUtils.js relatively —
+       fetch + rewrite it too so everything shares the one THREE instance */
+    const utilsURL=file.replace('/loaders/GLTFLoader.js','/utils/BufferGeometryUtils.js');
+    const utilsSrc=await (await fetch(utilsURL)).text();
+    const utilsBlob=URL.createObjectURL(new Blob([fix3(utilsSrc)],{type:'text/javascript'}));
+    const src=await (await fetch(file)).text();
+    const patched=fix3(src).replace(/from\s+['"]\.\.\/utils\/BufferGeometryUtils\.js['"]/g,'from \''+utilsBlob+'\'');
+    return (await import(URL.createObjectURL(new Blob([patched],{type:'text/javascript'})))).GLTFLoader;
+  }
+  return (await import(/* @vite-ignore */ base+'/examples/jsm/loaders/GLTFLoader.js')).GLTFLoader;
 }
 
 let THREE;
@@ -739,6 +789,8 @@ function reg(name,g,{dir=[0,1,0],dist=0,layer='B',ay=.2}={}){
   parts.push({name,g,dir:new THREE.Vector3(...dir),dist,layer,base:g.position.clone(),cur:0,ay});
   partByName[name]=g;return g;
 }
+const wheelSpins=[],lidarTops=[];
+function buildProceduralRobot(){
 {
   const tri=new THREE.Shape();const R=1.5;
   for(let i=0;i<3;i++){const a=Math.PI/2+i*2*Math.PI/3;const x=Math.cos(a)*R,y=Math.sin(a)*R;i?tri.lineTo(x,y):tri.moveTo(x,y);}
@@ -748,7 +800,6 @@ function reg(name,g,{dir=[0,1,0],dist=0,layer='B',ay=.2}={}){
   const mesh=new THREE.Mesh(geo,MAT.ti);mesh.position.y=.24;g.add(mesh);
   reg('chassis',g,{dist:0,layer:'C',ay:.35});
 }
-const wheelSpins=[];
 [90,210,330].forEach((deg,i)=>{
   const a=deg*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a),R=1.5;
   const mg=new THREE.Group();robot.add(mg);
@@ -814,7 +865,6 @@ const wheelSpins=[];
   coil.rotation.x=Math.PI/2;coil.position.set(-.6,1.47,-.35);g.add(coil);
   reg('buck',g,{dir:[-.6,1,-.3],dist:2.2,layer:'B',ay:1.55});
 }
-const lidarTops=[];
 {
   const g=new THREE.Group();robot.add(g);
   cy(g,.5,.52,.05,MAT.cb,0,1.72,0);
@@ -834,6 +884,72 @@ const lidarTops=[];
   cy(g,.035,.035,.02,MAT.lens,1.345,1.05,-.08,0,0,Math.PI/2);
   reg('ultra',g,{dir:[1.3,.4,0],dist:1.7,layer:'A',ay:1.25});
 }
+} /* end buildProceduralRobot — fallback if the GLB cannot load */
+
+/* ============ ROVER GLB — real RB/25 SolidWorks assembly ============ */
+let glbOK=false;
+try{
+  setStage('loading rover.glb');
+  const GLTFLoader=await loadGLTFLoader();
+  const gltf=await new Promise((res,rej)=>new GLTFLoader().load('models/rover.glb',res,undefined,rej));
+  const model=gltf.scene;
+  robot.add(model);
+  model.updateMatrixWorld(true);
+  const gb=new THREE.Box3().setFromObject(model);
+  const gs=gb.getSize(new THREE.Vector3()),gc=gb.getCenter(new THREE.Vector3());
+  const gsc=3.4/((Math.max(gs.x,gs.y,gs.z))||1);
+  model.scale.setScalar(gsc);
+  model.position.set(-gc.x*gsc,.02-gb.min.y*gsc,-gc.z*gsc);
+  model.updateMatrixWorld(true);
+  const nb=new THREE.Box3().setFromObject(model),nc=nb.getCenter(new THREE.Vector3());
+  /* GLTFLoader sanitises node names: whitespace becomes "_", reserved
+     characters are dropped and repeats get an "_1" suffix
+     ("occurrence of FLANGE PCD=47.5-1" -> "occurrence_of_FLANGE_PCD=475-1").
+     Compare normalised names so the SolidWorks part names still match. */
+  const glbKey=s=>String(s||'').toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_=<>-]/g,'');
+  const occs=[];
+  model.traverse(o=>{if(/^occurrence_of_/.test(o.name||''))occs.push(o);});
+  /* register a SolidWorks part: every matching "occurrence of X" node
+     becomes an exploded part with its own scroll vector */
+  function registerPart(solidName,dirArr,dist,layer,asNames){
+    const want=glbKey(solidName);
+    const hits=occs.filter(o=>{
+      const k=glbKey(o.name.replace(/^occurrence_of_/,''));
+      return k===want||k.indexOf(want+'_')===0;
+    });
+    if(!hits.length){console.warn('Part "'+solidName+'" not found in rover.glb — check the export names');return;}
+    hits.forEach((node,i)=>{
+      const pb=new THREE.Box3().setFromObject(node),pc=pb.getCenter(new THREE.Vector3());
+      const dir=new THREE.Vector3(dirArr[0],dirArr[1],dirArr[2]);
+      if(dirArr[2]&&!dirArr[0])dir.z=Math.abs(dir.z)*((pc.z>=nc.z)?1:-1);
+      if(dir.lengthSq()<1e-6)dir.set(0,1,0);
+      dir.normalize();
+      const key=(asNames&&asNames[i])||(solidName+'_'+i);
+      node.userData.partName=key;
+      const anc=new THREE.Object3D();
+      anc.position.copy(node.worldToLocal(pc.clone()));
+      node.add(anc);
+      parts.push({name:key,g:node,dir:dir,dist:dist,layer:layer,base:node.position.clone(),cur:0,ay:0,anchor:anc,noScale:true});
+      partByName[key]=node;
+    });
+  }
+  registerPart('ply wood 250x200-1',[0,0,0],0,'B',['deckLow']);
+  registerPart('plywood l2-1',[0,1,0],1.5,'A',['deckUp']);
+  registerPart('Traction Wheel-1',[0,.25,1],1.8,'C',['wheel0','wheel1']);
+  registerPart('MOTOR 1-1',[0,.5,1],1.1,'C',['motor0','motor1']);
+  registerPart('motor 2-1',[0,.5,1],1.1,'C',['motor2','motor3']);
+  registerPart('motor mount-2',[0,.45,1],.8,'C',['mount0','mount1']);
+  registerPart('FLANGE PCD=47.5-1',[0,.45,1],.8,'C',['flange0','flange1']);
+  registerPart('Part1-1',[-1,.15,0],1.3,'B',['bracketA']);
+  registerPart('Part2-1',[-1,.15,0],1.3,'B',['bracketB']);
+  registerPart('Castor Wheel-1',[-1,-.25,0],1.5,'B',['caster']);
+  registerPart('Part4-1',[-.4,1,0],2,'A',['hardA']);
+  registerPart('8-1',[-.4,1,0],2,'A',['hardB']);
+  if(!parts.length)throw new Error('no named parts matched in rover.glb');
+  glbOK=true;
+  setStage('rover.glb — '+parts.length+' parts registered');
+}catch(glbErr){console.warn('GLB rover unavailable, using procedural model:',glbErr);}
+if(!glbOK)buildProceduralRobot();
 robot.traverse(o=>{if(o.isMesh){let p=o;while(p&&!p.userData.partName)p=p.parent;o.userData.part=p?p.userData.partName:null;}});
 /* contact shadow under the rover */
 const disc=new THREE.Mesh(new THREE.CircleGeometry(1.9,40),new THREE.MeshBasicMaterial({map:shadow,color:0x000000,transparent:true,opacity:.16,depthWrite:false}));
@@ -843,7 +959,16 @@ const WIN={A:[.05,.16],B:[.14,.30],C:[.26,.44]};
 const layerVal={A:0,B:0,C:0};
 
 /* ============ HOTSPOT PINS ============ */
-const PINMETA=[
+const PINMETA=glbOK?[
+  ['deckLow','Main chassis deck','CHS-01','250 × 200 mm plywood base — the assembly reference; it stays put'],
+  ['deckUp','Upper deck L2','CHS-02','Second plywood level — lifts first in the teardown'],
+  ['wheel0','Traction wheel · A','DRV-01','Rubber traction wheel — splits outward along the axle'],
+  ['wheel1','Traction wheel · B','DRV-01','Rubber traction wheel — splits outward along the axle'],
+  ['motor0','DC gear motor','DRV-02','Drive gearmotor — slides outboard with its wheel'],
+  ['mount0','Motor mount','DRV-03','Motor bracket — follows the drivetrain out'],
+  ['bracketA','Caster bracket','SUP-01','Caster support — pulls away from the drive side'],
+  ['caster','Caster wheel','SUP-02','Swivel caster — drops out with its bracket'],
+]:[
   ['esp32','ESP32','MCU-01','240 MHz dual-core · FreeRTOS on both cores · Wi-Fi telemetry'],
   ['cytron','Cytron MD20A','DRV-02','30 V / 20 A H-bridge · PWM + direction · drives the omni array'],
   ['battery','6S LiPo','PWR-03','22.2 V nominal · 5000 mAh · 60C discharge for peak torque'],
@@ -861,7 +986,8 @@ PINMETA.forEach(([key,title,tag,spec],i)=>{
   const g=partByName[key];
   const rec=parts.find(p=>p.name===key);
   if(!g||!rec){console.warn('Hotspot skipped — no such part:',key);return;}
-  const anchor=new THREE.Object3D();anchor.position.set(0,rec.ay,0);g.add(anchor);
+  const anchor=rec.anchor||new THREE.Object3D();
+  if(!rec.anchor){anchor.position.set(0,rec.ay,0);g.add(anchor);rec.anchor=anchor;}
   const el=document.createElement('div');el.className='pin'+(i%2?' R':'');
   el.innerHTML='<span class="stem"></span><span class="dot" tabindex="0" role="button" aria-label="'+title+' — show specification"></span><div class="card"><b>'+title+'<i>'+tag+'</i></b><p>'+spec+'</p></div>';
   pinsEl.appendChild(el);
@@ -1331,22 +1457,34 @@ function updateBadgeStrap(dt){
   document.getElementById('strapBand').setAttribute('d',path);
   document.getElementById('strapBand').style.stroke='transparent';
   document.getElementById('strapTexture').style.display='none';
+  /* NOTE: fill must be set via style (not the fill attribute) — presentation
+     attributes do not resolve var(--acid), which left the strap invisible. */
+  const accent=(getComputedStyle(document.documentElement).getPropertyValue('--acid').trim()||'#C5FF00');
+  const twist=badgeMotion.twist;
   const sample=t=>{
     const f=Math.min(t*4,3.999999),i=Math.floor(f),u=f-i;
     const a=p[Math.max(0,i-1)],b=p[i],c=p[i+1],d=p[Math.min(4,i+2)];
     const coordinate=k=>.5*((2*b[k])+(-a[k]+c[k])*u+(2*a[k]-5*b[k]+4*c[k]-d[k])*u*u+(-a[k]+3*b[k]-3*c[k]+d[k])*u*u*u);
     const x=coordinate('x'),y=coordinate('y');
     const dx=c.x-b.x,dy=c.y-b.y,l=Math.hypot(dx,dy)||1;
-    const width=21*Math.cos(badgeMotion.twist*t);
-    return {left:[x-dy/l*width,y+dx/l*width],right:[x+dy/l*width,y-dx/l*width]};
+    // Half-turn from anchor (t=0) to clip (t=1): the ribbon pinches mid-way
+    // and its edges cross, like the woven band in the reference. The lateral
+    // crossover shift makes the twist visible instead of a subtle thinning.
+    const cw=Math.cos(twist*t),sw=Math.sin(twist*t);
+    const width=21*cw,cross=11*sw;
+    const ox=-dy/l*cross,oy=dx/l*cross;
+    return {left:[x-dy/l*width+ox,y+dx/l*width+oy],right:[x+dy/l*width+ox,y-dx/l*width+oy]};
   };
   ribbonSlices.forEach((face,i)=>{
     const a=sample(i/72),b=sample((i+1)/72);
     face.setAttribute('d',`M ${a.left} L ${a.right} L ${b.right} L ${b.left} Z`);
-    face.setAttribute('fill','var(--acid)');
-    // Darker edge-on fibers make the twist legible, including its back side.
-    face.style.filter=`brightness(${.55+.45*Math.abs(Math.cos(badgeMotion.twist*(i+.5)/72))})`;
-    face.setAttribute('stroke','#181717');face.setAttribute('stroke-opacity','.13');face.setAttribute('stroke-width','.5');
+    face.style.fill=accent;
+    // Edge-on fibers go dark; the back half of the twist renders darker so
+    // the flip direction reads. Alternating weave keeps the fabric look.
+    const edge=Math.abs(Math.cos(twist*(i+.5)/72));
+    const weave=(i%2===0)?1:.9;
+    face.style.filter=`brightness(${((.42+.58*edge)*weave).toFixed(3)})`;
+    face.setAttribute('stroke','#181717');face.setAttribute('stroke-opacity','.22');face.setAttribute('stroke-width','.6');
   });
   document.querySelector('.badge-clip').style.transform=`rotateY(${badgeMotion.twist}rad)`;
   document.querySelector('.badge-ring').style.transform=`rotateY(${badgeMotion.twist*.65}rad)`;
@@ -1492,6 +1630,151 @@ if(crewCountEl)crewCountEl.textContent='01 / '+String(CREW.length).padStart(2,'0
 syncCrewControls();paintCrew();
 /* redraw card textures once webfonts arrive */
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>paintCrew());
+
+/* ============ SPOTLIGHT CARDS (React Bits port) — EQ boxes ============
+   Vanilla port of <SpotlightCard />: circle spotlight (size 240, softness .7,
+   intensity .15, borderGlow .6, proximity 80, smoothing .3, flare on press).
+   Light color is a neutral gray cloud; texts and KaTeX are untouched. */
+(function(){
+  const cards=[...document.querySelectorAll('.eq')];
+  if(!cards.length)return;
+  const REDUCE_SPOT=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches??false;
+  const SIZE=240,INTENSITY=.6,BORDER_GLOW=.6,PROXIMITY=80,SMOOTH=.3;
+  const pointer={x:-9999,y:-9999,active:false};
+  const states=new Map();
+  cards.forEach(root=>{
+    const light=document.createElement('span');light.className='spotlight-card__light';light.setAttribute('aria-hidden','true');
+    const edge=document.createElement('span');edge.className='spotlight-card__edge';edge.setAttribute('aria-hidden','true');
+    root.appendChild(light);root.appendChild(edge);
+    states.set(root,{x:0,y:0,presence:0,flare:0,pressed:false,raf:0,light,edge,visible:true});
+  });
+  const paint=(root,st)=>{
+    const boost=1+.7*st.flare;
+    const a=Math.min(1,st.presence*INTENSITY*boost);
+    st.light.style.background=`radial-gradient(circle ${SIZE}px at ${st.x.toFixed(1)}px ${st.y.toFixed(1)}px, rgba(158,163,176,.85) 0%, rgba(158,163,176,${(a*.6).toFixed(3)}) 45%, transparent 100%)`;
+    st.light.style.opacity=String(a);
+    st.edge.style.background=`radial-gradient(circle ${(SIZE*.6).toFixed(0)}px at ${st.x.toFixed(1)}px ${st.y.toFixed(1)}px, rgba(158,163,176,.9) 0%, transparent 70%)`;
+    st.edge.style.opacity=String(Math.min(1,st.presence*BORDER_GLOW*boost));
+  };
+  const tick=(root,now,last)=>{
+    const st=states.get(root);st.raf=0;
+    const dt=Math.min(.05,Math.max(.001,(now-last)/1000));
+    const rect=root.getBoundingClientRect();
+    let tx=st.x,ty=st.y,target=0;
+    if(pointer.active){
+      tx=pointer.x-rect.left;ty=pointer.y-rect.top;
+      const gap=Math.hypot(Math.max(0,-tx,tx-rect.width),Math.max(0,-ty,ty-rect.height));
+      if(gap===0)target=1;
+      else if(PROXIMITY>0)target=Math.max(0,1-gap/PROXIMITY)**2;
+    }
+    if(REDUCE_SPOT){st.x=tx;st.y=ty;st.presence=target;st.flare=0;}
+    else{
+      if(st.presence<.02&&target>0){st.x=tx;st.y=ty;}
+      const follow=SMOOTH===0?1:1-Math.exp(-dt/(.015+SMOOTH*.22));
+      st.x+=(tx-st.x)*follow;st.y+=(ty-st.y)*follow;
+      const fade=1-Math.exp(-dt/(target>st.presence?.1:.32));
+      st.presence+=(target-st.presence)*fade;
+      if(Math.abs(target-st.presence)<.002)st.presence=target;
+      const press=(st.pressed)?1:0;
+      st.flare+=(press-st.flare)*(1-Math.exp(-dt/(press?.05:.28)));
+      if(Math.abs(press-st.flare)<.002)st.flare=press;
+    }
+    paint(root,st);
+    const moving=Math.abs(tx-st.x)>.1||Math.abs(ty-st.y)>.1;
+    if((!moving&&st.presence===target&&st.flare===((st.pressed)?1:0))===false)st.raf=requestAnimationFrame(n=>tick(root,n,now));
+  };
+  const wake=root=>{const st=states.get(root);if(!st||st.raf||!st.visible)return;st.raf=requestAnimationFrame(n=>tick(root,n,performance.now()));};
+  const wakeAll=()=>states.forEach((_,root)=>wake(root));
+  addEventListener('pointermove',e=>{pointer.x=e.clientX;pointer.y=e.clientY;pointer.active=true;wakeAll();},{passive:true});
+  document.addEventListener('pointerout',e=>{if(!e.relatedTarget){pointer.active=false;wakeAll();}});
+  addEventListener('scroll',()=>{if(pointer.active)wakeAll();},{capture:true,passive:true});
+  cards.forEach(root=>{
+    const st=states.get(root);
+    root.addEventListener('pointerdown',()=>{st.pressed=true;wake(root);});
+    addEventListener('pointerup',()=>{if(st.pressed){st.pressed=false;wake(root);}});
+    new IntersectionObserver(es=>{st.visible=es.some(en=>en.isIntersecting);if(st.visible)wake(root);}).observe(root);
+  });
+})();
+
+/* ============ GOOEY NAV (React Bits port) — site header ============
+   Props: particleCount 15, particleDistances [90,10], particleR 100,
+   animationTime 600, timeVariance 300, colors [1,2,3,1,2,3,1,4].
+   Anchor hrefs navigate natively; the pill + bubble particles are the effect. */
+(function(){
+  const container=document.getElementById('gooeyNav');
+  if(!container)return;
+  const navList=document.getElementById('gooeyList');
+  const filterEl=document.getElementById('gooeyFilter');
+  const textEl=document.getElementById('gooeyText');
+  if(!navList||!filterEl||!textEl)return;
+  const items=[...navList.querySelectorAll('li')];
+  const P_COUNT=15,P_DIST=[90,10],P_R=100,ANIM_T=600,T_VAR=300,COLORS=[1,2,3,1,2,3,1,4];
+  let activeIndex=0;
+  const noise=(n=1)=>n/2-Math.random()*n;
+  const getXY=(d,idx,total)=>{const a=((360+noise(8))/total)*idx*Math.PI/180;return[d*Math.cos(a),d*Math.sin(a)];};
+  const makeParticles=el=>{
+    el.style.setProperty('--time',(ANIM_T*2+T_VAR)+'ms');
+    for(let i=0;i<P_COUNT;i++){
+      const t=ANIM_T*2+noise(T_VAR*2);
+      const sXY=getXY(P_DIST[0],P_COUNT-i,P_COUNT);
+      const eXY=getXY(P_DIST[1]+noise(7),P_COUNT-i,P_COUNT);
+      const scale=1+noise(.2);
+      const color=COLORS[Math.floor(Math.random()*COLORS.length)];
+      let rot=noise(P_R/10);rot=rot>0?(rot+P_R/20)*10:(rot-P_R/20)*10;
+      el.classList.remove('active');
+      setTimeout(()=>{
+        const particle=document.createElement('span');
+        const point=document.createElement('span');
+        particle.className='particle';
+        particle.style.setProperty('--start-x',sXY[0].toFixed(1)+'px');
+        particle.style.setProperty('--start-y',sXY[1].toFixed(1)+'px');
+        particle.style.setProperty('--end-x',eXY[0].toFixed(1)+'px');
+        particle.style.setProperty('--end-y',eXY[1].toFixed(1)+'px');
+        particle.style.setProperty('--time',t.toFixed(0)+'ms');
+        particle.style.setProperty('--scale',scale.toFixed(3));
+        particle.style.setProperty('--color','var(--color-'+color+', white)');
+        particle.style.setProperty('--rotate',rot.toFixed(1)+'deg');
+        point.className='point';
+        particle.appendChild(point);
+        el.appendChild(particle);
+        requestAnimationFrame(()=>el.classList.add('active'));
+        setTimeout(()=>{try{el.removeChild(particle);}catch(e){}},Math.max(0,t));
+      },30);
+    }
+  };
+  const updateEffect=li=>{
+    const c=container.getBoundingClientRect(),p=li.getBoundingClientRect();
+    const css={left:(p.x-c.x).toFixed(1)+'px',top:(p.y-c.y).toFixed(1)+'px',width:p.width.toFixed(1)+'px',height:p.height.toFixed(1)+'px'};
+    Object.assign(filterEl.style,css);Object.assign(textEl.style,css);
+    textEl.innerText=li.innerText;
+  };
+  const activate=(li,idx,withParticles)=>{
+    if(idx===activeIndex)return;
+    activeIndex=idx;
+    items.forEach((it,i)=>it.classList.toggle('active',i===idx));
+    updateEffect(li);
+    filterEl.querySelectorAll('.particle').forEach(p=>{try{filterEl.removeChild(p);}catch(e){}});
+    textEl.classList.remove('active');void textEl.offsetWidth;textEl.classList.add('active');
+    if(withParticles)makeParticles(filterEl);
+  };
+  items.forEach((li,idx)=>{
+    const a=li.querySelector('a');
+    if(!a)return;
+    a.addEventListener('click',()=>activate(li,idx,true));
+    a.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){
+        e.preventDefault();
+        activate(li,idx,true);
+        const t=a.getAttribute('href');if(t&&t.charAt(0)==='#'){try{location.hash=t;}catch(err){}}
+      }
+    });
+  });
+  const init=()=>{const li=items[activeIndex];if(li){updateEffect(li);textEl.classList.add('active');}};
+  init();
+  addEventListener('load',init);
+  if('ResizeObserver' in window)new ResizeObserver(()=>{const li=items[activeIndex];if(li)updateEffect(li);}).observe(container);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(init);
+})();
 
 /* Crew controls are wired to the section scroll position below: one state source. */
 function flip(rec){
@@ -1840,13 +2123,15 @@ function loop(){
   lidarTops.forEach((t,i)=>t.rotation.y+=dt*(2+i*.3));
   MAT.led.emissiveIntensity=1.3+Math.sin(state.time*5)*.5;
   parts.forEach(p=>{
-    const s=state.hover===p.name?1.045:1;
-    p.g.scale.setScalar(lerp(p.g.scale.x,s,.18));
+    if(!p.noScale){
+      const s=state.hover===p.name?1.045:1;
+      p.g.scale.setScalar(lerp(p.g.scale.x,s,.18));
+    }
     if(p.el)p.el.classList.toggle('open',state.hover===p.name);
   });
   if(state.mode==='hardware'){
     parts.forEach(p=>{
-      if(!p.anchor)return;
+      if(!p.anchor||!p.el)return;
       p.anchor.getWorldPosition(wv);wv.project(camera);
       p.el.style.transform='translate('+((wv.x*.5+.5)*innerWidth).toFixed(1)+'px,'+((-wv.y*.5+.5)*innerHeight).toFixed(1)+'px)';
       p.el.style.opacity=wv.z<1?1:0;
