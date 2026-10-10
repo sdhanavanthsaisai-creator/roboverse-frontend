@@ -17,11 +17,20 @@ export default function TicketIsland() {
   const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const iv = setInterval(() => setNow(Date.now()), 5000);
+    const iv = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(iv);
   }, []);
 
-  const mins = Math.max(0, Math.floor((now - performance.timeOrigin) / 60000));
+  const totalSecs = Math.max(0, Math.floor((now - performance.timeOrigin) / 1000));
+  const mins = Math.floor(totalSecs / 60);
+  const secs = totalSecs % 60;
+  const entered = useMemo(
+    () =>
+      new Date(performance.timeOrigin)
+        .toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+        .toUpperCase(),
+    [],
+  );
   const ticketNo = useMemo(() => String(Math.floor(100000 + Math.random() * 900000)), []);
   const dateStr = useMemo(
     () => new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase(),
@@ -95,7 +104,7 @@ export default function TicketIsland() {
             <p className="tk-kicker">ROBOTO® · RB/25 · VISITOR PASS</p>
             <h3 className="tk-name">{displayName}</h3>
             <p className="tk-meta">
-              {mins} MIN ABOARD · {dateStr}
+              {mins} MIN {secs} SEC ABOARD · IN {entered} · {dateStr}
             </p>
             {admitted ? <p className="tk-admitted">STUB TORN — ADMITTED ✓</p> : null}
           </div>
@@ -113,7 +122,7 @@ export default function TicketIsland() {
             <p className="tp-kicker">ROBOTO® · RB/25 · VISITOR PASS</p>
             <h3 className="tp-name">{displayName}</h3>
             <p className="tp-meta">
-              {mins} MIN ABOARD · {dateStr}
+              {mins} MIN {secs} SEC ABOARD · ENTERED {entered} · {dateStr}
             </p>
             <p className="tp-note">Single-file WebGL · monochrome build · Built to escape mazes</p>
           </div>
