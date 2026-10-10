@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#FFFFFF">
 <title>Roboto® RB/25 — Autonomous maze explorer</title>
-<meta name="description" content="A monochrome, content-first 3D study of a 5 kg autonomous maze rover: exploded hardware, live A* replanning, holonomic kinematics and physics lanyard badges.">
+<meta name="description" content="A monochrome, content-first 3D study of RAT, a 3 kg differential-drive maze rover: exploded hardware, left-hand wall follower, drive physics and physics lanyard badges.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,6 +139,34 @@ main{position:relative;z-index:2}
 .landing-caption{position:absolute;right:var(--pad);bottom:var(--s12);font:var(--t-xs) var(--mono);letter-spacing:.1em;color:var(--t3);text-transform:uppercase}
 @media(max-width:760px){#landing .landing-copy{max-width:88vw}#landing h1{font-size:clamp(48px,14vw,86px)}.landing-caption{right:auto;left:var(--pad);bottom:18px}}
 
+/* ================= RIPPLE POOL (React Bits port · full first-page water) ================= */
+#rippleMount{position:absolute;inset:0;pointer-events:auto;z-index:1}
+#rippleMount #ripplePool{position:absolute;inset:0}
+#landing .landing-copy{position:relative;z-index:2}
+#rippleMount .ripple-cap{position:absolute;left:var(--pad);bottom:18px;z-index:2;font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--t3);pointer-events:none}
+@media(min-width:761px){#landing .landing-copy{max-width:min(660px,58vw)}}
+
+/* ================= HAMBURGER + OVERLAY MENU ================= */
+#burger{display:none;position:relative;width:44px;height:44px;margin-left:auto;background:transparent;border:0;cursor:pointer}
+#burger span{position:absolute;left:11px;right:11px;height:2px;background:var(--paper);transition:transform .35s var(--e-out),opacity .25s ease,left .25s var(--e-out),right .25s var(--e-out)}
+#burger span:nth-child(1){top:15px}#burger span:nth-child(2){top:21px}#burger span:nth-child(3){top:27px}
+#burger:hover span:nth-child(2){left:16px;right:6px}
+#burger:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
+body.menu-open #burger span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+body.menu-open #burger span:nth-child(2){opacity:0}
+body.menu-open #burger span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+@media(max-width:760px){#burger{display:block}}
+#menuOverlay{position:fixed;inset:0;z-index:25;background:var(--paper);display:flex;flex-direction:column;justify-content:center;padding:calc(var(--pad) + 84px) var(--pad) var(--pad);opacity:0;visibility:hidden;transition:opacity .45s var(--e-io),visibility 0s linear .45s}
+body.menu-open #menuOverlay{opacity:1;visibility:visible;transition:opacity .45s var(--e-io)}
+body.menu-open{overflow:hidden}
+#menuOverlay .mkick{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:var(--s6)}
+#menuOverlay nav{display:flex;flex-direction:column}
+#menuOverlay nav a{display:flex;align-items:baseline;gap:14px;padding:9px 0;font-size:clamp(30px,7.2vw,46px);font-weight:500;letter-spacing:-.03em;line-height:1.05;color:var(--ink);opacity:0;transform:translateY(26px);transition:opacity .5s var(--e-io),transform .55s var(--e-out),padding-left .3s var(--e-out);transition-delay:0s,calc(var(--i)*55ms),0s}
+body.menu-open #menuOverlay nav a{opacity:1;transform:none}
+#menuOverlay nav a .num{font-family:var(--mono);font-size:var(--t-xs);font-weight:400;letter-spacing:.1em;color:var(--t3)}
+#menuOverlay nav a:hover{padding-left:10px;text-decoration:underline;text-underline-offset:8px;text-decoration-thickness:2px}
+#menuOverlay .mfoot{margin-top:var(--s11);font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--t3)}
+
 /* Section OptionWheel navigation — same page, direct section jumps */
 #sectionWheel{--wheel-size:1.15rem;position:fixed;right:clamp(10px,2.2vw,34px);top:50%;z-index:24;width:170px;height:min(410px,58vh);transform:translateY(-50%);overflow:hidden;border:1px solid rgba(0,0,0,.09);border-radius:18px;background:rgba(255,255,255,.68);backdrop-filter:blur(14px);box-shadow:0 8px 34px rgba(0,0,0,.07);touch-action:pan-y;user-select:none;outline:none}
 #sectionWheel:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
@@ -159,7 +187,7 @@ main{position:relative;z-index:2}
 .sec{position:relative}
 .sec-inner{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:var(--s19) var(--pad) var(--s17);pointer-events:none}
 .tall{height:420vh}
-#game.tall{height:260vh}#team.tall{height:800vh;height:800svh}
+#game.tall{height:260vh}#model.tall{height:280vh}#team.tall{height:800vh;height:800svh}
 .tall .stick{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:var(--s19) var(--pad) var(--s16);pointer-events:none}
 
 .kick{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.08em;color:var(--t3);margin-bottom:var(--s6)}
@@ -341,7 +369,7 @@ footer .mail:active{transform:scale(.98)}
 <div id="veil" aria-hidden="true"></div>
 
 <div id="loader" aria-hidden="true">
-  <div class="top"><span>Roboto® — field unit RB/25</span><span>ESP32 · 4× LiDAR · 3× omni</span></div>
+  <div class="top"><span>Roboto® — field unit RB/25</span><span>ESP32 · MDDS30 · 2× PG36</span></div>
   <div id="loaderNum">000<i>%</i></div>
   <div id="loadStage">Booting…</div>
 </div>
@@ -361,7 +389,8 @@ footer .mail:active{transform:scale(.98)}
     <nav aria-label="Primary">
       <ul id="gooeyList">
         <li class="active"><a href="#hero">Intro</a></li>
-        <li><a href="#hardware">Hardware</a></li>
+        <li><a href="#hardware-intro">Hardware</a></li>
+        <li><a href="#model">Model</a></li>
         <li><a href="#math">Math</a></li>
         <li><a href="#game">Simulator</a></li>
         <li><a href="#code">Firmware</a></li>
@@ -373,19 +402,36 @@ footer .mail:active{transform:scale(.98)}
     <span class="effect text" id="gooeyText" aria-hidden="true"></span>
   </div>
   <span class="live"><i aria-hidden="true"></i>RB/25 online</span>
+  <button id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menuOverlay"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
 </header>
 
-<div id="explodeTag">Teardown — <b>0%</b></div>
+<div id="menuOverlay" aria-hidden="true">
+  <p class="mkick">Roboto® · RB/25 · Navigate</p>
+  <nav aria-label="Menu">
+    <a href="#hero" style="--i:0"><span class="num">01</span>Intro</a>
+    <a href="#hardware-intro" style="--i:1"><span class="num">02</span>Hardware</a>
+    <a href="#model" style="--i:2"><span class="num">03</span>Model</a>
+    <a href="#math" style="--i:3"><span class="num">04</span>Math</a>
+    <a href="#game" style="--i:4"><span class="num">05</span>Simulator</a>
+    <a href="#code" style="--i:5"><span class="num">06</span>Firmware</a>
+    <a href="#team" style="--i:6"><span class="num">07</span>Crew</a>
+    <a href="#contact" style="--i:7"><span class="num">08</span>Contact</a>
+  </nav>
+  <p class="mfoot">ESP32 · MDDS30 · 2× PG36</p>
+</div>
+
+<div id="explodeTag">Teardown — <b>0%</b><span> · drag to rotate</span></div>
 <div id="pins"></div>
 <aside id="sectionWheel" hidden style="display:none" aria-hidden="true">
   <button class="wheel-item" role="option" aria-selected="true" data-target="landing">01&nbsp; Landing</button>
   <button class="wheel-item" role="option" aria-selected="false" data-target="hero">02&nbsp; Intro</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="hardware">03&nbsp; Hardware</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="math">04&nbsp; Mathematics</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="game">05&nbsp; Simulator</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="code">06&nbsp; Firmware</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="team">07&nbsp; Crew</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="contact">08&nbsp; Contact</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="hardware-intro">03&nbsp; Hardware</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="model">04&nbsp; Model</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="math">05&nbsp; Mathematics</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="game">06&nbsp; Simulator</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="code">07&nbsp; Firmware</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="team">08&nbsp; Crew</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="contact">09&nbsp; Contact</button>
   <span class="wheel-caption">Scroll · click · drag</span>
 </aside>
 
@@ -394,71 +440,85 @@ footer .mail:active{transform:scale(.98)}
   <div class="landing-copy">
     <p class="landing-kicker">Roboto® · RB/25 · Autonomous field unit</p>
     <h1><span>MEET THE</span><span class="landing-outline">MAZE RUNNER.</span></h1>
-    <p class="landing-intro">A holonomic rover that reads the unknown, replans on the move, and never needs a joystick. Explore the machine, the math, and the team behind it.</p>
+    <p class="landing-intro">A two-wheel differential-drive rover that feels out unknown walls, shortens its own path, and never needs a joystick. Explore the machine, the math, and the team behind it.</p>
     <div class="landing-actions"><a href="#hero">Explore the project</a><a href="#team">Meet the crew</a></div>
   </div>
+  <div id="rippleMount" aria-hidden="true"><div id="ripplePool"></div><p class="ripple-cap">Move · the water</p></div>
   <p class="landing-caption">RB/25 · explore the project below</p>
 </section>
 <section class="sec" id="hero" data-mode="explore">
   <div class="sec-inner">
-    <p class="kick" data-reveal>Roboto® field unit RB/25 — 5 kg payload, fully autonomous</p>
+    <p class="kick" data-reveal>Roboto® field unit RB/25 — 3 kg payload, fully autonomous</p>
     <h1 data-reveal>
       <span class="w5">We taught a rover</span>
       <span class="w9">to read <em class="hollow">the maze.</em></span>
     </h1>
-    <p class="sub" data-reveal>RB/25 maps unfamiliar corridors, plans its own route, and replans the moment the maze changes. No joystick, no pre-drawn map. Scroll — the machine will take itself apart for you.</p>
+    <p class="sub" data-reveal>RB/25 enters a maze it has never seen, hugs the left wall to the goal, then replays a shortened path at higher speed. No joystick, no stored map. Scroll — the machine will take itself apart for you.</p>
     <div class="chips" data-reveal>
-      <span class="chip">ESP32 · FreeRTOS</span><span class="chip">4× LiDAR</span><span class="chip">3× omni, 127 mm</span><span class="chip">6S LiPo</span><span class="chip">A* replanning</span>
+      <span class="chip">ESP32 · Arduino</span><span class="chip">3× ultrasonic</span><span class="chip">2× PG36 24 V</span><span class="chip">6S LiPo</span><span class="chip">Run 1 explore · Run 2 sprint</span>
     </div>
   </div>
   <div class="cue">Scroll<b></b></div>
 </section>
 
 <div class="mq" aria-hidden="true"><div>
-  <span>Holonomic drive <i></i> log-odds SLAM <i></i> dynamic replanning <i></i> sensor fusion <i></i> 5 kg payload <i></i> zero human input <i></i></span>
-  <span>Holonomic drive <i></i> log-odds SLAM <i></i> dynamic replanning <i></i> sensor fusion <i></i> 5 kg payload <i></i> zero human input <i></i></span>
+  <span>Differential drive <i></i> left-hand solver <i></i> sensor fusion <i></i> two-run strategy <i></i> 3 kg payload <i></i> zero human input <i></i></span>
+  <span>Differential drive <i></i> left-hand solver <i></i> sensor fusion <i></i> two-run strategy <i></i> 3 kg payload <i></i> zero human input <i></i></span>
 </div></div>
 
-<section class="sec tall" id="hardware" data-mode="hardware">
-  <div class="stick"><div style="margin-top:auto;max-width:640px">
+<section class="sec" id="hardware-intro" data-mode="explore">
+  <div class="sec-inner" style="max-width:640px">
     <p class="kick" data-reveal>01 — The hardware</p>
     <h2 data-reveal>Every part, <span class="ol">exploded.</span></h2>
     <p class="sub" data-reveal>Scroll pulls the real assembly apart layer by layer — drivetrain, decks and caster. Rest on any component in the scene and its specification appears.</p>
+  </div>
+</section>
+
+<section class="sec tall" id="hardware" data-mode="hardware">
+  <div class="stick" aria-hidden="true"></div>
+</section>
+
+<section class="sec tall" id="model" data-mode="model">
+  <div class="stick"><div style="max-width:640px">
+    <p class="kick" data-reveal>02 — Hands on the machine</p>
+    <h2 data-reveal>Take the <span class="ol">controls.</span></h2>
+    <p class="sub" data-reveal>The teardown reassembles here — grab RB/25 and turn it over. Drag to rotate, Ctrl + scroll to zoom, double-click to reset.</p>
+    <div class="chips" data-reveal><span class="chip">Drag · rotate</span><span class="chip">Ctrl + scroll · zoom</span><span class="chip">Double-click · reset</span></div>
   </div></div>
 </section>
 
 <section class="sec" id="math" data-mode="math">
-  <p class="kick">02 — Problem statement &amp; solution engine</p>
+  <p class="kick">03 — Problem statement &amp; solution engine</p>
   <h2>Navigation under <span class="ol">dynamic constraints.</span></h2>
   <div class="prob">
-    <p>RB/25 has to cross a maze it has never seen while carrying up to 5 kg — and the maze refuses to sit still. Routes seal mid-drive; obstacles appear without notice. Because the drivetrain is a three-wheel holonomic base, the rover can translate and rotate independently, which reduces control to three wheel speeds solved exactly by inverse kinematics. Perception fuses four LiDAR pucks and one ultrasonic rangefinder into a log-odds occupancy grid; the planner runs A* on that grid and re-plans from the robot's current cell the moment the world invalidates its route. We never touch a joystick.</p>
-    <blockquote>The shortest-looking route is not the fastest — cost, not distance, decides.</blockquote>
+    <p>RB/25 has to cross a 300 × 300 cm maze it has never seen while carrying up to 3 kg — and the maze refuses to sit still. Routes seal mid-drive; obstacles appear without notice. The drivetrain is a two-wheel differential drive: two 98 mm rubber traction wheels plus a castor, deliberately chosen over omni wheels so wheel-slip never corrupts the encoder measurement. Sensing fuses three ultrasonic rangefinders (left, front, right) with wheel-encoder odometry and an MPU-6050 IMU — the walls say where to turn, the encoders say how far it has moved, the gyro says how much it has turned. Run 1 hugs the left wall and records every move; Run 2 replays the shortened path at higher speed. We never touch a joystick.</p>
+    <blockquote>No single sensor is enough on its own — together they let the rover choose a move, carry it out, and check the result.</blockquote>
   </div>
   <div class="eqs">
-    <div class="eq border-glow-card wide"><span class="tag">EQ 01 — Holonomic forward kinematics</span><h3>Three omni wheels at 90° / 210° / 330°</h3>
-      <div class="tex"><span class="tex" data-tex="\begin{bmatrix} v_{1}\\ v_{2}\\ v_{3} \end{bmatrix}=\begin{bmatrix} -\sin\theta_{1} & \cos\theta_{1} & R\\ -\sin\theta_{2} & \cos\theta_{2} & R\\ -\sin\theta_{3} & \cos\theta_{3} & R \end{bmatrix}\begin{bmatrix} \dot{x}\\ \dot{y}\\ \omega \end{bmatrix}"></span></div>
-      <p>Each wheel contributes the body velocity projected on its roller axis plus the rotation term R·ω. Three independent equations, three unknowns — the base is fully holonomic.</p></div>
-    <div class="eq border-glow-card"><span class="tag">EQ 02 — Inverse kinematics</span><h3>Body twist to wheel speeds</h3>
-      <div class="tex"><span class="tex" data-tex="\begin{bmatrix} \dot{x}\\ \dot{y}\\ \omega \end{bmatrix}=\mathbf{J}^{-1}\mathbf{v},\qquad \det\mathbf{J}\neq 0"></span></div>
-      <p>J is square and never singular for this roller placement, so any commanded twist maps to exact wheel speeds — sideways sprints while facing the goal are legal moves.</p></div>
-    <div class="eq border-glow-card"><span class="tag">EQ 03 — Planner · A*</span><h3>Optimal grid search</h3>
-      <div class="tex"><span class="tex" data-tex="f(n)=g(n)+h(n),\qquad h(n)=|x_{n}-x_{g}|+|y_{n}-y_{g}|"></span></div>
-      <p>Manhattan h is admissible on the 4-connected grid, so the returned route is provably minimal — the benchmark every re-plan is measured against.</p></div>
-    <div class="eq border-glow-card"><span class="tag">EQ 04 — SLAM · occupancy update</span><h3>Bayes in log-odds form</h3>
-      <div class="tex"><span class="tex" data-tex="l_{t}=l_{t-1}+\log\dfrac{P(\mathrm{occ}\mid z)}{P(\mathrm{free}\mid z)},\qquad P(\mathrm{occ}\mid z)=\dfrac{1}{1+e^{-l_{t}}}"></span></div>
-      <p>Every LiDAR return nudges a cell by a fixed log-ratio, so one noisy ping can never rewrite the map; certainty saturates instead of compounding.</p></div>
-    <div class="eq border-glow-card wide"><span class="tag">EQ 05 — Control · PID heading loop</span><h3>Closing the loop at 100 Hz</h3>
-      <div class="tex"><span class="tex" data-tex="u(t)=K_{p}\,e(t)+K_{i}\!\int_{0}^{t}\!e(\tau)\,d\tau+K_{d}\,\dfrac{de(t)}{dt}"></span></div>
-      <p>Proportional kick, integral patience, derivative damping — u(t) becomes the ω command fed straight into the inverse kinematics block.</p></div>
+    <div class="eq border-glow-card wide"><span class="tag">EQ 01 — Drive · top speed</span><h3>98 mm wheels at a rated 430 rpm</h3>
+      <div class="tex"><span class="tex" data-tex="v_{max}=\pi d n=\pi\times0.098\times7.17\approx2.21\ \mathrm{m/s}"></span></div>
+      <p>430 rpm is 7.17 rev/s over a 307.9 mm circumference — theory caps at 2.21 m/s, but inside 50 cm cells the rover needs accurate stops and turns, so Run 1 is driven much slower.</p></div>
+    <div class="eq border-glow-card"><span class="tag">EQ 02 — Pull · grip check</span><h3>29.2 N against the 5 kg assumption</h3>
+      <div class="tex"><span class="tex" data-tex="F=\tau/r=29.2\ \mathrm{N},\qquad a=F/m=5.84\ \mathrm{m/s^2}<\mu g=6.87"></span></div>
+      <p>Both motors pull about 60% of the assumed 5 kg robot-plus-payload weight, under the 0.7-grip limit — the wheels should not slip. Re-checked once the real mass is weighed.</p></div>
+    <div class="eq border-glow-card"><span class="tag">EQ 03 — Odometry · ticks per cell</span><h3>1.62 wheel turns per 50 cm cell</h3>
+      <div class="tex"><span class="tex" data-tex="N_{cell}=500/(\pi\times98)\approx1.62\ \mathrm{turns},\qquad d_{tick}=307.9/N\ \mathrm{mm}"></span></div>
+      <p>Ticks per cell is 1.62 × N, where N is encoder counts per turn (TBC) — calibrated by pushing the rover one cell by hand and reading the counts.</p></div>
+    <div class="eq border-glow-card"><span class="tag">EQ 04 — Solver · path shortening</span><h3>Dead ends cancel out</h3>
+      <div class="tex"><span class="tex" data-tex="LUL\to S,\qquad LUS\to R,\qquad SUL\to R"></span></div>
+      <p>Counting left −90°, right +90° and U-turn 180°, each U-turn detour sums to its shortcut — the same final heading with less distance travelled.</p></div>
+    <div class="eq border-glow-card wide"><span class="tag">EQ 05 — Power · battery sizing</span><h3>179.5 W worst case, about 8.1 A</h3>
+      <div class="tex"><span class="tex" data-tex="P=2\times4\times22.2=177.6\ \mathrm{W},\qquad E=8.1\times\tfrac{10}{60}=1.35\ \mathrm{Ah}"></span></div>
+      <p>Ten minutes needs 1.35 Ah (1.69 at 80% usable) at about 4.8 C — so the pack must be rated 5 C or more. Pack choice TBD; running current to be measured.</p></div>
   </div>
 </section>
 
 <section class="sec tall" id="game" data-mode="game">
   <div class="stick">
     <div style="margin-top:auto;max-width:560px">
-      <p class="kick" data-reveal>03 — Simulation mode</p>
+      <p class="kick" data-reveal>04 — Simulation mode</p>
       <h2 data-reveal>Sabotage <span class="ol">the route.</span></h2>
-      <p class="sub" data-reveal>Click cells to raise walls, run the bot, then drop a wall in its path mid-drive and watch it recompute from where it stands. The LiDAR rays keep sweeping; the plan rebuilds; nothing pauses.</p>
+      <p class="sub" data-reveal>Click cells to raise walls, run the bot, then drop a wall in its path mid-drive and watch it fall back and recompute from where it stands. The sensors keep sweeping; the path rebuilds; nothing pauses.</p>
     </div>
     <div class="panel" id="gamePanel">
       <h3>Pathfinding sim — 13×13 grid</h3>
@@ -475,9 +535,9 @@ footer .mail:active{transform:scale(.98)}
 </section>
 
 <section class="sec" id="code" data-mode="code">
-  <p class="kick">04 — Firmware</p>
+  <p class="kick">05 — Firmware</p>
   <h2>Open the <span class="ol">source.</span></h2>
-  <p class="sub" style="margin-bottom:var(--s12)">Real ESP32 / FreeRTOS structure — tasks pinned to cores, the holonomic kinematics, and the replanning planner. Copy whatever you need.</p>
+  <p class="sub" style="margin-bottom:var(--s12)">Real ESP32 / Arduino structure — Motor, Encoder, Ultrasonic, IMU and Robot classes, the WallFollower solver, and the PathRecorder. Copy whatever you need.</p>
   <div class="term">
     <div class="tbar"><span class="td t1" aria-hidden="true"></span><span class="td t2" aria-hidden="true"></span><span class="td t3" aria-hidden="true"></span>
       <span class="ttitle">rb25@esp32:~/firmware</span>
@@ -494,7 +554,7 @@ footer .mail:active{transform:scale(.98)}
 <section class="sec" id="team" data-mode="team">
   <div id="crewPage">
     <div class="crew-copy">
-      <p class="kick">05 — The crew · ID card showcase</p>
+      <p class="kick">06 — The crew · ID card showcase</p>
       <h2>Eight hands, <span class="ol">one rover.</span></h2>
       <h3 id="crewName">Vector</h3>
       <p class="sub" id="crewRole">Team lead · Systems</p>
@@ -645,6 +705,74 @@ function toast(m){
   setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},2400);
 }
 
+/* ============ RIPPLE POOL (React Bits · landing image distortion) ============ */
+/* NOTE: static imports are rejected inside Vite's inlined index.html module
+   (html-proxy wraps it), so the island loads React + the component chunk
+   through dynamic import — same source, same behavior. */
+{
+  const mount=document.getElementById('ripplePool');
+  if(mount){
+    /* No photo: the water distorts a paper grid in the site's own language,
+       built as a data-URL so nothing downloads and WebGL never taints. */
+    const gridSVG=`<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000'>`
+      +`<defs><pattern id='g' width='44' height='44' patternUnits='userSpaceOnUse'>`
+      +`<path d='M44 0H0V44' fill='none' stroke='rgba(0,0,0,0.10)' stroke-width='1.2'/></pattern>`
+      +`<linearGradient id='wash' x1='0' y1='0' x2='1' y2='1'>`
+      +`<stop offset='0' stop-color='rgba(0,0,0,0.10)'/><stop offset='45%' stop-color='rgba(0,0,0,0)'/>`
+      +`<stop offset='70%' stop-color='rgba(0,0,0,0.07)'/><stop offset='100%' stop-color='rgba(0,0,0,0.02)'/></linearGradient>`
+      +`<radialGradient id='v' cx='50%' cy='42%' r='75%'>`
+      +`<stop offset='50%' stop-color='rgba(0,0,0,0)'/><stop offset='100%' stop-color='rgba(0,0,0,0.14)'/></radialGradient></defs>`
+      +`<rect width='1600' height='1000' fill='#efefef'/><rect width='1600' height='1000' fill='url(#wash)'/>`
+      +`<g fill='none' stroke='rgba(0,0,0,0.10)' stroke-width='1.5'>`
+      +`<circle cx='1180' cy='420' r='150'/><circle cx='1180' cy='420' r='230'/><circle cx='1180' cy='420' r='320'/></g>`
+      +`<rect width='1600' height='1000' fill='url(#g)'/>`
+      +`<rect width='1600' height='1000' fill='url(#v)'/></svg>`;
+    const gridSrc='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(gridSVG);
+    Promise.all([import('react'),import('react-dom/client'),import('./src/components/RippleDistortion'),import('./src/components/RippleDistortion.css')])
+      .then(([React,ReactDOM,Ripple])=>{
+        ReactDOM.createRoot(mount).render(React.createElement(Ripple.default,{
+          src:gridSrc,
+          brushSize:180,
+          strength:0.35,
+          swirl:2,
+          rings:5,
+          grayscale:true,
+          spread:6,
+          fade:4,
+          spacing:10,
+          dispersion:0,
+          glint:0.5,
+          tint:'#161616',
+          tintAmount:0.5,
+          highlightColor:'#ffffff',
+          trigger:'hover',
+          clickStrength:2,
+          quality:'low',
+          enabled:true,
+        }));
+        mount.dataset.ready='1';
+      })
+      .catch(err=>{console.warn('RippleDistortion island failed to load:',err);mount.remove();});
+  }
+}
+
+/* ============ HAMBURGER MENU ============ */
+{
+  const burger=document.getElementById('burger'),overlay=document.getElementById('menuOverlay');
+  const setMenu=open=>{
+    document.body.classList.toggle('menu-open',open);
+    burger.setAttribute('aria-expanded',String(open));
+    burger.setAttribute('aria-label',open?'Close menu':'Open menu');
+    overlay.setAttribute('aria-hidden',String(!open));
+  };
+  burger.addEventListener('click',()=>setMenu(!document.body.classList.contains('menu-open')));
+  overlay.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+    setMenu(false);
+    $$('#gooeyList li').forEach(li=>li.classList.toggle('active',li.textContent.trim()===a.textContent.trim()));
+  }));
+  addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('menu-open'))setMenu(false);});
+}
+
 const state={mode:'explore',e:0,teamE:0,time:0,mouse:{x:0,y:0},heroDriving:false,hover:null,hoverCell:null};
 const GM={x:34,z:-18};
 const TEAM={x:0,z:-58};
@@ -786,7 +914,8 @@ const robot=new THREE.Group();scene.add(robot);
 const parts=[],partByName={};
 function reg(name,g,{dir=[0,1,0],dist=0,layer='B',ay=.2}={}){
   g.userData.partName=name;
-  parts.push({name,g,dir:new THREE.Vector3(...dir),dist,layer,base:g.position.clone(),cur:0,ay});
+  /* compress the fallback stack so the full teardown stays inside the frame */
+  parts.push({name,g,dir:new THREE.Vector3(...dir),dist:dist*.55,layer,base:g.position.clone(),cur:0,ay});
   partByName[name]=g;return g;
 }
 const wheelSpins=[],lidarTops=[];
@@ -805,7 +934,7 @@ function buildProceduralRobot(){
   const mg=new THREE.Group();robot.add(mg);
   cy(mg,.09,.09,.26,MAT.al,ca*(R-.32),.34,sa*(R-.32),0,0,Math.PI/2);
   bx(mg,.2,.18,.16,MAT.dk,ca*(R-.12),.34,sa*(R-.12),0,-a+Math.PI/2,0);
-  reg('motor'+i,mg,{dir:[ca,.15,sa],dist:.7,layer:'C',ay:.45});
+  reg('motor'+i,mg,{dir:[0,1,0],dist:.45+.15*i,layer:'C',ay:.45});
   const wg=new THREE.Group();wg.position.set(ca*R,.34,sa*R);wg.rotation.y=-(a+Math.PI/2);robot.add(wg);
   const spin=new THREE.Group();wg.add(spin);
   cy(spin,.34,.34,.16,MAT.rb,0,0,0,0,0,Math.PI/2);
@@ -813,28 +942,28 @@ function buildProceduralRobot(){
   cy(spin,.13,.13,.18,MAT.ti,0,0,0,0,0,Math.PI/2);
   cy(spin,.05,.05,.2,MAT.led,0,0,0,0,0,Math.PI/2);
   wheelSpins.push(spin);
-  reg('wheel'+i,wg,{dir:[ca,.18,sa],dist:1.5,layer:'C',ay:.5});
+  reg('wheel'+i,wg,{dir:[0,1,0],dist:.9+.25*i,layer:'C',ay:.5});
 });
 {
   const g=new THREE.Group();robot.add(g);
   cy(g,.98,1.02,.07,MAT.cb,0,.78,0);
   [[-.55,-.4],[.55,-.4],[-.55,.4],[.55,.4]].forEach(([x,z])=>cy(g,.04,.04,.18,MAT.ti,x,.9,z));
   bx(g,.62,.02,.34,new THREE.MeshStandardMaterial({map:labelTex('5 KG MAX'),roughness:.6}),0,.822,.42);
-  reg('deck',g,{dir:[0,1,0],dist:.85,layer:'B',ay:1});
+  reg('deck',g,{dir:[0,1,0],dist:1.65,layer:'B',ay:1});
 }
 {
   const g=new THREE.Group();robot.add(g);
   bx(g,.85,.3,1.15,MAT.dk,0,1.0,0);
   bx(g,.87,.05,.2,MAT.ledA,0,1.0,-.42);
   bx(g,.7,.02,.5,new THREE.MeshStandardMaterial({map:labelTex('6S LiPo'),roughness:.6}),0,1.155,.15);
-  reg('battery',g,{dir:[.25,1,0],dist:1.4,layer:'B',ay:1.18});
+  reg('battery',g,{dir:[0,1,0],dist:1.9,layer:'B',ay:1.18});
 }
 {
   const g=new THREE.Group();robot.add(g);
   bx(g,.9,.09,.7,MAT.pcbB,0,1.28,.15);
   for(let i=0;i<6;i++)bx(g,.08,.14,.5,MAT.al,-.32+i*.13,1.39,.15);
-  bx(g,.4,.02,.22,new THREE.MeshStandardMaterial({map:labelTex('MD20A'),roughness:.6}),0,1.335,-.22);
-  reg('cytron',g,{dir:[-.3,1,.2],dist:2.0,layer:'B',ay:1.45});
+  bx(g,.4,.02,.22,new THREE.MeshStandardMaterial({map:labelTex('MDDS30'),roughness:.6}),0,1.335,-.22);
+  reg('cytron',g,{dir:[0,1,0],dist:2.2,layer:'B',ay:1.45});
 }
 {
   const g=new THREE.Group();robot.add(g);
@@ -843,12 +972,12 @@ function buildProceduralRobot(){
   const d=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.16,12),MAT.dk);
   d.rotation.z=Math.PI/2;d.position.set(.62,1.35,.42);g.add(d);
   bx(g,.03,.03,.03,MAT.al,.71,1.35,.42);
-  reg('cap',g,{dir:[.7,1,.5],dist:2.9,layer:'B',ay:1.6});
+  reg('cap',g,{dir:[0,1,0],dist:2.7,layer:'B',ay:1.6});
   const g2=new THREE.Group();robot.add(g2);
   const d2=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.2,12),MAT.dk);
   d2.rotation.z=Math.PI/2;d2.position.set(-.55,1.33,-.28);g2.add(d2);
   bx(g2,.03,.035,.035,MAT.al,-.64,1.33,-.28);
-  reg('diode',g2,{dir:[.95,1,.15],dist:3.2,layer:'B',ay:1.5});
+  reg('diode',g2,{dir:[0,1,0],dist:2.55,layer:'B',ay:1.5});
 }
 {
   const g=new THREE.Group();robot.add(g);
@@ -856,14 +985,14 @@ function buildProceduralRobot(){
   bx(g,.3,.09,.22,MAT.al,.35,1.52,-.45);
   bx(g,.12,.02,.3,MAT.al,.62,1.48,-.45);
   bx(g,.08,.03,.03,MAT.led,.18,1.49,-.55);
-  reg('esp32',g,{dir:[.4,1,-.4],dist:2.5,layer:'B',ay:1.62});
+  reg('esp32',g,{dir:[0,1,0],dist:2.4,layer:'B',ay:1.62});
 }
 {
   const g=new THREE.Group();robot.add(g);
   bx(g,.42,.07,.3,MAT.pcb,-.6,1.4,-.35);
   const coil=new THREE.Mesh(new THREE.TorusGeometry(.09,.035,10,20),MAT.cu);
   coil.rotation.x=Math.PI/2;coil.position.set(-.6,1.47,-.35);g.add(coil);
-  reg('buck',g,{dir:[-.6,1,-.3],dist:2.2,layer:'B',ay:1.55});
+  reg('buck',g,{dir:[0,1,0],dist:2.05,layer:'B',ay:1.55});
 }
 {
   const g=new THREE.Group();robot.add(g);
@@ -873,7 +1002,7 @@ function buildProceduralRobot(){
     const top=cy(g,.09,.09,.05,MAT.ti,x,1.86,z);lidarTops.push(top);
     cy(g,.07,.07,.02,MAT.led,x,1.895,z);
   });
-  reg('lidar',g,{dir:[0,1,0],dist:3.3,layer:'A',ay:2.1});
+  reg('lidar',g,{dir:[0,1,0],dist:2.9,layer:'A',ay:2.1});
 }
 {
   const g=new THREE.Group();robot.add(g);
@@ -882,7 +1011,7 @@ function buildProceduralRobot(){
   cy(g,.05,.05,.05,MAT.al,1.31,1.05,-.08,0,0,Math.PI/2);
   cy(g,.035,.035,.02,MAT.lens,1.345,1.05,.08,0,0,Math.PI/2);
   cy(g,.035,.035,.02,MAT.lens,1.345,1.05,-.08,0,0,Math.PI/2);
-  reg('ultra',g,{dir:[1.3,.4,0],dist:1.7,layer:'A',ay:1.25});
+  reg('ultra',g,{dir:[0,1,0],dist:2.85,layer:'A',ay:1.25});
 }
 } /* end buildProceduralRobot — fallback if the GLB cannot load */
 
@@ -920,31 +1049,36 @@ try{
     if(!hits.length){console.warn('Part "'+solidName+'" not found in rover.glb — check the export names');return;}
     hits.forEach((node,i)=>{
       const pb=new THREE.Box3().setFromObject(node),pc=pb.getCenter(new THREE.Vector3());
-      const dir=new THREE.Vector3(dirArr[0],dirArr[1],dirArr[2]);
-      if(dirArr[2]&&!dirArr[0])dir.z=Math.abs(dir.z)*((pc.z>=nc.z)?1:-1);
-      if(dir.lengthSq()<1e-6)dir.set(0,1,0);
-      dir.normalize();
+      /* STRICTLY VERTICAL teardown: every part travels purely along +Y.
+         Each part is assigned a slot height so the assembly opens into a
+         clean bottom-to-top stack; dist bridges its assembled center to it. */
+      const SLOT_Y={caster:0.35,bracketA:0.56,bracketB:0.77,wheel0:0.98,wheel1:1.19,flange0:1.40,flange1:1.61,mount0:1.82,mount1:2.03,motor0:2.24,motor1:2.45,motor2:2.66,motor3:2.87,deckUp:3.08,hardA:3.29,hardB:3.50};
+      const dir=new THREE.Vector3(0,1,0);
       const key=(asNames&&asNames[i])||(solidName+'_'+i);
+      /* Closed-loop slots: the main loop servos each part's world-center Y
+         to lerp(homeY, slotY, t), so nested sub-assemblies can never
+         compound their parents' travel. deckLow is the fixed reference. */
+      const slotY=(key==='deckLow')?pc.y:(SLOT_Y[key]!==undefined?SLOT_Y[key]:pc.y+dist);
       node.userData.partName=key;
       const anc=new THREE.Object3D();
       anc.position.copy(node.worldToLocal(pc.clone()));
       node.add(anc);
-      parts.push({name:key,g:node,dir:dir,dist:dist,layer:layer,base:node.position.clone(),cur:0,ay:0,anchor:anc,noScale:true});
+      parts.push({name:key,g:node,dir:dir,dist:0,layer:layer,base:node.position.clone(),cur:0,ay:0,anchor:anc,noScale:true,slotY:slotY,homeY:pc.y});
       partByName[key]=node;
     });
   }
   registerPart('ply wood 250x200-1',[0,0,0],0,'B',['deckLow']);
-  registerPart('plywood l2-1',[0,1,0],1.5,'A',['deckUp']);
-  registerPart('Traction Wheel-1',[0,.25,1],1.8,'C',['wheel0','wheel1']);
-  registerPart('MOTOR 1-1',[0,.5,1],1.1,'C',['motor0','motor1']);
-  registerPart('motor 2-1',[0,.5,1],1.1,'C',['motor2','motor3']);
-  registerPart('motor mount-2',[0,.45,1],.8,'C',['mount0','mount1']);
-  registerPart('FLANGE PCD=47.5-1',[0,.45,1],.8,'C',['flange0','flange1']);
-  registerPart('Part1-1',[-1,.15,0],1.3,'B',['bracketA']);
-  registerPart('Part2-1',[-1,.15,0],1.3,'B',['bracketB']);
-  registerPart('Castor Wheel-1',[-1,-.25,0],1.5,'B',['caster']);
-  registerPart('Part4-1',[-.4,1,0],2,'A',['hardA']);
-  registerPart('8-1',[-.4,1,0],2,'A',['hardB']);
+  registerPart('plywood l2-1',[0,1,0],0,'A',['deckUp']);
+  registerPart('Traction Wheel-1',[0,1,0],0,'C',['wheel0','wheel1']);
+  registerPart('MOTOR 1-1',[0,1,0],0,'C',['motor0','motor1']);
+  registerPart('motor 2-1',[0,1,0],0,'C',['motor2','motor3']);
+  registerPart('motor mount-2',[0,1,0],0,'C',['mount0','mount1']);
+  registerPart('FLANGE PCD=47.5-1',[0,1,0],0,'C',['flange0','flange1']);
+  registerPart('Part1-1',[0,1,0],0,'B',['bracketA']);
+  registerPart('Part2-1',[0,1,0],0,'B',['bracketB']);
+  registerPart('Castor Wheel-1',[0,1,0],0,'B',['caster']);
+  registerPart('Part4-1',[0,1,0],0,'A',['hardA']);
+  registerPart('8-1',[0,1,0],0,'A',['hardB']);
   if(!parts.length)throw new Error('no named parts matched in rover.glb');
   glbOK=true;
   setStage('rover.glb — '+parts.length+' parts registered');
@@ -955,31 +1089,31 @@ robot.traverse(o=>{if(o.isMesh){let p=o;while(p&&!p.userData.partName)p=p.parent
 const disc=new THREE.Mesh(new THREE.CircleGeometry(1.9,40),new THREE.MeshBasicMaterial({map:shadow,color:0x000000,transparent:true,opacity:.16,depthWrite:false}));
 disc.rotation.x=-Math.PI/2;disc.position.y=.02;scene.add(disc);
 
-const WIN={A:[.05,.16],B:[.14,.30],C:[.26,.44]};
+const WIN={A:[.05,.80],B:[.15,.90],C:[.25,1.0]};
 const layerVal={A:0,B:0,C:0};
 
 /* ============ HOTSPOT PINS ============ */
 const PINMETA=glbOK?[
-  ['deckLow','Main chassis deck','CHS-01','250 × 200 mm plywood base — the assembly reference; it stays put'],
+  ['deckLow','Main chassis deck','CHS-01','270 × 270 mm plywood base — the assembly reference; it stays put'],
   ['deckUp','Upper deck L2','CHS-02','Second plywood level — lifts first in the teardown'],
-  ['wheel0','Traction wheel · A','DRV-01','Rubber traction wheel — splits outward along the axle'],
-  ['wheel1','Traction wheel · B','DRV-01','Rubber traction wheel — splits outward along the axle'],
-  ['motor0','DC gear motor','DRV-02','Drive gearmotor — slides outboard with its wheel'],
-  ['mount0','Motor mount','DRV-03','Motor bracket — follows the drivetrain out'],
-  ['bracketA','Caster bracket','SUP-01','Caster support — pulls away from the drive side'],
-  ['caster','Caster wheel','SUP-02','Swivel caster — drops out with its bracket'],
+  ['wheel0','Traction wheel · A','DRV-01','98 mm rubber traction wheel — flange PCD 47.5, rises to its slot'],
+  ['wheel1','Traction wheel · B','DRV-01','98 mm rubber traction wheel — flange PCD 47.5, rises to its slot'],
+  ['motor0','PG36 gear motor','DRV-02','24 V geared DC · 430 rpm · encoder behind the motor'],
+  ['mount0','Motor mount','DRV-03','Motor bracket — lifts off the chassis into the stack'],
+  ['bracketA','Caster bracket','SUP-01','Caster support — rises off the base into the stack'],
+  ['caster','Caster wheel','SUP-02','Swivel caster — lowest layer of the stack, just above the deck'],
 ]:[
-  ['esp32','ESP32','MCU-01','240 MHz dual-core · FreeRTOS on both cores · Wi-Fi telemetry'],
-  ['cytron','Cytron MD20A','DRV-02','30 V / 20 A H-bridge · PWM + direction · drives the omni array'],
+  ['esp32','ESP32','MCU-01','240 MHz dual-core · Arduino firmware · fuses walls, odometry and yaw'],
+  ['cytron','Cytron MDDS30','DRV-02','Dual-channel 30 A driver · PWM speed + DIR direction · runs both PG36 motors'],
   ['battery','6S LiPo','PWR-03','22.2 V nominal · 5000 mAh · 60C discharge for peak torque'],
   ['cap','470 µF capacitor','PWR-04','Smooths motor-bus ripple during sudden direction flips'],
   ['diode','Schottky diode','PWR-05','Reverse-polarity guard · 40 V / 10 A low-drop'],
-  ['motor0','3× PG36555','MTR-06','12 V geared motors · 55 rpm · 28 kg·cm stall torque'],
-  ['wheel0','127 mm omni wheels','DRV-07','Offset rollers — true holonomic traction, zero scrub'],
-  ['chassis','Triangle chassis','STR-08','6061 alloy holonomic base · 30×30 cm footprint'],
-  ['buck','40 V buck converter','PWR-09','6S rail to 5 V logic, 5 A continuous for ESP32 + sensors'],
-  ['lidar','4× LiDAR pucks','SNS-10','360° time-of-flight array · 8 m · fused occupancy map'],
-  ['ultra','Ultrasonic sensor','SNS-11','HC-SR04 forward ranging · 2–400 cm collision guard'],
+  ['motor0','2× PG36 24 V','MTR-06','Geared DC · rated 430 rpm · encoder behind each motor'],
+  ['wheel0','98 mm traction wheels','DRV-07','Rubber 98 mm OD · flange-coupled · no omni slip, encoders stay honest'],
+  ['chassis','270 mm plywood chassis','STR-08','Twin 270 × 270 mm plywood decks · ally channels · top deck carries the load'],
+  ['buck','XL4005 buck','PWR-09','6S rail to 5 V logic · set with a multimeter first · one common GND'],
+  ['lidar','Ranging array','SNS-10','Wall-distance sensing · left/front/right vote the turn · forward collision guard'],
+  ['ultra','Ultrasonic node','SNS-11','HC-SR04 · 40 kHz pulse · 60 ms spacing kills crosstalk'],
 ];
 const pinsEl=$('#pins');
 PINMETA.forEach(([key,title,tag,spec],i)=>{
@@ -1854,6 +1988,67 @@ canvas.addEventListener('pointermove',e=>{
     }
   }
 });
+/* ---- model viewer: drag orbit / Ctrl+wheel zoom / double-click reset ---- */
+/* NOTE: listeners live on window because sections sit above the fixed canvas
+   and take the hit — canvas-direct listeners never see the events. */
+addEventListener('pointerdown',e=>{
+  if(state.mode!=='model')return;
+  if(e.target.closest?.('a,button'))return;
+  viewer.drag=true;viewer.lx=e.clientX;viewer.ly=e.clientY;
+  viewer.vyaw=0;viewer.vpitch=0;viewer.idle=0;
+  document.body.style.cursor='grabbing';
+});
+addEventListener('pointermove',e=>{
+  if(state.mode!=='model')return;
+  if(!viewer.drag){document.body.style.cursor='grab';return;}
+  const dx=e.clientX-viewer.lx,dy=e.clientY-viewer.ly;
+  viewer.lx=e.clientX;viewer.ly=e.clientY;
+  viewer.yaw-=dx*.0055;viewer.pitch=clamp(viewer.pitch-dy*.004,-.37,.98);
+  const now=performance.now(),dt=Math.max(.008,(now-(viewer.lt||now))/1000);
+  viewer.vyaw=clamp(-dx*.0055/dt,-8,8);viewer.vpitch=clamp(-dy*.004/dt,-6,6);
+  viewer.lt=now;viewer.idle=0;
+});
+addEventListener('pointerup',()=>{
+  if(viewer.drag){viewer.drag=false;if(state.mode==='model')document.body.style.cursor='grab';}
+  if(turn.drag){turn.drag=false;if(state.mode==='hardware')document.body.style.cursor='grab';}
+});
+addEventListener('pointercancel',()=>{
+  if(turn.drag){turn.drag=false;if(state.mode==='hardware')document.body.style.cursor='grab';}
+});
+/* ---- teardown turntable: drag spins the exploded stack, scroll still scrolls ----
+   NOTE: window-level like the model viewer — sections sit above the fixed
+   canvas, so canvas-direct listeners never see the events. Pin dots, links
+   and buttons are excluded so hotspot taps keep working. */
+addEventListener('pointerdown',e=>{
+  if(state.mode!=='hardware')return;
+  if(e.target.closest?.('a,button,.pin'))return;
+  turn.drag=true;turn.lx=e.clientX;turn.vyaw=0;turn.lt=performance.now();
+  document.body.style.cursor='grabbing';
+});
+addEventListener('pointermove',e=>{
+  if(state.mode!=='hardware'||!turn.drag)return;
+  const dx=e.clientX-turn.lx;turn.lx=e.clientX;
+  const now=performance.now(),dt=Math.max(.008,(now-(turn.lt||now))/1000);
+  turn.yaw+=dx*.006;turn.vyaw=clamp(dx*.006/dt,-8,8);turn.lt=now;
+});
+/* double-click re-squares the stack */
+addEventListener('dblclick',e=>{
+  if(state.mode!=='hardware')return;
+  if(e.target.closest?.('a,button,.pin'))return;
+  turn.yaw=0;turn.vyaw=0;
+});
+addEventListener('wheel',e=>{
+  if(state.mode!=='model')return;
+  if(!(e.ctrlKey||e.metaKey))return;
+  e.preventDefault();
+  viewer.zoom=clamp(viewer.zoom*Math.exp(-e.deltaY*.01),.7,2);
+  viewer.idle=0;
+},{passive:false});
+addEventListener('dblclick',e=>{
+  if(state.mode!=='model')return;
+  if(e.target.closest?.('a,button'))return;
+  viewer.yaw=0;viewer.pitch=0;viewer.zoom=1;viewer.vyaw=0;viewer.vpitch=0;viewer.idle=0;
+});
 canvas.addEventListener('pointermove',e=>{
   if(!grab)return;
   grab.moved+=Math.abs(e.clientX-grab.lx)+Math.abs(e.clientY-grab.ly);
@@ -1885,11 +2080,23 @@ addEventListener('pointerup',e=>{
 
 /* ============ CAMERA ============ */
 const camT=new THREE.Vector3(),lookT=new THREE.Vector3(),curLook=new THREE.Vector3(0,.9,0);
+/* model-viewer orbit state: drag to rotate, Ctrl+wheel to zoom, double-click resets */
+const viewer={yaw:0,pitch:0,zoom:1,vyaw:0,vpitch:0,idle:99,drag:false,lx:0,ly:0,lt:0};
+/* teardown turntable: spin the exploded stack mid-scroll, with momentum */
+const turn={yaw:0,vyaw:0,drag:false,lx:0,lt:0};
 function cameraTarget(){
   const t=state.time;
   switch(state.mode){
     case 'landing':camT.set(0,2.55,12.6);lookT.set(0,2.3,-.5);break;
-    case 'hardware':camT.set(4.4-state.e*.6,2.3+state.e*2.1,5.6-state.e*.5);lookT.set(0,.9+state.e*1.25,0);break;
+    case 'hardware':camT.set(5.4-state.e*.6,2.8+state.e*2.0,7.0-state.e*.5);lookT.set(0,1.0+state.e*1.2,0);break;
+    case 'model':{
+      const az=Math.atan2(4.6,5.4)+viewer.yaw;
+      const el=clamp(.2217+viewer.pitch,-.15,1.2);
+      const r=7.096/viewer.zoom;
+      lookT.set(0,1.0,0);
+      camT.set(r*Math.cos(el)*Math.sin(az),1.0+r*Math.sin(el),r*Math.cos(el)*Math.cos(az));
+      break;
+    }
     case 'math':camT.set(13,6.5,16);lookT.set(0,.6,0);break;   /* lonely wide shot while reading */
     case 'game':camT.set(GM.x+state.mouse.x*.9,15.4-state.mouse.y*.5,GM.z+8.8);lookT.set(GM.x,0,GM.z+.4);break;
     case 'code':camT.set(GM.x+11,7.5,GM.z+13);lookT.set(GM.x,.5,GM.z);break;
@@ -1935,6 +2142,7 @@ function computeMode(){
     robot.visible=m!=='landing';
     pinsEl.classList.toggle('on',m==='hardware');
     $('#explodeTag').classList.toggle('on',m==='hardware');
+    document.body.style.cursor=(m==='model'||m==='hardware')?'grab':'';
     if(m==='team')document.documentElement.style.setProperty('--acid',CREW[crewIndex].accent);
   }
   const hw=$('#hardware').getBoundingClientRect();
@@ -1959,97 +2167,100 @@ if(window.katex){
 
 /* ============ CODE VIEWER ============ */
 const FILES={
-main:`// RB/25 - ESP32 firmware entry (Arduino framework + FreeRTOS)
+main:`// RB/25 - ESP32 firmware entry (Arduino IDE, ESP32 flash)
 #include <Arduino.h>
-#include "kinematics.h"
-#include "planner.h"
+#include "robot.h"
+#include "solver.h"
 
-QueueHandle_t scanQueue;        // lidar task -> drive task
+// Pins live in one file. Echo/encoder inputs: GPIO 34-39
+// (input-only). GPIO 12 avoided - it can block boot.
+WallFollower solver;
+PathRecorder recorder;
 
-void lidarTask(void *arg) {     // CORE 0 - sensing @ 50 Hz
-  ScanFrame f;
+void senseTask(void *arg) {     // CORE 0 - sensing
   for (;;) {
-    lidar.read(f);              // 4x ToF pucks, 360 deg sweep
-    occupancy.update(f);        // log-odds mapping (EQ 04)
-    xQueueOverwrite(scanQueue, &f);
+    walls.read();               // 3x HC-SR04, one at a time,
+                                // 60 ms apart, no crosstalk
+    imu.update();               // MPU-6050 yaw (GPIO 21/22)
     vTaskDelay(pdMS_TO_TICKS(20));
   }
 }
 
-void driveTask(void *arg) {     // CORE 1 - control @ 100 Hz
-  ScanFrame latest;
-  Pose target;
+void driveTask(void *arg) {     // CORE 1 - motion
   for (;;) {
-    if (xQueuePeek(scanQueue, &latest, 0)) {
-      if (planner.blockedAhead(latest))
-        planner.replan(pose);   // dynamic reroute, no pause
-      planner.next(target);
-    }
-    Kinematics::driveTo(target, pid);   // EQ 02 + EQ 05
+    char move = solver.next(walls);   // left > front > right > U
+    robot.doMove(move);               // encoders + IMU close it
+    recorder.push(move);              // Run 1 log for Run 2
+    if (walls.goalGap()) robot.stop();// front reads 300 cm+
     vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
 
 void setup() {
   Serial.begin(115200);
-  scanQueue = xQueueCreate(1, sizeof(ScanFrame));
-  xTaskCreatePinnedToCore(lidarTask, "lidar", 4096, NULL, 2, NULL, 0);
+  imu.calibrate();                // rover held still at start-up
+  xTaskCreatePinnedToCore(senseTask, "sense", 4096, NULL, 2, NULL, 0);
   xTaskCreatePinnedToCore(driveTask, "drive", 4096, NULL, 3, NULL, 1);
 }
 
 void loop() {}    // all work lives in the tasks`,
-kin:`// Holonomic inverse kinematics - 3x PG36555 + 127mm omni wheels
-#include "kinematics.h"
+kin:`// Differential motion - 2x PG36 24 V + 98 mm traction wheels
+#include "robot.h"
 
-static constexpr float R_WHEEL = 0.0635f;              // 127 mm dia -> m
-static constexpr float THETA[3] = {1.5708f, 3.6652f, 5.7596f}; // 90/210/330
+static constexpr float TICKS_PER_CELL = 1.62f * N_COUNTS; // EQ 03
 
-// EQ 01 inverted:  v_i = -sin(t)*vx + cos(t)*vy + R*omega
-WheelSpeeds Kinematics::inverse(const Twist& t) {
-  WheelSpeeds w;
-  for (int i = 0; i < 3; ++i) {
-    float v = -sin(THETA[i]) * t.vx
-            +  cos(THETA[i]) * t.vy
-            +  R_WHEEL * t.omega;
-    w.rpm[i] = v / R_WHEEL * 60.0f / (2.0f * PI);   // rad/s -> rpm
+// One cell: reset encoders, run both motors, stop on average count.
+// Side sensors trim drift toward a wall while driving.
+void Robot::moveCell() {
+  encL.reset(); encR.reset();
+  motors.forward(cruisePWM);
+  while (encAvg() < TICKS_PER_CELL) {
+    motors.trim(walls.drift());   // stay off the walls
+    if (encStalled(1000)) break;  // counts frozen 1 s: stuck
   }
-  return w;                                          // det(J) != 0 always
+  motors.stop();
+  front.stopCheck();              // front sensor is the stop
 }
 
-// EQ 05 - PID heading loop, called at 1 kHz from driveTask
-float pidStep(PID& p, float err, float dt) {
-  p.i += err * dt;
-  p.i  = constrain(p.i, -p.imax, p.imax);            // anti-windup
-  float d = (err - p.prev) / dt;
-  p.prev = err;
-  return p.kp * err + p.ki * p.i + p.kd * d;         // -> omega command
+// Turn: motors opposed until the IMU yaw swings 90 deg
+// (180 at a dead end). Chassis diagonal 382 mm < 470 mm
+// clear width, so it turns in place.
+void Robot::turn(int deg) {
+  float t0 = imu.yaw();
+  motors.opposed(turnPWM);
+  while (imu.delta(t0) < deg) {}
+  motors.stop();
 }`,
-plan:`// Grid A* with dynamic replanning (13x13 occupancy, 4-connected)
-#include "planner.h"
+plan:`// Left-hand wall follower + Run 2 path shortening
+#include "solver.h"
 
-struct Node { int i; float f; };        // min-heap keyed on f = g + h
-static float h(int a, int b) {          // EQ 03 - Manhattan, admissible
-  return abs(a % G - b % G) + abs(a / G - b / G);
+// Priority at every junction: left, front, right, else U-turn.
+// No map stored - only what the sensors see at this cell.
+char WallFollower::next(const Walls& w) {
+  if (w.leftOpen())  return 'L';
+  if (w.frontOpen()) return 'S';
+  if (w.rightOpen()) return 'R';
+  return 'U';                       // dead end: 180 deg
 }
 
-bool Planner::plan(int start, int goal, const uint8_t* occ) {
-  heap.push({start, h(start, goal)});
-  g[start] = 0;
-  while (heap.size()) {
-    Node n = heap.pop();
-    if (n.i == goal) { rebuild(came, goal); return true; }
-    for (int d : {1, -1, G, -G}) {
-      int nxt = n.i + d;
-      if (occ[nxt] || closed[nxt]) continue;
-      float ng = g[n.i] + 1.0f;
-      if (ng < g[nxt]) {
-        g[nxt]  = ng;
-        came[nxt] = n.i;
-        heap.push({nxt, ng + h(nxt, goal)});
-      }
-    }
+// EQ 04: a U-turn marks a dead end, so each detour
+// collapses to its shortcut. S L U L S R -> S S S R.
+void PathRecorder::shorten() {
+  for (size_t i = 0; i + 2 < path.size(); ++i) {
+    auto t = path.slice(i, 3);
+    if      (t == "LUL") path.replace(i, 3, "S");
+    else if (t == "LUS") path.replace(i, 3, "R");
+    else if (t == "SUL") path.replace(i, 3, "R");
   }
-  return false;                         // sealed - hover, rescan, replan
+}
+
+// Run 2 replays the short path faster. A wall where open
+// space was expected falls back to wall following.
+void run2(const Path& short_) {
+  for (char m : short_) {
+    if (!walls.expectOpen(m)) { followWalls(); return; }
+    robot.doMove(m);
+  }
 }`};
 const codeBox=$('#codeBox');let curFile='main';
 function loadFile(k){
@@ -2089,15 +2300,20 @@ function finishLoader(){
 }
 
 /* ============ MAIN LOOP ============ */
+const _wv=new THREE.Vector3(),_ws=new THREE.Vector3();
+const bgTarget=new THREE.Color(0xffffff);
 const explodeTagB=$('#explodeTag').querySelector('b');
 const clock=new THREE.Clock();
 function loop(){
   const dt=Math.min(.05,clock.getDelta());
   state.time+=dt;
   const teamScene=state.mode==='team';
-  const sceneTone=teamScene?0x181717:0xffffff;
-  scene.background.setHex(sceneTone);
-  if(scene.fog)scene.fog.color.setHex(sceneTone);
+  /* grey stage while the white rover is torn down / handled, so it reads;
+     paper-white everywhere else, near-black for the crew island */
+  const greyStage=state.mode==='hardware'||state.mode==='model';
+  bgTarget.setHex(teamScene?0x181717:greyStage?0x8a8a8a:0xffffff);
+  scene.background.lerp(bgTarget,1-Math.exp(-dt*3.5));
+  if(scene.fog)scene.fog.color.copy(scene.background);
   cameraTarget();
   camera.position.lerp(camT,.07);
   curLook.lerp(lookT,.07);
@@ -2110,13 +2326,33 @@ function loop(){
   const ease=x=>x*x*(3-2*x);
   parts.forEach(p=>{
     const t=ease(layerVal[p.layer]);
-    p.g.position.copy(p.base).addScaledVector(p.dir,p.dist*t);
+    if(p.slotY!==undefined&&p.anchor&&p.g.parent){
+      /* strictly vertical, closed-loop: lock local X/Z to assembled pose and
+         servo world-center Y onto its slot — immune to nested parents */
+      p.g.position.x=p.base.x;p.g.position.z=p.base.z;
+      p.anchor.getWorldPosition(_wv);
+      const wantY=p.homeY+(p.slotY-p.homeY)*t;
+      p.g.parent.getWorldScale(_ws);
+      p.g.position.y+=(wantY-_wv.y)/(_ws.y||1);
+    }else{
+      p.g.position.copy(p.base).addScaledVector(p.dir,p.dist*t);
+    }
   });
   const eAvg=(layerVal.A+layerVal.B+layerVal.C)/3;
   explodeTagB.textContent=Math.round(state.mode==='hardware'?state.e*100:eAvg*100)+'%';
+  if(state.mode==='model'&&!viewer.drag){
+    viewer.yaw+=viewer.vyaw*dt;viewer.pitch=clamp(viewer.pitch+viewer.vpitch*dt,-.37,.98);
+    const vdec=Math.exp(-dt*4.5);viewer.vyaw*=vdec;viewer.vpitch*=vdec;
+    viewer.idle+=dt;
+    if(!REDUCE&&viewer.idle>2)viewer.yaw+=dt*.4;
+  }
   const wob=(1-eAvg)*(state.heroDriving?0:1);
   robot.position.y=Math.sin(state.time*1.3)*.04*wob;
-  robot.rotation.y=Math.sin(state.time*.4)*.05*wob;
+  robot.rotation.y=turn.yaw+Math.sin(state.time*.4)*.05*wob;
+  if(state.mode==='hardware'&&!turn.drag){
+    turn.yaw+=turn.vyaw*dt;
+    turn.vyaw*=Math.exp(-dt*4.5);
+  }
   disc.position.x=robot.position.x;
   const spinSpd=state.heroDriving?14:1.6;
   wheelSpins.forEach(w=>w.rotation.x+=dt*spinSpd);

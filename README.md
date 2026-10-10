@@ -1,6 +1,6 @@
 # Team Roboto® / Roboverse — RB/25 Showcase
 
-Official site for **Team Roboto**: an autonomous ESP32-powered holonomic maze rover.
+Official site for **Team Roboto**: RAT, an autonomous ESP32-powered differential-drive maze rover.
 Live at **https://webdev-team-3.vercel.app** (auto-deploys on every push to `master`).
 
 ## What's on the site
@@ -8,9 +8,9 @@ Live at **https://webdev-team-3.vercel.app** (auto-deploys on every push to `mas
 | Section | What it does |
 |---|---|
 | **Hero** | 3D rover drives in; intro chips, scroll cue |
-| **01 Hardware** | Scroll-driven **exploded view** of all 11 rover components with hoverable spec pins (ESP32, Cytron MD20A, 6S LiPo, LiDAR array, …) |
-| **02 Math** | Problem statement + 5 KaTeX-rendered equations (holonomic kinematics, inverse IK, A*, log-odds SLAM, PID) |
-| **03 Simulator** | Interactive **13×13 A\* maze game** — click to raise walls mid-run and watch the rover replan live (cost / moves / replans / time / best counters) · **LiDAR fog-of-war** (map builds only where swept) · speedrun timer with local record |
+| **01 Hardware** | Scroll-driven **exploded view** of the rover assembly with hoverable spec pins (ESP32, Cytron MDDS30, 6S LiPo, PG36 motors, …) · drag to rotate mid-teardown |
+| **02 Math** | Problem statement + 5 KaTeX-rendered equations (top speed, grip check, cell odometry, path shortening, power budget) |
+| **03 Simulator** | Interactive **13×13 maze game** — click to raise walls mid-run and watch the rover fall back and recompute live (cost / moves / replans / time / best counters) · speedrun timer with local record |
 | **04 Firmware** | Tabbed C++ firmware viewer (main / kinematics / planner) with syntax highlighting + copy button |
 | **05 Media** | **Photo & video gallery** of the project — tiles auto-load from `public/media/manifest.json`; empty slots show themed DROP-FILE placeholders; click opens a lightbox (←/→ navigate, Esc close; videos play with sound) |
 | **06 Crew** | 3D island where the five **real members' ID badges** stand on a lit display deck — click a badge to flip it and see contact details |
