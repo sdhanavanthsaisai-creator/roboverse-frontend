@@ -5,6 +5,7 @@ export type NavItem = { id: string; label: string };
 export const navItems: NavItem[] = [
   { id: 'hero', label: 'Intro' },
   { id: 'problem', label: 'Problem' },
+  { id: 'hardware-model', label: 'Hardware 3D' },
   { id: 'solution', label: 'Solution' },
   { id: 'maze', label: 'Maze Lab' },
   { id: 'code', label: 'Code' },

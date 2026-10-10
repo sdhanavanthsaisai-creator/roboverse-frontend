@@ -11,11 +11,11 @@ Live at **https://webdev-team-3.vercel.app** (auto-deploys on every push to `mas
 | **01 Hardware** | Scroll-driven **exploded view** of all 11 rover components with hoverable spec pins (ESP32, Cytron MD20A, 6S LiPo, LiDAR array, …) |
 | **02 Math** | Problem statement + 5 KaTeX-rendered equations (holonomic kinematics, inverse IK, A*, log-odds SLAM, PID) |
 | **03 Simulator** | Interactive **13×13 A\* maze game** — click to raise walls mid-run and watch the rover replan live (cost / moves / replans / time / best counters) · **LiDAR fog-of-war** (map builds only where swept) · speedrun timer with local record |
-| **05 Media** | **Photo & video gallery** of the project — tiles auto-load from `public/media/manifest.json`; empty slots show themed DROP-FILE placeholders; click opens a lightbox (←/→ navigate, Esc close; videos play with sound) |
 | **04 Firmware** | Tabbed C++ firmware viewer (main / kinematics / planner) with syntax highlighting + copy button |
-| **05 Crew** | 3D island where the five **real members' ID badges** stand on a lit display deck — click a badge to flip it and see contact details |
+| **05 Media** | **Photo & video gallery** of the project — tiles auto-load from `public/media/manifest.json`; empty slots show themed DROP-FILE placeholders; click opens a lightbox (←/→ navigate, Esc close; videos play with sound) |
+| **06 Crew** | 3D island where the five **real members' ID badges** stand on a lit display deck — click a badge to flip it and see contact details |
 | **Crew roster** | Large themed **flip ID cards** (real photos from `public/photos/`, IG / LinkedIn / GitHub / email links on the back) |
-| **06 Enquiry** | Working form → FormSubmit email, with the **3D letter-pop animation** on submit (see below) |
+| **07 Enquiry** | Working form → FormSubmit email, with the **3D letter-pop animation** on submit (see below) |
 
 ## The submit-button 3D letter animation
 
