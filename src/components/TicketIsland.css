@@ -183,6 +183,16 @@
   cursor: wait;
 }
 
+/* Phone only — laptop rendering untouched. */
+@media (max-width: 760px) {
+  .tk-name {
+    font-size: 22px;
+  }
+  .ticket-block {
+    padding: 40px 16px;
+  }
+}
+
 /* Hidden print replica — must stay rendered for html2canvas. */
 .ticket-printwrap {
   position: fixed;

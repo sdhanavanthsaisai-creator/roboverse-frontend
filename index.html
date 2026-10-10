@@ -164,6 +164,16 @@ body.menu-open #burger span:nth-child(1){transform:translateY(6px) rotate(45deg)
 body.menu-open #burger span:nth-child(2){opacity:0}
 body.menu-open #burger span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 @media(max-width:760px){#burger{display:block}}
+/* ============ PHONE ONLY (≤760px) — laptop rendering untouched ============
+   Kills sideways pan, swaps the overflowing pill nav for the burger menu,
+   and keeps equation boxes inside the viewport. */
+@media(max-width:760px){
+  html,body{overflow-x:clip}
+  .gooey-nav-container{display:none}
+  .eq{overflow-x:auto}
+  .eq .katex{font-size:.82em}
+  .term{overflow-x:auto}
+}
 #menuOverlay{position:fixed;inset:0;z-index:25;background:var(--paper);display:flex;flex-direction:column;justify-content:center;padding:calc(var(--pad) + 84px) var(--pad) var(--pad);opacity:0;visibility:hidden;transition:opacity .45s var(--e-io),visibility 0s linear .45s}
 body.menu-open #menuOverlay{opacity:1;visibility:visible;transition:opacity .45s var(--e-io)}
 body.menu-open{overflow:hidden}

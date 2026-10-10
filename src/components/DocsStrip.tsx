@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import './DocsStrip.css';
 
 export interface DocItem {
@@ -48,6 +48,11 @@ const SAMPLE_DOCS: DocItem[] = [
 
 const DocsStrip = ({ images = SAMPLE_DOCS }: { images?: DocItem[] }) => {
   const [activeImage, setActiveImage] = useState<number | null>(1);
+  /* Phone only — false on laptop, so desktop sizes are byte-identical. */
+  const small = useMemo(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width:760px)').matches,
+    [],
+  );
 
   return (
     <motion.div
@@ -64,8 +69,8 @@ const DocsStrip = ({ images = SAMPLE_DOCS }: { images?: DocItem[] }) => {
               className="docs-cell"
               initial={{ width: '2.5rem', height: '20rem' }}
               animate={{
-                width: activeImage === index ? '24rem' : '5rem',
-                height: '24rem',
+                width: activeImage === index ? (small ? '62vw' : '24rem') : small ? '2.75rem' : '5rem',
+                height: small ? '18rem' : '24rem',
               }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               onClick={() => setActiveImage(index)}
