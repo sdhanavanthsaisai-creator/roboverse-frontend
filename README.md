@@ -13,7 +13,7 @@ Live at **https://webdev-team-3.vercel.app** (auto-deploys on every push to `mas
 | **03 Simulator** | Interactive **13×13 maze game** — click to raise walls mid-run and watch the rover fall back and recompute live (cost / moves / replans / time / best counters) · speedrun timer with local record |
 | **04 Firmware** | Tabbed C++ firmware viewer (main / kinematics / planner) with syntax highlighting + copy button |
 | **05 Media** | **Photo & video gallery** of the project — tiles auto-load from `public/media/manifest.json`; empty slots show themed DROP-FILE placeholders; click opens a lightbox (←/→ navigate, Esc close; videos play with sound) |
-| **06 Crew** | 3D island where the **eight members' ID badges** (6 real + 2 placeholders) stand on a lit display deck — click a badge to flip it and see contact details |
+| **06 Crew** | 3D island where the **eight members' ID badges** (7 real + 1 placeholder) stand on a lit display deck — click a badge to flip it and see contact details |
 | **Crew roster** | Large themed **flip ID cards** (front: photo + name + DOB + role; back: tappable IG / LinkedIn link rows that open the profile) |
 | **07 Enquiry** | Working form → FormSubmit email, with the **3D letter-pop animation** on submit (see below) |
 
@@ -31,7 +31,7 @@ State flow: `idle → load → ok|err → idle`, driven entirely by `data-state`
 
 ## Crew data — single source of truth
 
-The eight members are defined **once**, in the inline `CREW` array in `index.html` (badges read `photo`, `dob`, `insta`, `linkedin`, `accent` from it). Cards 07–08 are placeholders (`photo:''`, no links) until their details arrive.
+The eight members are defined **once**, in the inline `CREW` array in `index.html` (badges read `photo`, `dob`, `insta`, `linkedin`, `accent` from it). Card 08 is still a placeholder (`photo:''`, no links) until its details arrive.
 
 > ⚠️ If the crew changes, update **only that array**. Photos: real portraits live in `public/photos/member1.jpg … member6.jpg`.
 
