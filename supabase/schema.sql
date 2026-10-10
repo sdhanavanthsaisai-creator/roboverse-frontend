@@ -73,14 +73,14 @@ create policy "anyone can leave a message"
   on public.messages for insert
   with check (true);
 
--- ──────────────── optional: seed the 6 members (mirrors the CREW array in index.html) ─────────────
+-- ──────────────── optional: seed the 8 members (mirrors the CREW array in index.html) ─────────────
 insert into public.members (id, name, role, photo, instagram, github, linkedin, email, bio) values
-  (1, 'Dhanavanthsai',  'CSE Core',                                    'photos/member1.jpg', 'https://www.instagram.com/dhanavanth_17/', '',                         'https://www.linkedin.com/in/dhanavanth-sai-16a272414',  'dhanavanthsai.s@gmail.com', 'This website and the project documentation.'),
+  (1, 'Dhanavanthsai',  'CSE Core',                                    'photos/member1.png', 'https://www.instagram.com/dhanavanth_17/', '',                         'https://www.linkedin.com/in/dhanavanth-sai-16a272414',  'dhanavanthsai.s@gmail.com', 'This website and the project documentation.'),
   (2, 'Muhammed Nehan', 'EKE · Class of 2030',                         'photos/member2.jpg', 'https://instagram.com/nvm.nehan',            'https://github.com/K1llaloe', 'https://www.linkedin.com/in/muhammed-nehan-472694368', 'ciphertrooper@gmail.com',   'Electronics and computer engineering, class of 2030.'),
   (3, 'Fizan Islam',    'Web Dev',                                     'photos/member3.jpg', '',                                             '',                         'https://www.linkedin.com/in/fizan-islam-4ab3a9374',      '',                          'Web development.'),
   (4, 'Nipun Gaur',     'B.Tech CSE (IT) · 1st Yr',                    'photos/member4.jpg', 'https://instagram.com/nipun2908',            '',                         'https://www.linkedin.com/in/nipun-gaur-b42408429',      'nipungaur2008@gmail.com',   '1st year B.Tech CSE (IT) team member.'),
   (5, 'Ishani Garg',    'CSE (AI&ML) · 1st Yr',                        'photos/member5.jpg', 'https://www.instagram.com/stfuishani_',      '',                         'https://www.linkedin.com/in/ishani-garg-b1a339425',     'ishanigarg2@gmail.com',     'Reports, slide deck, and keeping the crew on schedule.'),
   (6, 'M. Swastii',     'Mechanical · ECE (CPS)',                      'photos/member6.jpg', 'https://www.instagram.com/mswastii_75',      '',                         'https://www.linkedin.com/in/m-swastii-murugesan-00717a429', '',                      '1st year ECE — Cyber Physical Systems team member.'),
   (7, 'VED',            'Coding',                                      '',                   '',                                               '',                         'https://www.linkedin.com/in/ved-prakash-853904322', '',                          'Coding.'),
-  (8, 'Member 08',      'TBA — updating soon',                         '',                   '',                                               '',                         '',                                                    '',                      'Placeholder card — details arriving soon.')
+  (8, 'Moulik Kulshreshtha', 'B.Tech ECE (Data Science)',               'photos/member8.jpg', 'https://www.instagram.com/moulik._07/',      '',                         'https://www.linkedin.com/in/moulik-undefined-559b8b3b1', '',                    'Handled all the electronics work for the robot.')
 on conflict (id) do nothing;

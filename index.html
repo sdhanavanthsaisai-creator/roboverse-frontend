@@ -1423,14 +1423,14 @@ function updateGame(dt){
 
 /* ============ TEAM ISLAND — monochrome lanyards ============ */
 const CREW=[
-  {id:'01',name:'Dhanavanthsai',dob:'TBA',role:'CSE Core',photo:'./photos/member1.jpg',strapColor:'#C5FF00',cardColor:'#1E1E1E',accent:'#C5FF00',insta:'https://www.instagram.com/dhanavanth_17/',linkedin:'https://www.linkedin.com/in/dhanavanth-sai-16a272414/'},
+  {id:'01',name:'Dhanavanthsai',dob:'TBA',role:'CSE Core',photo:'./photos/member1.png',strapColor:'#C5FF00',cardColor:'#1E1E1E',accent:'#C5FF00',insta:'https://www.instagram.com/dhanavanth_17/',linkedin:'https://www.linkedin.com/in/dhanavanth-sai-16a272414/'},
   {id:'02',name:'Muhammed Nehan',dob:'25 FEB 2008',role:'EKE · Class of 2030',photo:'./photos/member2.jpg',strapColor:'#D6FF4B',cardColor:'#161616',accent:'#D6FF4B',insta:'https://instagram.com/nvm.nehan',linkedin:'https://www.linkedin.com/in/muhammed-nehan-472694368'},
   {id:'03',name:'Fizan Islam',dob:'07 OCT 2007',role:'Web Dev',photo:'./photos/member3.jpg',strapColor:'#9BFF00',cardColor:'#202020',accent:'#9BFF00',insta:'',linkedin:'https://www.linkedin.com/in/fizan-islam-4ab3a9374'},
   {id:'04',name:'Nipun Gaur',dob:'29 SEP 2008',role:'B.Tech CSE (IT) · 1st Yr',photo:'./photos/member4.jpg',strapColor:'#EAFF00',cardColor:'#181818',accent:'#EAFF00',insta:'https://instagram.com/nipun2908',linkedin:'https://www.linkedin.com/in/nipun-gaur-b42408429'},
   {id:'05',name:'Ishani Garg',dob:'04 OCT 2008',role:'CSE (AI&ML) · 1st Yr',photo:'./photos/member5.jpg',strapColor:'#BEFF6B',cardColor:'#1B1B1B',accent:'#BEFF6B',insta:'https://www.instagram.com/stfuishani_',linkedin:'https://www.linkedin.com/in/ishani-garg-b1a339425'},
   {id:'06',name:'M. Swastii',dob:'TBA',role:'Mechanical · ECE (CPS)',photo:'./photos/member6.jpg',strapColor:'#F4FF78',cardColor:'#1D1D1D',accent:'#F4FF78',insta:'https://www.instagram.com/mswastii_75',linkedin:'https://www.linkedin.com/in/m-swastii-murugesan-00717a429'},
   {id:'07',name:'VED',dob:'15 NOV 2005',role:'Coding',photo:'',strapColor:'#C8FF2E',cardColor:'#191919',accent:'#C8FF2E',insta:'',linkedin:'https://www.linkedin.com/in/ved-prakash-853904322/'},
-  {id:'08',name:'Member 08',dob:'TBA',role:'TBA — updating soon',photo:'',strapColor:'#E2FF55',cardColor:'#1C1C1C',accent:'#E2FF55',insta:'',linkedin:''}
+  {id:'08',name:'Moulik Kulshreshtha',dob:'24 OCT 2007',role:'B.Tech ECE (Data Science)',photo:'./photos/member8.jpg',strapColor:'#E2FF55',cardColor:'#1C1C1C',accent:'#E2FF55',insta:'https://www.instagram.com/moulik._07/',linkedin:'https://www.linkedin.com/in/moulik-undefined-559b8b3b1'}
 ];
 {
   // Crew is a standalone ID showcase: no display deck, rod, or hanging hardware.
@@ -1479,7 +1479,10 @@ function crewCanvas(m,i,back){
     if(m._img){g.filter='grayscale(1) contrast(1.07)';const side=Math.min(m._img.width,m._img.height);g.drawImage(m._img,(m._img.width-side)/2,(m._img.height-side)/2,side,side,52,65,152,152);g.filter='none';}
     else{g.textAlign='center';g.fillStyle=accent;g.font='900 96px Archivo,Arial,sans-serif';g.fillText(m.name[0],128,174);}
     g.restore();g.strokeStyle='rgba(255,255,255,.36)';g.lineWidth=1;round(52,65,152,152,8);g.stroke();
-    g.textAlign='center';g.fillStyle='#fff';g.font='900 23px Archivo,Arial,sans-serif';g.fillText(m.name,128,250);
+    g.textAlign='center';g.fillStyle='#fff';
+    let nameSize=23;g.font='900 '+nameSize+'px Archivo,Arial,sans-serif';
+    while(g.measureText(m.name).width>210&&nameSize>12){nameSize-=1;g.font='900 '+nameSize+'px Archivo,Arial,sans-serif';}
+    g.fillText(m.name,128,250);
     g.fillStyle='rgba(255,255,255,.62)';g.font='400 8px "IBM Plex Mono",monospace';g.fillText(m.role,128,266);
     g.fillStyle=accent;g.font='600 8px "IBM Plex Mono",monospace';g.fillText('DOB · '+(m.dob||'TBA'),128,282);
     const random=mul32(i*77+3);let x=30;
