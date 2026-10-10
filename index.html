@@ -15,6 +15,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
 
 <style>
 /* ============================================================
@@ -146,6 +147,13 @@ main{position:relative;z-index:2}
 #rippleMount .ripple-cap{position:absolute;left:var(--pad);bottom:18px;z-index:2;font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--t3);pointer-events:none}
 @media(min-width:761px){#landing .landing-copy{max-width:min(660px,58vw)}}
 
+/* ================= GALLERY + DOCS (islands inside #math) ================= */
+.gallery-block,.docs-block{margin:var(--s19) 0 var(--s8)}
+.gallery-block .sub,.docs-block .sub{max-width:62ch;margin-bottom:var(--s10)}
+#gallerySphere{position:relative;height:600px;border:1px solid var(--line);background:#ececec;overflow:hidden}
+#docsMount{position:relative}
+@media(max-width:760px){#gallerySphere{height:440px}}
+
 /* ================= HAMBURGER + OVERLAY MENU ================= */
 #burger{display:none;position:relative;width:44px;height:44px;margin-left:auto;background:transparent;border:0;cursor:pointer}
 #burger span{position:absolute;left:11px;right:11px;height:2px;background:var(--paper);transition:transform .35s var(--e-out),opacity .25s ease,left .25s var(--e-out),right .25s var(--e-out)}
@@ -167,23 +175,12 @@ body.menu-open #menuOverlay nav a{opacity:1;transform:none}
 #menuOverlay nav a:hover{padding-left:10px;text-decoration:underline;text-underline-offset:8px;text-decoration-thickness:2px}
 #menuOverlay .mfoot{margin-top:var(--s11);font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--t3)}
 
-/* Section OptionWheel navigation — same page, direct section jumps */
-#sectionWheel{--wheel-size:1.15rem;position:fixed;right:clamp(10px,2.2vw,34px);top:50%;z-index:24;width:170px;height:min(410px,58vh);transform:translateY(-50%);overflow:hidden;border:1px solid rgba(0,0,0,.09);border-radius:18px;background:rgba(255,255,255,.68);backdrop-filter:blur(14px);box-shadow:0 8px 34px rgba(0,0,0,.07);touch-action:pan-y;user-select:none;outline:none}
-#sectionWheel:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
-#sectionWheel .wheel-item{position:absolute;top:50%;left:18px;right:8px;white-space:nowrap;text-align:left;font:500 var(--wheel-size) var(--mono);letter-spacing:-.04em;color:#777;cursor:pointer;transform-origin:left center;will-change:transform,opacity,filter;transition:color .2s}
-#sectionWheel .wheel-item[aria-selected="true"]{color:#111}
-#sectionWheel .wheel-item[aria-selected="true"]::before{content:"";position:absolute;left:-11px;top:50%;width:3px;height:.72em;transform:translateY(-50%);background:var(--acid)}
-#sectionWheel .wheel-item:focus-visible{outline:2px solid var(--acid);outline-offset:3px;border-radius:3px}
-#sectionWheel .wheel-caption{position:absolute;left:18px;right:10px;bottom:12px;color:rgba(0,0,0,.36);font:8px var(--mono);letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
-@media(max-width:760px){#sectionWheel{right:8px;width:116px;height:min(300px,44vh);border-radius:13px}#sectionWheel .wheel-item{left:14px;right:4px;font-size:9px;letter-spacing:-.05em}#sectionWheel .wheel-caption{left:14px;font-size:7px}#sectionWheel .wheel-item[aria-selected="true"]::before{left:-8px}}
 .eq.border-glow-card{position:relative;isolation:isolate;overflow:visible;--glow-angle:0deg;transition:transform .25s var(--e-out),border-color .25s}
 .eq.border-glow-card::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:conic-gradient(from var(--glow-angle),transparent 0 68%,rgba(255,255,255,.9) 82%,#fff 88%,transparent 96%);opacity:0;z-index:-1;transition:opacity .2s;pointer-events:none;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
 .eq.border-glow-card::after{content:"";position:absolute;inset:-12px;border-radius:inherit;background:conic-gradient(from var(--glow-angle),transparent 0 70%,rgba(160,165,178,.45) 86%,transparent 97%);filter:blur(16px);opacity:0;z-index:-2;transition:opacity .2s;pointer-events:none}
 .eq.border-glow-card:hover::before,.eq.border-glow-card:focus-within::before,.eq.border-glow-card:hover::after,.eq.border-glow-card:focus-within::after{opacity:1}
 .eq.border-glow-card:hover{border-color:rgba(255,255,255,.35);transform:translateY(-2px)}
 .eq.border-glow-card .tag{position:relative}
-#sectionWheel .wheel-caption{position:absolute;left:18px;right:10px;bottom:12px;color:rgba(0,0,0,.36);font:8px var(--mono);letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
-@media(max-width:760px){#sectionWheel{right:8px;width:116px;height:min(300px,44vh);border-radius:13px}#sectionWheel .wheel-item{left:14px;right:4px;font-size:9px;letter-spacing:-.05em}#sectionWheel .wheel-caption{left:14px;font-size:7px}#sectionWheel .wheel-item[aria-selected="true"]::before{left:-8px}}
 .sec{position:relative}
 .sec-inner{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:var(--s19) var(--pad) var(--s17);pointer-events:none}
 .tall{height:420vh}
@@ -359,7 +356,6 @@ footer .mail:active{transform:scale(.98)}
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
   html{scroll-behavior:auto}
   [data-reveal]{opacity:1;transform:none}
-  #sectionWheel .wheel-item{filter:none!important}
 }
 </style>
 </head>
@@ -422,19 +418,6 @@ footer .mail:active{transform:scale(.98)}
 
 <div id="explodeTag">Teardown — <b>0%</b><span> · drag to rotate</span></div>
 <div id="pins"></div>
-<aside id="sectionWheel" hidden style="display:none" aria-hidden="true">
-  <button class="wheel-item" role="option" aria-selected="true" data-target="landing">01&nbsp; Landing</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="hero">02&nbsp; Intro</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="hardware-intro">03&nbsp; Hardware</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="model">04&nbsp; Model</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="math">05&nbsp; Mathematics</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="game">06&nbsp; Simulator</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="code">07&nbsp; Firmware</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="team">08&nbsp; Crew</button>
-  <button class="wheel-item" role="option" aria-selected="false" data-target="contact">09&nbsp; Contact</button>
-  <span class="wheel-caption">Scroll · click · drag</span>
-</aside>
-
 <main>
 <section class="sec" id="landing" data-mode="landing">
   <div class="landing-copy">
@@ -493,6 +476,18 @@ footer .mail:active{transform:scale(.98)}
   <div class="prob">
     <p>RB/25 has to cross a 300 × 300 cm maze it has never seen while carrying up to 3 kg — and the maze refuses to sit still. Routes seal mid-drive; obstacles appear without notice. The drivetrain is a two-wheel differential drive: two 98 mm rubber traction wheels plus a castor, deliberately chosen over omni wheels so wheel-slip never corrupts the encoder measurement. Sensing fuses three ultrasonic rangefinders (left, front, right) with wheel-encoder odometry and an MPU-6050 IMU — the walls say where to turn, the encoders say how far it has moved, the gyro says how much it has turned. Run 1 hugs the left wall and records every move; Run 2 replays the shortened path at higher speed. We never touch a joystick.</p>
     <blockquote>No single sensor is enough on its own — together they let the rover choose a move, carry it out, and check the result.</blockquote>
+  </div>
+  <div class="gallery-block" id="gallery">
+    <p class="kick" data-reveal>Gallery — the build so far</p>
+    <h2 data-reveal>Shot <span class="ol">by shot.</span></h2>
+    <p class="sub" data-reveal>Sample frames for now — the real build photos slot in tomorrow, one item per photo. Drag the sphere, scroll it, or use arrow keys; it also strolls on its own until you grab it.</p>
+    <div id="gallerySphere" data-reveal></div>
+  </div>
+  <div class="docs-block" id="docs">
+    <p class="kick" data-reveal>Documentation — papers &amp; logs</p>
+    <h2 data-reveal>Read <span class="ol">the receipts.</span></h2>
+    <p class="sub" data-reveal>Sample entries — the real 4–5 PDFs and their covers land here tomorrow. Hover or tap a spine to expand it.</p>
+    <div id="docsMount" data-reveal></div>
   </div>
   <div class="eqs">
     <div class="eq border-glow-card wide"><span class="tag">EQ 01 — Drive · top speed</span><h3>98 mm wheels at a rated 430 rpm</h3>
@@ -556,13 +551,13 @@ footer .mail:active{transform:scale(.98)}
     <div class="crew-copy">
       <p class="kick">06 — The crew · ID card showcase</p>
       <h2>Eight hands, <span class="ol">one rover.</span></h2>
-      <h3 id="crewName">Vector</h3>
-      <p class="sub" id="crewRole">Team lead · Systems</p>
+      <h3 id="crewName">Dhanavanthsai</h3>
+      <p class="sub" id="crewRole">CSE Core</p>
       <p class="crew-description">Meet the people behind RB/25. Drag the green-strapped ID and release to watch it swing. Tap to flip, or use Next to slide to another member.</p>
     </div>
     <div id="badgeStage">
       <svg id="badgeStrap" aria-hidden="true"><defs><pattern id="strapWeave" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 0H4M0 0V4" stroke="#181717" stroke-opacity=".12" stroke-width="1"/></pattern></defs><path id="strapBand" fill="none" stroke="var(--acid)" stroke-width="42"/><path id="strapTexture" fill="none" stroke="url(#strapWeave)" stroke-width="42"/><g id="strapRibbon"></g></svg>
-    <button id="crewBadge" type="button" aria-label="Flip Vector ID card" aria-pressed="false">
+    <button id="crewBadge" type="button" aria-label="Flip Dhanavanthsai ID card" aria-pressed="false">
       <span class="badge-clip" aria-hidden="true"></span><span class="badge-ring" aria-hidden="true"></span>
       <span class="badge-faces"><canvas id="badgeFront" width="1024" height="1440" aria-hidden="true"></canvas><canvas id="badgeBack" width="1024" height="1440" aria-hidden="true"></canvas></span>
     </button>
@@ -572,7 +567,7 @@ footer .mail:active{transform:scale(.98)}
   <div id="crewNav">
     <button class="btn" id="crewPrev" aria-label="Previous crew badge" disabled>‹ Prev</button>
     <div id="crewDots" role="tablist" aria-label="Choose a crew badge"></div>
-    <span id="crewCount" aria-live="polite">01 / 08</span>
+    <span id="crewCount" aria-live="polite">01 / 06</span>
     <button class="btn pri" id="crewNext" aria-label="Next crew badge">Next ›</button>
   </div>
   <div id="teamHint">Drag & release the ID · tap to flip · Prev / Next or ← / → to slide</div>
@@ -756,6 +751,45 @@ function toast(m){
   }
 }
 
+/* ============ GALLERY SPHERE (React Bits InfiniteMenu · sample frames) ============ */
+/* Tomorrow: swap each image for the real build photo (keep title/description). */
+{
+  const mount=document.getElementById('gallerySphere');
+  if(mount){
+    const ITEMS=[
+      {image:'https://picsum.photos/seed/rat-chassis/600/600?grayscale',title:'Chassis',description:'Twin 270 × 270 mm plywood decks on ally channels — the top deck carries the load.'},
+      {image:'https://picsum.photos/seed/rat-drive/600/600?grayscale',title:'Drivetrain',description:'PG36 24 V gearmotors on 98 mm rubber traction wheels, flange PCD 47.5.'},
+      {image:'https://picsum.photos/seed/rat-boards/600/600?grayscale',title:'Electronics',description:'ESP32 brain, MDDS30 muscle, XL4005 5 V rail, one common GND.'},
+      {image:'https://picsum.photos/seed/rat-maze/600/600?grayscale',title:'Maze',description:'300 × 300 cm, 6 × 6 cells of 50 cm. Never seen, never stored.'},
+      {image:'https://picsum.photos/seed/rat-runs/600/600?grayscale',title:'Field runs',description:'Run 1 hugs the wall and records; Run 2 replays it shorter, faster.'},
+    ];
+    Promise.all([import('react'),import('react-dom/client'),import('./src/components/InfiniteMenu')])
+      .then(([React,ReactDOM,Menu])=>{
+        ReactDOM.createRoot(mount).render(React.createElement(Menu.default,{
+          items:ITEMS,count:120,tileSize:.59,roundness:.12,zoom:1.8,pullBack:1.15,
+          stretch:.6,inertia:.6,autoplay:3,grayscale:true,dim:.5,intro:true,
+          showInfo:true,theme:'light',accentColor:'#111111',
+        }));
+        mount.dataset.ready='1';
+      })
+      .catch(err=>{console.warn('InfiniteMenu island failed to load:',err);mount.remove();});
+  }
+}
+
+/* ============ DOCS STRIP (Skiper HoverExpand · sample entries) ============ */
+/* Tomorrow: pass real {src, alt, code, title} per PDF via DocsStrip images prop. */
+{
+  const mount=document.getElementById('docsMount');
+  if(mount){
+    Promise.all([import('react'),import('react-dom/client'),import('./src/components/DocsStrip')])
+      .then(([React,ReactDOM,Docs])=>{
+        ReactDOM.createRoot(mount).render(React.createElement(Docs.default));
+        mount.dataset.ready='1';
+      })
+      .catch(err=>{console.warn('DocsStrip island failed to load:',err);mount.remove();});
+  }
+}
+
 /* ============ HAMBURGER MENU ============ */
 {
   const burger=document.getElementById('burger'),overlay=document.getElementById('menuOverlay');
@@ -778,11 +812,7 @@ const GM={x:34,z:-18};
 const TEAM={x:0,z:-58};
 const crewScroll={progress:0,t:0,index:0};
 let crewIndex=0,crewX=0,crewWheelLock=0,crewNavTarget=0;
-const wheelRow=18;
-const sectionWheel=document.getElementById('sectionWheel');
-const wheelItems=sectionWheel?[...sectionWheel.querySelectorAll('.wheel-item')]:[];
 const modeSecs=$$('[data-mode]');
-let wheelPosition=0,wheelTarget=0,wheelLast=performance.now(),sectionWheelRAF=null,wheelScrollLock=0;
 
 /* ============ renderer / scene — white studio ============ */
 const canvas=$('#gl');
@@ -1116,6 +1146,9 @@ const PINMETA=glbOK?[
   ['ultra','Ultrasonic node','SNS-11','HC-SR04 · 40 kHz pulse · 60 ms spacing kills crosstalk'],
 ];
 const pinsEl=$('#pins');
+/* Single owner for click-pinned cards: the loop renders hover OR pinned,
+   so a click can never be reverted by the next frame (touch users included) */
+const pinned=new Set();
 PINMETA.forEach(([key,title,tag,spec],i)=>{
   const g=partByName[key];
   const rec=parts.find(p=>p.name===key);
@@ -1127,8 +1160,9 @@ PINMETA.forEach(([key,title,tag,spec],i)=>{
   pinsEl.appendChild(el);
   rec.anchor=anchor;rec.el=el;
   const dot=el.querySelector('.dot');
-  dot.addEventListener('click',()=>el.classList.toggle('open'));
-  dot.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.classList.toggle('open');}});
+  const flipPin=()=>{pinned.has(key)?pinned.delete(key):pinned.add(key);el.classList.toggle('open',pinned.has(key));};
+  dot.addEventListener('click',flipPin);
+  dot.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flipPin();}});
 });
 
 /* ============ GAME ISLAND — light plate, black walls ============ */
@@ -1389,14 +1423,14 @@ function updateGame(dt){
 
 /* ============ TEAM ISLAND — monochrome lanyards ============ */
 const CREW=[
-  {id:'01',name:'Vector',role:'Team lead · Systems',photo:'./photos/member1.jpg',strapColor:'#C5FF00',cardColor:'#1E1E1E',accent:'#C5FF00',emergency:'+91 98860 10001',stats:{runs:128,uptime:'99.2%',replans:47}},
-  {id:'02',name:'Nova',role:'AI & path planning',photo:'./photos/member2.jpg',strapColor:'#D6FF4B',cardColor:'#161616',accent:'#D6FF4B',emergency:'+91 98860 10002',stats:{runs:121,uptime:'98.7%',replans:63}},
-  {id:'03',name:'Echo',role:'Sensor fusion',photo:'./photos/member3.jpg',strapColor:'#9BFF00',cardColor:'#202020',accent:'#9BFF00',emergency:'+91 98860 10003',stats:{runs:117,uptime:'99.0%',replans:39}},
-  {id:'04',name:'Pixel',role:'Perception & mapping',photo:'./photos/member4.jpg',strapColor:'#EAFF00',cardColor:'#181818',accent:'#EAFF00',emergency:'+91 98860 10004',stats:{runs:133,uptime:'98.4%',replans:51}},
-  {id:'05',name:'Rax',role:'Embedded firmware',photo:'./photos/member5.jpg',strapColor:'#BEFF6B',cardColor:'#1B1B1B',accent:'#BEFF6B',emergency:'+91 98860 10005',stats:{runs:109,uptime:'98.9%',replans:44}},
-  {id:'06',name:'Torque',role:'Drive & chassis',photo:'./photos/member6.jpg',strapColor:'#F4FF78',cardColor:'#1D1D1D',accent:'#F4FF78',emergency:'+91 98860 10006',stats:{runs:126,uptime:'98.1%',replans:58}},
-  {id:'07',name:'Volta',role:'Power & electronics',photo:'./photos/member7.jpg',strapColor:'#C8FF2E',cardColor:'#191919',accent:'#C8FF2E',emergency:'+91 98860 10007',stats:{runs:114,uptime:'99.1%',replans:41}},
-  {id:'08',name:'Axle',role:'Test & field ops',photo:'./photos/member8.jpg',strapColor:'#E2FF55',cardColor:'#1C1C1C',accent:'#E2FF55',emergency:'+91 98860 10008',stats:{runs:131,uptime:'98.6%',replans:52}}
+  {id:'01',name:'Dhanavanthsai',dob:'TBA',role:'CSE Core',photo:'./photos/member1.jpg',strapColor:'#C5FF00',cardColor:'#1E1E1E',accent:'#C5FF00',insta:'https://www.instagram.com/dhanavanth_17/',linkedin:'https://www.linkedin.com/in/dhanavanth-sai-16a272414/'},
+  {id:'02',name:'Muhammed Nehan',dob:'25 FEB 2008',role:'EKE · Class of 2030',photo:'./photos/member2.jpg',strapColor:'#D6FF4B',cardColor:'#161616',accent:'#D6FF4B',insta:'https://instagram.com/nvm.nehan',linkedin:'https://www.linkedin.com/in/muhammed-nehan-472694368'},
+  {id:'03',name:'Fizan Islam',dob:'07 OCT 2007',role:'Web Dev',photo:'./photos/member3.jpg',strapColor:'#9BFF00',cardColor:'#202020',accent:'#9BFF00',insta:'',linkedin:'https://www.linkedin.com/in/fizan-islam-4ab3a9374'},
+  {id:'04',name:'Nipun Gaur',dob:'29 SEP 2008',role:'B.Tech CSE (IT) · 1st Yr',photo:'./photos/member4.jpg',strapColor:'#EAFF00',cardColor:'#181818',accent:'#EAFF00',insta:'https://instagram.com/nipun2908',linkedin:'https://www.linkedin.com/in/nipun-gaur-b42408429'},
+  {id:'05',name:'Ishani Garg',dob:'04 OCT 2008',role:'CSE (AI&ML) · 1st Yr',photo:'./photos/member5.jpg',strapColor:'#BEFF6B',cardColor:'#1B1B1B',accent:'#BEFF6B',insta:'https://www.instagram.com/stfuishani_',linkedin:'https://www.linkedin.com/in/ishani-garg-b1a339425'},
+  {id:'06',name:'M. Swastii',dob:'TBA',role:'Mechanical · ECE (CPS)',photo:'./photos/member6.jpg',strapColor:'#F4FF78',cardColor:'#1D1D1D',accent:'#F4FF78',insta:'https://www.instagram.com/mswastii_75',linkedin:'https://www.linkedin.com/in/m-swastii-murugesan-00717a429'},
+  {id:'07',name:'Member 07',dob:'TBA',role:'TBA — updating soon',photo:'',strapColor:'#C8FF2E',cardColor:'#191919',accent:'#C8FF2E',insta:'',linkedin:''},
+  {id:'08',name:'Member 08',dob:'TBA',role:'TBA — updating soon',photo:'',strapColor:'#E2FF55',cardColor:'#1C1C1C',accent:'#E2FF55',insta:'',linkedin:''}
 ];
 {
   // Crew is a standalone ID showcase: no display deck, rod, or hanging hardware.
@@ -1447,6 +1481,7 @@ function crewCanvas(m,i,back){
     g.restore();g.strokeStyle='rgba(255,255,255,.36)';g.lineWidth=1;round(52,65,152,152,8);g.stroke();
     g.textAlign='center';g.fillStyle='#fff';g.font='900 23px Archivo,Arial,sans-serif';g.fillText(m.name,128,250);
     g.fillStyle='rgba(255,255,255,.62)';g.font='400 8px "IBM Plex Mono",monospace';g.fillText(m.role,128,266);
+    g.fillStyle=accent;g.font='600 8px "IBM Plex Mono",monospace';g.fillText('DOB · '+(m.dob||'TBA'),128,282);
     const random=mul32(i*77+3);let x=30;
     while(x<226){const w=1+random()*1.5;if(random()>.22){g.fillStyle='rgba(255,255,255,.8)';g.fillRect(x,302,Math.min(w,226-x),17);}x+=w+1+random();}
     g.fillStyle='rgba(255,255,255,.55)';g.font='400 7px "IBM Plex Mono",monospace';g.fillText('RB-25-'+m.id,128,337);
@@ -1456,12 +1491,27 @@ function crewCanvas(m,i,back){
     g.strokeStyle='rgba(255,255,255,.18)';g.strokeRect(9,9,238,342);
     g.textAlign='center';g.fillStyle=accent;g.font='900 64px Archivo,Arial,sans-serif';g.fillText('R®',128,88);
     g.fillStyle='#fff';g.font='500 8px "IBM Plex Mono",monospace';g.fillText(m.name.toUpperCase()+' · '+m.role.toUpperCase(),128,110);
-    g.fillStyle='rgba(255,255,255,.52)';g.font='500 7px "IBM Plex Mono",monospace';g.fillText('EMERGENCY CONTACT',128,145);
-    g.fillStyle='#fff';g.font='900 17px Archivo,Arial,sans-serif';g.fillText(m.emergency,128,171);
-    const rows=[['MAZE RUNS',String(m.stats.runs)],['UPTIME',m.stats.uptime],['LIVE REPLANS',String(m.stats.replans)]];
-    rows.forEach((row,k)=>{const y=207+k*36;g.strokeStyle='rgba(255,255,255,.18)';g.beginPath();g.moveTo(35,y-13);g.lineTo(221,y-13);g.stroke();
-      g.textAlign='left';g.fillStyle='rgba(255,255,255,.58)';g.font='500 7px "IBM Plex Mono",monospace';g.fillText(row[0],38,y+2);
-      g.textAlign='right';g.fillStyle=accent;g.font='600 10px "IBM Plex Mono",monospace';g.fillText(row[1],218,y+2);});
+    g.fillStyle='rgba(255,255,255,.52)';g.font='500 7px "IBM Plex Mono",monospace';g.fillText('FIND ME — TAP A LINK',128,145);
+    /* Tappable link rows. Hotspots are stored in full-res canvas pixels
+       (faces are painted at 4x) for the click handler on #crewBadge. */
+    const linkRows=[];
+    if(m.insta)linkRows.push({tag:'IG',url:m.insta});
+    if(m.linkedin)linkRows.push({tag:'in',url:m.linkedin});
+    m._hotspots=[];
+    if(!linkRows.length){g.textAlign='center';g.fillStyle='rgba(255,255,255,.6)';g.font='500 10px "IBM Plex Mono",monospace';g.fillText('DETAILS COMING SOON',128,205);}
+    linkRows.forEach((row,k)=>{
+      const y=158+k*62;
+      g.fillStyle='rgba(255,255,255,.06)';round(30,y,196,50,9);g.fill();
+      g.strokeStyle=accent;g.lineWidth=1;round(30,y,196,50,9);g.stroke();
+      g.fillStyle=accent;round(38,y+9,32,32,7);g.fill();
+      g.textAlign='center';g.fillStyle='#101010';g.font='900 11px Archivo,Arial,sans-serif';g.fillText(row.tag,54,y+30);
+      g.textAlign='left';g.fillStyle='#fff';g.font='500 9px "IBM Plex Mono",monospace';
+      const slug=row.url.replace(/\/$/,'').split('/').pop();
+      let label=row.tag==='IG'?'@'+slug:'in/'+slug;
+      if(g.measureText(label).width>108){while(label.length>5&&g.measureText(label+'…').width>108)label=label.slice(0,-1);label+='…';}
+      g.fillText(label,80,y+30);
+      m._hotspots.push({x:30*4,y:y*4,w:196*4,h:50*4,url:row.url});
+    });
     g.textAlign='center';g.fillStyle='rgba(255,255,255,.5)';g.font='400 7px "IBM Plex Mono",monospace';g.fillText('TAP TO FLIP BACK',128,334);
     g.fillStyle=accent;g.fillRect(10,347,236,4);
   }
@@ -1682,6 +1732,16 @@ addEventListener('pointerup',releaseBadge);addEventListener('pointercancel',rele
 crewBadge.addEventListener('click',e=>{
   if(e.detail&&suppressBadgeClick){suppressBadgeClick=false;return;}
   if(crewTransition)return;
+  /* Back face showing? A tap on a link row opens the profile instead of flipping. */
+  if(crewBadge.getAttribute('aria-pressed')==='true'){
+    const spots=CREW[crewIndex]._hotspots||[];
+    if(spots.length&&e.clientX){
+      const r=crewBadge.getBoundingClientRect();
+      const cx=(e.clientX-r.left)/r.width*1024,cy=(e.clientY-r.top)/r.height*1440;
+      const hit=spots.find(h=>cx>=h.x&&cx<=h.x+h.w&&cy>=h.y&&cy<=h.y+h.h);
+      if(hit){window.open(hit.url,'_blank','noopener');return;}
+    }
+  }
   const flipped=crewBadge.getAttribute('aria-pressed')!=='true';
   crewBadge.setAttribute('aria-pressed',String(flipped));
   badgeMotion.twistFrom=badgeMotion.twist;
@@ -1723,30 +1783,6 @@ if(swipeStage){
   swipeStage.addEventListener('pointerup',e=>{if(!swipeStart)return;const dx=e.clientX-swipeStart.x,dy=e.clientY-swipeStart.y;if(!swipeLocked&&Math.abs(dx)>=70&&Math.abs(dx)>Math.abs(dy)*1.25)scrollToCrewIndex(crewIndex+(dx<0?1:-1));swipeStart=null;swipeLocked=false;});
   swipeStage.addEventListener('pointercancel',()=>{swipeStart=null;swipeLocked=false;});
 }
-function syncSectionWheel(index){
-  if(!sectionWheel)return;
-  const bounded=clamp(index,0,wheelItems.length-1);
-  if(bounded===wheelTarget)return;
-  wheelItems.forEach((item,i)=>{item.setAttribute('aria-selected',String(i===bounded));item.tabIndex=i===bounded?0:-1;});
-  wheelTarget=bounded;
-  startWheelAnimation();
-}
-function startWheelAnimation(){
-  if(sectionWheelRAF==null)sectionWheelRAF=requestAnimationFrame(updateSectionWheel);
-}
-function updateSectionWheel(now){
-  sectionWheelRAF=null;
-  const dt=Math.min(.05,Math.max(.001,(now-wheelLast)/1000));wheelLast=now;
-  wheelPosition+=(wheelTarget-wheelPosition)*(1-Math.exp(-dt/.18));
-  if(Math.abs(wheelTarget-wheelPosition)<.001)wheelPosition=wheelTarget;
-  wheelItems.forEach((el,i)=>{
-    const d=i-wheelPosition,dist=Math.abs(d),angle=clamp(d*8*Math.PI/180,-Math.PI/2,Math.PI/2),radius=wheelRow/(8*Math.PI/180);
-    const x=-radius*(1-Math.cos(angle)),y=radius*Math.sin(angle);
-    el.style.transform='translate('+x.toFixed(1)+'px,calc('+y.toFixed(1)+'px - 50%)) rotate('+(angle*180/Math.PI).toFixed(2)+'deg)';
-    el.style.opacity=String(Math.max(.12,1-dist*.29));el.style.filter=REDUCE?'none':'blur('+(Math.min(dist*1.1,3)).toFixed(1)+'px)';
-  });
-  if(Math.abs(wheelTarget-wheelPosition)>.001)sectionWheelRAF=requestAnimationFrame(updateSectionWheel);
-}
 function setCrew(i,dir,animate=true){
   /* Keep every input in sync by routing it to the matching scroll stop. */
   const next=clamp(Math.round(i),0,CREW.length-1);
@@ -1755,6 +1791,7 @@ function setCrew(i,dir,animate=true){
 /* preload every member's face so cycling is instant */
 CREW.forEach((m,i)=>{
   m._img=null;
+  if(!m.photo)return; /* placeholder card — keep the initial-letter fallback */
   const img=new Image();img.decoding='async';
   img.onload=()=>{m._img=img;if(i===crewIndex)paintCrew();};
   img.onerror=()=>{m._img=null;if(i===crewIndex)paintCrew();};
@@ -2111,31 +2148,34 @@ function cameraTarget(){
 }
 
 /* ============ MODE / SCROLL ============ */
-function scrollToSectionId(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:REDUCE?'instant':'smooth',block:'start'});}
-function currentSectionIndex(){
-  const y=innerHeight/2;let active=0;
-  wheelItems.forEach((item,i)=>{const section=document.getElementById(item.dataset.target);if(section){const r=section.getBoundingClientRect();if(r.top<=y&&r.bottom>=y)active=i;}});
-  return active;
+/* Lenis buttery smooth scroll (lenis.dev): hijacks wheel input but keeps
+   native scroll position, so the scroll-spy, teardown % and reveal
+   observers below keep working untouched. Skipped when the user prefers
+   reduced motion or the CDN is blocked — native scroll is the fallback. */
+let lenis=null;
+if(window.Lenis&&!REDUCE){
+  try{
+    lenis=new window.Lenis({duration:1.15,smoothWheel:true});
+    document.documentElement.style.scrollBehavior='auto'; /* CSS smooth fights Lenis */
+    const lenisRaf=t=>{lenis.raf(t);requestAnimationFrame(lenisRaf);};
+    requestAnimationFrame(lenisRaf);
+    /* Anchor links (nav, landing buttons) go through Lenis so they glide. */
+    document.addEventListener('click',e=>{
+      const a=e.target.closest?.('a[href^="#"]');
+      if(!a)return;
+      const el=document.getElementById(a.getAttribute('href').slice(1));
+      if(el){e.preventDefault();lenis.scrollTo(el,{duration:1.4});}
+    });
+    window.__lenis=true;
+  }catch(e){lenis=null;}
 }
-if(sectionWheel){
-  wheelItems.forEach((item,i)=>item.addEventListener('click',()=>scrollToSectionId(item.dataset.target)));
-  sectionWheel.addEventListener('keydown',e=>{
-    if(e.key==='ArrowDown'||e.key==='ArrowRight'){e.preventDefault();scrollToSectionId(wheelItems[Math.min(wheelItems.length-1,currentSectionIndex()+1)].dataset.target);}
-    else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();scrollToSectionId(wheelItems[Math.max(0,currentSectionIndex()-1)].dataset.target);}
-    else if(e.key==='Home'){e.preventDefault();scrollToSectionId(wheelItems[0].dataset.target);}
-    else if(e.key==='End'){e.preventDefault();scrollToSectionId(wheelItems[wheelItems.length-1].dataset.target);}
-  });
-  sectionWheel.addEventListener('wheel',e=>{
-    e.preventDefault();const now=performance.now();if(now<wheelScrollLock)return;wheelScrollLock=now+320;
-    const step=e.deltaY||e.deltaX;if(step)scrollToSectionId(wheelItems[clamp(currentSectionIndex()+(step>0?1:-1),0,wheelItems.length-1)].dataset.target);
-  },{passive:false});
-}
+function scrollToSectionId(id){const el=document.getElementById(id);if(!el)return;
+  if(lenis)lenis.scrollTo(el,{duration:1.4});
+  else el.scrollIntoView({behavior:REDUCE?'instant':'smooth',block:'start'});}
 let lastMode='';
 function computeMode(){
   const y=innerHeight/2;let m='explore';
   for(const s of modeSecs){const r=s.getBoundingClientRect();if(r.top<=y&&r.bottom>=y){m=s.dataset.mode;break;}}
-  const activeSection=currentSectionIndex();
-  if(wheelItems.length)syncSectionWheel(activeSection);
   if(m!==lastMode){
     lastMode=m;state.mode=m;
     document.body.classList.toggle('crew-active',m==='team');
@@ -2148,7 +2188,6 @@ function computeMode(){
   const hw=$('#hardware').getBoundingClientRect();
   state.e=clamp01(-hw.top/Math.max(1,hw.height-innerHeight));
   // Crew member selection is button-driven, independent of vertical page scrolling.
-  if(sectionWheelRAF==null)startWheelAnimation();
 }
 addEventListener('scroll',()=>requestAnimationFrame(computeMode),{passive:true});
 computeMode();
@@ -2305,6 +2344,8 @@ const bgTarget=new THREE.Color(0xffffff);
 const explodeTagB=$('#explodeTag').querySelector('b');
 const clock=new THREE.Clock();
 function loop(){
+  /* Hidden tabs get no rAF anyway; this also covers throttled-background edge cases */
+  if(document.hidden){clock.getDelta();requestAnimationFrame(loop);return;}
   const dt=Math.min(.05,clock.getDelta());
   state.time+=dt;
   const teamScene=state.mode==='team';
@@ -2363,7 +2404,7 @@ function loop(){
       const s=state.hover===p.name?1.045:1;
       p.g.scale.setScalar(lerp(p.g.scale.x,s,.18));
     }
-    if(p.el)p.el.classList.toggle('open',state.hover===p.name);
+    if(p.el)p.el.classList.toggle('open',state.hover===p.name||pinned.has(p.name));
   });
   if(state.mode==='hardware'){
     parts.forEach(p=>{

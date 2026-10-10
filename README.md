@@ -13,8 +13,8 @@ Live at **https://webdev-team-3.vercel.app** (auto-deploys on every push to `mas
 | **03 Simulator** | Interactive **13×13 maze game** — click to raise walls mid-run and watch the rover fall back and recompute live (cost / moves / replans / time / best counters) · speedrun timer with local record |
 | **04 Firmware** | Tabbed C++ firmware viewer (main / kinematics / planner) with syntax highlighting + copy button |
 | **05 Media** | **Photo & video gallery** of the project — tiles auto-load from `public/media/manifest.json`; empty slots show themed DROP-FILE placeholders; click opens a lightbox (←/→ navigate, Esc close; videos play with sound) |
-| **06 Crew** | 3D island where the five **real members' ID badges** stand on a lit display deck — click a badge to flip it and see contact details |
-| **Crew roster** | Large themed **flip ID cards** (real photos from `public/photos/`, IG / LinkedIn / GitHub / email links on the back) |
+| **06 Crew** | 3D island where the **eight members' ID badges** (6 real + 2 placeholders) stand on a lit display deck — click a badge to flip it and see contact details |
+| **Crew roster** | Large themed **flip ID cards** (front: photo + name + DOB + role; back: tappable IG / LinkedIn link rows that open the profile) |
 | **07 Enquiry** | Working form → FormSubmit email, with the **3D letter-pop animation** on submit (see below) |
 
 ## The submit-button 3D letter animation
@@ -31,13 +31,9 @@ State flow: `idle → load → ok|err → idle`, driven entirely by `data-state`
 
 ## Crew data — single source of truth
 
-The five real members are defined **once**, in `public/crew.js` (`window.ROBO_CREW`):
+The eight members are defined **once**, in the inline `CREW` array in `index.html` (badges read `photo`, `dob`, `insta`, `linkedin`, `accent` from it). Cards 07–08 are placeholders (`photo:''`, no links) until their details arrive.
 
-- `index.html` consumes it as `const CREW_DATA = window.ROBO_CREW` (DOM flip ID cards)
-- `public/showcase.js` maps it to the 3D badge array (crew island)
-
-> ⚠️ If the crew changes, update **only `public/crew.js`**. Never fabricate emails — an empty `em:` simply hides the row.
-> Photos: drop real portraits into `public/photos/member1.jpg … member5.jpg` (currently template placeholders; the layout falls back to an initial letter if a file is missing).
+> ⚠️ If the crew changes, update **only that array**. Photos: real portraits live in `public/photos/member1.jpg … member6.jpg`.
 
 ## Sharp edges
 
@@ -51,12 +47,11 @@ New elements are automatically sharp — no per-rule maintenance.
 
 ## Architecture
 
-- **`index.html`** — the whole site shell: styles, DOM sections, crew builder, enquiry state machine, boot watchdog.
-- **`public/showcase.js`** — the Three.js r160 3D engine (exploded rover, maze sim, 3D badges). Loaded as a plain deferred `<script>` so Vite copies it to the build **untouched** (no module bundling issues with the CDN `import()`).
+- **`index.html`** — the whole site: styles, DOM sections, inline Three.js engine (exploded rover, maze sim, crew island), firmware viewer, hamburger menu.
+- **`src/components/RippleDistortion.*`** — the landing water island (React + ogl), loaded via dynamic import; the only code under `src/` that ships.
 - **Three.js** loads at runtime from 3 CDN fallbacks (jsDelivr → unpkg → esm.sh); KaTeX + highlight.js from CDN. If WebGL or the CDN fails, a diagnostic fallback card with a RETRY button appears instead of a black screen.
-- **`public/photos/`** — member portraits (member1–8.jpg).
-- **`src/`, `supabase/`** — legacy React/Roboverse version, still type-checked by the build (`tsc --noEmit && vite build`); not part of the deployed page.
-- **`dist/`** — Vite build output (committed for reference).
+- **`public/photos/`** — member portraits (member1–8.jpg); **`public/models/rover.glb`** — the real SolidWorks assembly the teardown explodes.
+- **`dist/`** — Vite build output (git-ignored).
 
 ## Enquiry form (FormSubmit)
 

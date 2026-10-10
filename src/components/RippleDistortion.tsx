@@ -217,6 +217,7 @@ const RippleDistortion = ({
   style,
 }: RippleDistortionProps) => {
   const mountRef = useRef<HTMLDivElement>(null);
+  const inViewRef = useRef(true);
   const configRef = useRef<RippleConfig>({ brushSize, spread, fade, spacing, clickStrength, trigger, enabled });
   const uniformsRef = useRef<RippleUniforms | null>(null);
 
@@ -360,6 +361,21 @@ const RippleDistortion = ({
     const ro = new ResizeObserver(resize);
     ro.observe(mount);
     resize();
+    const kick = () => {
+      if (inViewRef.current && !raf && !document.hidden) raf = requestAnimationFrame(loop);
+    };
+    const vis = new IntersectionObserver(
+      ([entry]) => {
+        inViewRef.current = entry.isIntersecting;
+        if (entry.isIntersecting) kick();
+      },
+      { threshold: 0.02 },
+    );
+    vis.observe(mount);
+    const onVis = () => {
+      if (!document.hidden) kick();
+    };
+    document.addEventListener('visibilitychange', onVis);
 
     const setNewWave = (x: number, y: number, power: number) => {
       const cfg = configRef.current;
@@ -412,7 +428,12 @@ const RippleDistortion = ({
     let raf = 0;
     let previousTime = 0;
 
+    /* Landing-only water: no invisible frames while scrolled past or tab-hidden */
     const loop = (now: number) => {
+      if (document.hidden || !inViewRef.current) {
+        raf = 0;
+        return;
+      }
       raf = requestAnimationFrame(loop);
       const delta = previousTime ? Math.min(0.05, (now - previousTime) / 1000) : 0;
       previousTime = now;
@@ -457,7 +478,10 @@ const RippleDistortion = ({
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
+      raf = 0;
       ro.disconnect();
+      vis.disconnect();
+      document.removeEventListener('visibilitychange', onVis);
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerdown', onDown);
       uniformsRef.current = null;

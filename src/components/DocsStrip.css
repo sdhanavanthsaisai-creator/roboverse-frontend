@@ -1,0 +1,76 @@
+/* DocsStrip — vanilla-CSS port of the Skiper HoverExpand layout (no Tailwind on this page) */
+.docs-strip {
+  position: relative;
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.docs-strip .w-full {
+  width: 100%;
+}
+
+.docs-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.docs-cell {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--ink);
+  flex: none;
+}
+
+.docs-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(1) contrast(1.05);
+}
+
+.docs-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent 60%);
+  pointer-events: none;
+}
+
+.docs-caption {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 16px;
+  pointer-events: none;
+}
+
+.docs-code {
+  margin: 0;
+  text-align: left;
+  font-size: 12px;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.docs-title {
+  margin: 2px 0 0;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
