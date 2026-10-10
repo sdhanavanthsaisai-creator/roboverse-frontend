@@ -24,6 +24,7 @@
   /* color — text primary #000000 · text light #FFFFFF · nothing else */
   --ink:#000000;
   --paper:#FFFFFF;
+  --acid:#C5FF00;
   --t2:rgba(0,0,0,.62);          /* secondary text   */
   --t3:rgba(0,0,0,.45);          /* captions         */
   --line:rgba(0,0,0,.14);        /* hairline         */
@@ -98,13 +99,45 @@ img{display:block}
 .hdr .live i{width:5px;height:5px;border-radius:var(--r-6);background:var(--paper);animation:looperino 2s linear infinite}
 @keyframes looperino{50%{opacity:.25}}
 @media(max-width:760px){.hdr nav{display:none}}
+.hdr nav a[aria-current="location"]{opacity:1;text-decoration:underline;text-underline-offset:4px}
 
 /* ================= SECTIONS ================= */
 main{position:relative;z-index:2}
+#landing{min-height:100svh;display:flex;align-items:center;padding:calc(var(--pad) + 64px) var(--pad) var(--pad);pointer-events:none}
+#landing .landing-copy{max-width:min(780px,75vw);pointer-events:auto}
+#landing .landing-kicker{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.12em;color:var(--t2);text-transform:uppercase}
+#landing h1{font-size:clamp(54px,8.5vw,124px);line-height:.88;letter-spacing:-.06em;font-weight:900;margin:24px 0 18px}
+#landing h1 span{display:block}
+#landing h1 .landing-outline{color:transparent;-webkit-text-stroke:1.5px var(--ink)}
+#landing .landing-intro{max-width:46ch;color:var(--t2);font-size:var(--t-lg);margin:0 0 26px}
+.landing-actions{display:flex;gap:10px;flex-wrap:wrap}
+.landing-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 19px;border:1px solid var(--ink);border-radius:999px;background:rgba(255,255,255,.84);font:500 var(--t-xs) var(--mono);letter-spacing:.08em;text-transform:uppercase;transition:background .2s,color .2s,transform .2s}
+.landing-actions a:first-child{background:var(--ink);color:var(--paper)}
+.landing-actions a:hover{transform:translateY(-2px);background:var(--acid);border-color:var(--acid);color:var(--ink)}
+.landing-caption{position:absolute;right:var(--pad);bottom:var(--s12);font:var(--t-xs) var(--mono);letter-spacing:.1em;color:var(--t3);text-transform:uppercase}
+@media(max-width:760px){#landing .landing-copy{max-width:88vw}#landing h1{font-size:clamp(48px,14vw,86px)}.landing-caption{right:auto;left:var(--pad);bottom:18px}}
+
+/* Section OptionWheel navigation — same page, direct section jumps */
+#sectionWheel{--wheel-size:1.15rem;position:fixed;right:clamp(10px,2.2vw,34px);top:50%;z-index:24;width:170px;height:min(410px,58vh);transform:translateY(-50%);overflow:hidden;border:1px solid rgba(0,0,0,.09);border-radius:18px;background:rgba(255,255,255,.68);backdrop-filter:blur(14px);box-shadow:0 8px 34px rgba(0,0,0,.07);touch-action:pan-y;user-select:none;outline:none}
+#sectionWheel:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+#sectionWheel .wheel-item{position:absolute;top:50%;left:18px;right:8px;white-space:nowrap;text-align:left;font:500 var(--wheel-size) var(--mono);letter-spacing:-.04em;color:#777;cursor:pointer;transform-origin:left center;will-change:transform,opacity,filter;transition:color .2s}
+#sectionWheel .wheel-item[aria-selected="true"]{color:#111}
+#sectionWheel .wheel-item[aria-selected="true"]::before{content:"";position:absolute;left:-11px;top:50%;width:3px;height:.72em;transform:translateY(-50%);background:var(--acid)}
+#sectionWheel .wheel-item:focus-visible{outline:2px solid var(--acid);outline-offset:3px;border-radius:3px}
+#sectionWheel .wheel-caption{position:absolute;left:18px;right:10px;bottom:12px;color:rgba(0,0,0,.36);font:8px var(--mono);letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
+@media(max-width:760px){#sectionWheel{right:8px;width:116px;height:min(300px,44vh);border-radius:13px}#sectionWheel .wheel-item{left:14px;right:4px;font-size:9px;letter-spacing:-.05em}#sectionWheel .wheel-caption{left:14px;font-size:7px}#sectionWheel .wheel-item[aria-selected="true"]::before{left:-8px}}
+.eq.border-glow-card{position:relative;isolation:isolate;overflow:visible;--glow-angle:0deg;transition:transform .25s var(--e-out),border-color .25s}
+.eq.border-glow-card::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:conic-gradient(from var(--glow-angle),transparent 0 68%,var(--acid) 82%,#fff 88%,transparent 96%);opacity:0;z-index:-1;transition:opacity .2s;pointer-events:none;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.eq.border-glow-card::after{content:"";position:absolute;inset:-12px;border-radius:inherit;background:conic-gradient(from var(--glow-angle),transparent 0 70%,color-mix(in srgb,var(--acid) 45%,transparent) 86%,transparent 97%);filter:blur(16px);opacity:0;z-index:-2;transition:opacity .2s;pointer-events:none}
+.eq.border-glow-card:hover::before,.eq.border-glow-card:focus-within::before,.eq.border-glow-card:hover::after,.eq.border-glow-card:focus-within::after{opacity:1}
+.eq.border-glow-card:hover{border-color:color-mix(in srgb,var(--acid) 65%,transparent);transform:translateY(-2px)}
+.eq.border-glow-card .tag{position:relative}
+#sectionWheel .wheel-caption{position:absolute;left:18px;right:10px;bottom:12px;color:rgba(0,0,0,.36);font:8px var(--mono);letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
+@media(max-width:760px){#sectionWheel{right:8px;width:116px;height:min(300px,44vh);border-radius:13px}#sectionWheel .wheel-item{left:14px;right:4px;font-size:9px;letter-spacing:-.05em}#sectionWheel .wheel-caption{left:14px;font-size:7px}#sectionWheel .wheel-item[aria-selected="true"]::before{left:-8px}}
 .sec{position:relative}
 .sec-inner{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:var(--s19) var(--pad) var(--s17);pointer-events:none}
 .tall{height:420vh}
-#game.tall{height:260vh}#team.tall{height:300vh}
+#game.tall{height:260vh}#team.tall{height:800vh;height:800svh}
 .tall .stick{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:var(--s19) var(--pad) var(--s16);pointer-events:none}
 
 .kick{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.08em;color:var(--t3);margin-bottom:var(--s6)}
@@ -186,7 +219,50 @@ h2 .ol{color:transparent;-webkit-text-stroke:1.2px var(--ink)}
 @media(max-width:760px){.panel{right:var(--s5);left:var(--s5);width:auto;bottom:var(--s6)}}
 
 /* ================= TEAM ================= */
-#teamHint{position:absolute;left:50%;bottom:var(--s16);transform:translateX(-50%);font-family:var(--mono);font-size:var(--t-xs);color:var(--t2);background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(8px);padding:var(--s3) var(--s8);border-radius:var(--r-8);white-space:nowrap;pointer-events:none}
+#team{background:transparent;color:#fff;touch-action:pan-y;--crew-glow:var(--acid);scroll-margin-top:0}
+#team .kick,#team .sub{color:rgba(255,255,255,.58)}
+#team h2 .ol{-webkit-text-stroke-color:rgba(255,255,255,.7)}
+#team .stick{touch-action:pan-y}
+#gl{touch-action:pan-y}
+#crewNav{position:absolute;left:50%;bottom:calc(var(--s16) + 36px);transform:translateX(-50%);display:flex;align-items:center;gap:var(--s5);pointer-events:auto;z-index:5}
+body.crew-active #crewNav{position:fixed;bottom:calc(var(--s16) + 36px)}
+body.crew-active #teamHint{position:fixed;bottom:var(--s16)}
+body.crew-active #printing{position:fixed}
+body.crew-active #crewProgress{position:fixed;z-index:31}
+#crewNav .btn{min-width:104px;padding:var(--s5) var(--s9);border-color:rgba(197,255,0,.55);background:rgba(24,24,23,.72);color:var(--acid);backdrop-filter:blur(10px);border-radius:999px;box-shadow:0 0 18px rgba(197,255,0,.12)}
+#crewNav .btn.pri{background:var(--acid);color:#181717;border-color:var(--acid)}
+#crewNav .btn:hover:not(:disabled){box-shadow:0 0 25px color-mix(in srgb,var(--acid) 55%,transparent);transform:translateY(-2px)}
+#crewNav .btn:disabled{opacity:.25;cursor:not-allowed;box-shadow:none;pointer-events:none}
+#crewCount{font-family:var(--mono);font-size:var(--t-xs);color:var(--acid);min-width:66px;text-align:center;font-variant-numeric:tabular-nums}
+#crewDots{display:flex;align-items:center;gap:9px}
+#crewDots button{width:8px;height:8px;padding:0;border:1px solid rgba(255,255,255,.42);border-radius:50%;background:transparent;transition:transform .2s,background .2s,border-color .2s;cursor:pointer}
+#crewDots button[aria-selected="true"]{background:var(--acid);border-color:var(--acid);transform:scale(1.25);box-shadow:0 0 12px color-mix(in srgb,var(--acid) 65%,transparent)}
+#crewDots button:focus-visible{outline:2px solid var(--acid);outline-offset:4px}
+#crewDots button:hover{border-color:var(--acid)}
+#crewProgress{position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(255,255,255,.14);transform-origin:left;pointer-events:none}
+#crewProgress span{display:block;height:100%;width:100%;background:var(--acid);transform:scaleX(0);transform-origin:left;will-change:transform}
+#teamHint{position:absolute;left:50%;bottom:var(--s16);transform:translateX(-50%);font-family:var(--mono);font-size:var(--t-xs);color:rgba(255,255,255,.48);white-space:nowrap;pointer-events:none}
+#printing{position:absolute;left:50%;top:78px;transform:translateX(-50%);z-index:6;padding:7px 13px;border:1px solid rgba(197,255,0,.35);border-radius:999px;background:rgba(12,12,12,.72);backdrop-filter:blur(8px);color:var(--acid);font:9px var(--mono);letter-spacing:.14em;text-transform:uppercase;opacity:0;transition:opacity .15s}
+#printing.on{opacity:1}
+#team{background:#181717;min-height:100svh;height:auto!important;overflow:hidden;padding:90px var(--pad) 130px;pointer-events:auto}
+#crewPage{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:48px;min-height:calc(100svh - 220px);will-change:transform,opacity}
+.crew-copy{max-width:550px}.crew-copy h3{font-size:clamp(40px,5vw,76px);line-height:1.1;margin-top:32px;color:var(--acid);text-shadow:0 0 44px color-mix(in srgb,var(--acid) 25%,transparent)}
+.crew-description{color:rgba(255,255,255,.4);max-width:42ch;margin-top:24px}
+#crewBadge{touch-action:pan-y;user-select:none;will-change:transform;display:block;position:relative;width:min(100%,400px);aspect-ratio:1024/1440;justify-self:center;perspective:1400px;padding:0;border-radius:22px;background:transparent;box-shadow:0 24px 70px #0008,0 0 40px color-mix(in srgb,var(--acid) 8%,transparent);cursor:grab}
+#badgeStage{position:relative;width:100%;padding-top:150px;display:grid;justify-items:center;perspective:1400px;touch-action:pan-y}
+#badgeStrap{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+#strapBand{pointer-events:stroke;cursor:grab;touch-action:pan-y}
+.badge-clip{position:absolute;left:calc(50% - 26px);top:-40px;width:52px;height:22px;border:1px solid #60636c;border-radius:5px;background:linear-gradient(120deg,#30343c,#101114);box-shadow:0 3px 5px #0008;z-index:3}
+.badge-ring{position:absolute;left:calc(50% - 10px);top:-20px;width:20px;height:39px;border:4px solid #11141b;border-radius:50%;box-shadow:inset 1px 0 0 #6d7280,1px 0 0 #5b6068;z-index:3}
+@media(max-width:760px){#badgeStage{padding-top:125px}}
+.badge-faces{position:absolute;inset:0;display:block;transform-style:preserve-3d;transition:transform .65s var(--e-out)}
+#crewBadge[aria-pressed="true"] .badge-faces{transform:rotateY(180deg)}
+#crewBadge canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:22px;backface-visibility:hidden}
+#badgeBack{transform:rotateY(180deg)}
+body.crew-active #crewNav,body.crew-active #teamHint,body.crew-active #printing,body.crew-active #crewProgress{position:absolute}
+#crewNav{bottom:48px}#teamHint{bottom:20px}#crewBadge:focus-visible,#crewNav button:focus-visible{outline:2px solid var(--acid);outline-offset:6px}
+@media(max-width:760px){#team{padding:80px 22px 100px}#crewPage{grid-template-columns:1fr;gap:24px;min-height:0}.crew-copy{text-align:center}.crew-copy h2{font-size:28px}.crew-copy h3{font-size:30px;margin-top:12px}.crew-copy .sub{font-size:13px}.crew-description{display:none}#crewBadge{width:min(68vw,290px)}#crewNav,body.crew-active #crewNav{bottom:24px;gap:6px}#crewNav .btn{min-width:46px;padding:8px 10px;font-size:9px}#crewDots{gap:6px}#crewDots button{width:6px;height:6px}#teamHint{display:none}#printing{top:68px}}
+@media(prefers-reduced-motion:reduce){.badge-faces{transition:none}}
 
 /* ================= FOOTER ================= */
 footer{position:relative;z-index:2;background:var(--paper);border-top:1px solid var(--line2);padding:var(--s18) var(--pad) var(--s12)}
@@ -229,6 +305,7 @@ footer .mail:active{transform:scale(.98)}
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
   html{scroll-behavior:auto}
   [data-reveal]{opacity:1;transform:none}
+  #sectionWheel .wheel-item{filter:none!important}
 }
 </style>
 </head>
@@ -255,19 +332,41 @@ footer .mail:active{transform:scale(.98)}
 <header class="hdr">
   <a class="logo" href="#hero">Roboto<sup>®</sup></a>
   <nav aria-label="Primary">
+    <a href="#hero">Intro</a>
     <a href="#hardware">Hardware</a>
-    <a href="#math">Mathematics</a>
+    <a href="#math">Math</a>
     <a href="#game">Simulator</a>
     <a href="#code">Firmware</a>
     <a href="#team">Crew</a>
+    <a href="#contact">Contact</a>
   </nav>
   <span class="live"><i aria-hidden="true"></i>RB/25 online</span>
 </header>
 
 <div id="explodeTag">Teardown — <b>0%</b></div>
 <div id="pins"></div>
+<aside id="sectionWheel" hidden style="display:none" aria-hidden="true">
+  <button class="wheel-item" role="option" aria-selected="true" data-target="landing">01&nbsp; Landing</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="hero">02&nbsp; Intro</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="hardware">03&nbsp; Hardware</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="math">04&nbsp; Mathematics</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="game">05&nbsp; Simulator</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="code">06&nbsp; Firmware</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="team">07&nbsp; Crew</button>
+  <button class="wheel-item" role="option" aria-selected="false" data-target="contact">08&nbsp; Contact</button>
+  <span class="wheel-caption">Scroll · click · drag</span>
+</aside>
 
 <main>
+<section class="sec" id="landing" data-mode="landing">
+  <div class="landing-copy">
+    <p class="landing-kicker">Roboto® · RB/25 · Autonomous field unit</p>
+    <h1><span>MEET THE</span><span class="landing-outline">MAZE RUNNER.</span></h1>
+    <p class="landing-intro">A holonomic rover that reads the unknown, replans on the move, and never needs a joystick. Explore the machine, the math, and the team behind it.</p>
+    <div class="landing-actions"><a href="#hero">Explore the project</a><a href="#team">Meet the crew</a></div>
+  </div>
+  <p class="landing-caption">RB/25 · explore the project below</p>
+</section>
 <section class="sec" id="hero" data-mode="explore">
   <div class="sec-inner">
     <p class="kick" data-reveal>Roboto® field unit RB/25 — 5 kg payload, fully autonomous</p>
@@ -304,19 +403,19 @@ footer .mail:active{transform:scale(.98)}
     <blockquote>The shortest-looking route is not the fastest — cost, not distance, decides.</blockquote>
   </div>
   <div class="eqs">
-    <div class="eq wide"><span class="tag">EQ 01 — Holonomic forward kinematics</span><h3>Three omni wheels at 90° / 210° / 330°</h3>
+    <div class="eq border-glow-card wide"><span class="tag">EQ 01 — Holonomic forward kinematics</span><h3>Three omni wheels at 90° / 210° / 330°</h3>
       <div class="tex"><span class="tex" data-tex="\begin{bmatrix} v_{1}\\ v_{2}\\ v_{3} \end{bmatrix}=\begin{bmatrix} -\sin\theta_{1} & \cos\theta_{1} & R\\ -\sin\theta_{2} & \cos\theta_{2} & R\\ -\sin\theta_{3} & \cos\theta_{3} & R \end{bmatrix}\begin{bmatrix} \dot{x}\\ \dot{y}\\ \omega \end{bmatrix}"></span></div>
       <p>Each wheel contributes the body velocity projected on its roller axis plus the rotation term R·ω. Three independent equations, three unknowns — the base is fully holonomic.</p></div>
-    <div class="eq"><span class="tag">EQ 02 — Inverse kinematics</span><h3>Body twist to wheel speeds</h3>
+    <div class="eq border-glow-card"><span class="tag">EQ 02 — Inverse kinematics</span><h3>Body twist to wheel speeds</h3>
       <div class="tex"><span class="tex" data-tex="\begin{bmatrix} \dot{x}\\ \dot{y}\\ \omega \end{bmatrix}=\mathbf{J}^{-1}\mathbf{v},\qquad \det\mathbf{J}\neq 0"></span></div>
       <p>J is square and never singular for this roller placement, so any commanded twist maps to exact wheel speeds — sideways sprints while facing the goal are legal moves.</p></div>
-    <div class="eq"><span class="tag">EQ 03 — Planner · A*</span><h3>Optimal grid search</h3>
+    <div class="eq border-glow-card"><span class="tag">EQ 03 — Planner · A*</span><h3>Optimal grid search</h3>
       <div class="tex"><span class="tex" data-tex="f(n)=g(n)+h(n),\qquad h(n)=|x_{n}-x_{g}|+|y_{n}-y_{g}|"></span></div>
       <p>Manhattan h is admissible on the 4-connected grid, so the returned route is provably minimal — the benchmark every re-plan is measured against.</p></div>
-    <div class="eq"><span class="tag">EQ 04 — SLAM · occupancy update</span><h3>Bayes in log-odds form</h3>
+    <div class="eq border-glow-card"><span class="tag">EQ 04 — SLAM · occupancy update</span><h3>Bayes in log-odds form</h3>
       <div class="tex"><span class="tex" data-tex="l_{t}=l_{t-1}+\log\dfrac{P(\mathrm{occ}\mid z)}{P(\mathrm{free}\mid z)},\qquad P(\mathrm{occ}\mid z)=\dfrac{1}{1+e^{-l_{t}}}"></span></div>
       <p>Every LiDAR return nudges a cell by a fixed log-ratio, so one noisy ping can never rewrite the map; certainty saturates instead of compounding.</p></div>
-    <div class="eq wide"><span class="tag">EQ 05 — Control · PID heading loop</span><h3>Closing the loop at 100 Hz</h3>
+    <div class="eq border-glow-card wide"><span class="tag">EQ 05 — Control · PID heading loop</span><h3>Closing the loop at 100 Hz</h3>
       <div class="tex"><span class="tex" data-tex="u(t)=K_{p}\,e(t)+K_{i}\!\int_{0}^{t}\!e(\tau)\,d\tau+K_{d}\,\dfrac{de(t)}{dt}"></span></div>
       <p>Proportional kick, integral patience, derivative damping — u(t) becomes the ω command fed straight into the inverse kinematics block.</p></div>
   </div>
@@ -360,17 +459,36 @@ footer .mail:active{transform:scale(.98)}
   </div>
 </section>
 
-<section class="sec tall" id="team" data-mode="team">
-  <div class="stick"><div style="margin-top:auto;max-width:560px">
-    <p class="kick" data-reveal>05 — The crew</p>
-    <h2 data-reveal>Eight hands, <span class="ol">one rover.</span></h2>
-    <p class="sub" data-reveal>Real physics on every lanyard — gravity, inertia, cloth constraints. Grab a badge to swing it; click to flip it for contact details.</p>
-  </div></div>
-  <div id="teamHint">Drag to swing — click to flip</div>
+<section class="sec" id="team" data-mode="team">
+  <div id="crewPage">
+    <div class="crew-copy">
+      <p class="kick">05 — The crew · ID card showcase</p>
+      <h2>Eight hands, <span class="ol">one rover.</span></h2>
+      <h3 id="crewName">Vector</h3>
+      <p class="sub" id="crewRole">Team lead · Systems</p>
+      <p class="crew-description">Meet the people behind RB/25. Drag the green-strapped ID and release to watch it swing. Tap to flip, or use Next to slide to another member.</p>
+    </div>
+    <div id="badgeStage">
+      <svg id="badgeStrap" aria-hidden="true"><defs><pattern id="strapWeave" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 0H4M0 0V4" stroke="#181717" stroke-opacity=".12" stroke-width="1"/></pattern></defs><path id="strapBand" fill="none" stroke="var(--acid)" stroke-width="42"/><path id="strapTexture" fill="none" stroke="url(#strapWeave)" stroke-width="42"/><g id="strapRibbon"></g></svg>
+    <button id="crewBadge" type="button" aria-label="Flip Vector ID card" aria-pressed="false">
+      <span class="badge-clip" aria-hidden="true"></span><span class="badge-ring" aria-hidden="true"></span>
+      <span class="badge-faces"><canvas id="badgeFront" width="1024" height="1440" aria-hidden="true"></canvas><canvas id="badgeBack" width="1024" height="1440" aria-hidden="true"></canvas></span>
+    </button>
+    </div>
+  </div>
+  <div id="printing" aria-live="polite">Printing badge…</div>
+  <div id="crewNav">
+    <button class="btn" id="crewPrev" aria-label="Previous crew badge" disabled>‹ Prev</button>
+    <div id="crewDots" role="tablist" aria-label="Choose a crew badge"></div>
+    <span id="crewCount" aria-live="polite">01 / 08</span>
+    <button class="btn pri" id="crewNext" aria-label="Next crew badge">Next ›</button>
+  </div>
+  <div id="teamHint">Drag & release the ID · tap to flip · Prev / Next or ← / → to slide</div>
+  <div id="crewProgress" aria-hidden="true"><span></span></div>
 </section>
 </main>
 
-<footer data-mode="footer">
+<footer id="contact" data-mode="footer">
   <h2 class="giant">Put us in <span class="stroke">a maze.</span></h2>
   <a class="mail" href="mailto:hello@roboto.team">hello@roboto.team
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
@@ -420,9 +538,9 @@ const setStage=s=>{window.__stage=s;const el=document.getElementById('loadStage'
 
 async function loadThree(){
   const CDNS=[
-    'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js',
-    'https://unpkg.com/three@0.160.0/build/three.module.js',
-    'https://esm.sh/three@0.160.0'
+    'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js',
+    'https://unpkg.com/three@0.170.0/build/three.module.js',
+    'https://esm.sh/three@0.170.0'
   ];
   let lastErr;
   for(const url of CDNS){
@@ -480,6 +598,13 @@ function toast(m){
 const state={mode:'explore',e:0,teamE:0,time:0,mouse:{x:0,y:0},heroDriving:false,hover:null,hoverCell:null};
 const GM={x:34,z:-18};
 const TEAM={x:0,z:-58};
+const crewScroll={progress:0,t:0,index:0};
+let crewIndex=0,crewX=0,crewWheelLock=0,crewNavTarget=0;
+const wheelRow=18;
+const sectionWheel=document.getElementById('sectionWheel');
+const wheelItems=sectionWheel?[...sectionWheel.querySelectorAll('.wheel-item')]:[];
+const modeSecs=$$('[data-mode]');
+let wheelPosition=0,wheelTarget=0,wheelLast=performance.now(),sectionWheelRAF=null,wheelScrollLock=0;
 
 /* ============ renderer / scene — white studio ============ */
 const canvas=$('#gl');
@@ -525,6 +650,43 @@ function radialTex(inner,mid){
 }
 const glow=radialTex('rgba(255,255,255,1)','rgba(255,255,255,.4)');   /* for gray dust   */
 const shadow=radialTex('rgba(0,0,0,1)','rgba(0,0,0,.45)');            /* contact shadow  */
+
+/* Landing Ballpit: one shared renderer/context, theme-color physics spheres. */
+const ballCount=72,ballPit=new THREE.Group(),ballPitGeo=new THREE.SphereGeometry(1,16,12);
+const ballPitMat=new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:.22,metalness:.18,clearcoat:1,clearcoatRoughness:.12});
+const ballPitMesh=new THREE.InstancedMesh(ballPitGeo,ballPitMat,ballCount);ballPitMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+const ballPitPalette=[0xC5FF00,0x222222,0xD6FF4B,0x9BFF00,0xAEB3B6,0xEAFF00];
+const ballPitData=Array.from({length:ballCount},(_,i)=>({
+  x:i===0?0:(mul32(771+i)()-.5)*10.4,y:i===0?2.4:.5+mul32(991+i)()*4.2,z:i===0?0:(mul32(1199+i)()-.5)*1.2,
+  vx:0,vy:0,vz:0,r:i===0?.46:.12+mul32(1423+i)()*.12,color:ballPitPalette[i%ballPitPalette.length]
+}));
+ballPitData.forEach((ball,i)=>ballPitMesh.setColorAt(i,new THREE.Color(ball.color)));
+// Opening balloons removed: this legacy group is never added to the scene.
+ballPit.visible=false;
+const ballPitDummy=new THREE.Object3D(),ballPitRay=new THREE.Raycaster(),ballPitNdc=new THREE.Vector2(),ballPitPlane=new THREE.Plane(new THREE.Vector3(0,1,0),-2.4),ballPitTarget=new THREE.Vector3();
+function updateBallpit(dt){
+  const active=state.mode==='landing';ballPit.visible=active;if(!active)return;
+  ballPitNdc.set(state.mouse.x,-state.mouse.y);ballPitRay.setFromCamera(ballPitNdc,camera);
+  const cursorHit=ballPitRay.ray.intersectPlane(ballPitPlane,ballPitTarget);
+  if(!cursorHit)ballPitTarget.set(0,2.4,0);
+  const lead=ballPitData[0];lead.x+=(clamp(ballPitTarget.x,-5,5)-lead.x)*Math.min(1,dt*8);lead.y+=(clamp(ballPitTarget.y,0.55,4.8)-lead.y)*Math.min(1,dt*8);lead.z=0;
+  for(let i=1;i<ballCount;i++){
+    const a=ballPitData[i];a.vy-=.72*dt;a.vx*=.994;a.vy*=.997;a.vz*=.994;
+    a.x+=a.vx;a.y+=a.vy;a.z+=a.vz;
+    if(a.x-a.r< -5.5){a.x=-5.5+a.r;a.vx=Math.abs(a.vx)*.86;}if(a.x+a.r>5.5){a.x=5.5-a.r;a.vx=-Math.abs(a.vx)*.86;}
+    if(a.y-a.r<.35){a.y=.35+a.r;a.vy=Math.abs(a.vy)*.82;}if(a.y+a.r>5){a.y=5-a.r;a.vy=-Math.abs(a.vy)*.82;}
+    if(a.z-a.r<-.95){a.z=-.95+a.r;a.vz=Math.abs(a.vz)*.86;}if(a.z+a.r>.95){a.z=.95-a.r;a.vz=-Math.abs(a.vz)*.86;}
+    for(let j=0;j<i;j++){
+      const b=ballPitData[j],dx=a.x-b.x,dy=a.y-b.y,dz=a.z-b.z,dist=Math.hypot(dx,dy,dz)||.0001,min=a.r+b.r;
+      if(dist<min){const nx=dx/dist,ny=dy/dist,nz=dz/dist,overlap=(min-dist)*.5;a.x+=nx*overlap;a.y+=ny*overlap;a.z+=nz*overlap;
+        const impulse=(a.vx*nx+a.vy*ny+a.vz*nz);if(impulse<0){a.vx-=impulse*nx*1.45;a.vy-=impulse*ny*1.45;a.vz-=impulse*nz*1.45;}}
+    }
+    const dx=a.x-lead.x,dy=a.y-lead.y,dz=a.z-lead.z,dist=Math.hypot(dx,dy,dz)||.0001,min=a.r+lead.r;
+    if(dist<min){const nx=dx/dist,ny=dy/dist,nz=dz/dist,overlap=min-dist;a.x+=nx*overlap;a.y+=ny*overlap;a.z+=nz*overlap;a.vx+=nx*.018;a.vy+=ny*.018;a.vz+=nz*.018;}
+  }
+  for(let i=0;i<ballCount;i++){const b=ballPitData[i];ballPitDummy.position.set(b.x,b.y,b.z);ballPitDummy.scale.setScalar(b.r);ballPitDummy.updateMatrix();ballPitMesh.setMatrixAt(i,ballPitDummy.matrix);}
+  ballPitMesh.instanceMatrix.needsUpdate=true;
+}
 
 /* floor — white with hairline grid */
 {
@@ -967,20 +1129,17 @@ function updateGame(dt){
 
 /* ============ TEAM ISLAND — monochrome lanyards ============ */
 const CREW=[
-  ['Vector','Team lead · Systems','roboto.vector','roboto-vector','vector@roboto.dev'],
-  ['Nova','AI & path planning','roboto.nova','roboto-nova','nova@roboto.dev'],
-  ['Echo','Sensor fusion','roboto.echo','roboto-echo','echo@roboto.dev'],
-  ['Pixel','Perception & mapping','roboto.pixel','roboto-pixel','pixel@roboto.dev'],
-  ['Rax','Embedded firmware','roboto.rax','roboto-rax','rax@roboto.dev'],
-  ['Torque','Drive & chassis','roboto.torque','roboto-torque','torque@roboto.dev'],
-  ['Volta','Power & electronics','roboto.volta','roboto-volta','volta@roboto.dev'],
-  ['Axle','Test & field ops','roboto.axle','roboto-axle','axle@roboto.dev'],
+  {id:'01',name:'Vector',role:'Team lead · Systems',photo:'./photos/member1.jpg',strapColor:'#C5FF00',cardColor:'#1E1E1E',accent:'#C5FF00',emergency:'+91 98860 10001',stats:{runs:128,uptime:'99.2%',replans:47}},
+  {id:'02',name:'Nova',role:'AI & path planning',photo:'./photos/member2.jpg',strapColor:'#D6FF4B',cardColor:'#161616',accent:'#D6FF4B',emergency:'+91 98860 10002',stats:{runs:121,uptime:'98.7%',replans:63}},
+  {id:'03',name:'Echo',role:'Sensor fusion',photo:'./photos/member3.jpg',strapColor:'#9BFF00',cardColor:'#202020',accent:'#9BFF00',emergency:'+91 98860 10003',stats:{runs:117,uptime:'99.0%',replans:39}},
+  {id:'04',name:'Pixel',role:'Perception & mapping',photo:'./photos/member4.jpg',strapColor:'#EAFF00',cardColor:'#181818',accent:'#EAFF00',emergency:'+91 98860 10004',stats:{runs:133,uptime:'98.4%',replans:51}},
+  {id:'05',name:'Rax',role:'Embedded firmware',photo:'./photos/member5.jpg',strapColor:'#BEFF6B',cardColor:'#1B1B1B',accent:'#BEFF6B',emergency:'+91 98860 10005',stats:{runs:109,uptime:'98.9%',replans:44}},
+  {id:'06',name:'Torque',role:'Drive & chassis',photo:'./photos/member6.jpg',strapColor:'#F4FF78',cardColor:'#1D1D1D',accent:'#F4FF78',emergency:'+91 98860 10006',stats:{runs:126,uptime:'98.1%',replans:58}},
+  {id:'07',name:'Volta',role:'Power & electronics',photo:'./photos/member7.jpg',strapColor:'#C8FF2E',cardColor:'#191919',accent:'#C8FF2E',emergency:'+91 98860 10007',stats:{runs:114,uptime:'99.1%',replans:41}},
+  {id:'08',name:'Axle',role:'Test & field ops',photo:'./photos/member8.jpg',strapColor:'#E2FF55',cardColor:'#1C1C1C',accent:'#E2FF55',emergency:'+91 98860 10008',stats:{runs:131,uptime:'98.6%',replans:52}}
 ];
 {
-  const d2=new THREE.Mesh(new THREE.CircleGeometry(7.5,48),new THREE.MeshStandardMaterial({color:0xEFEFEF,roughness:.95,metalness:0}));
-  d2.rotation.x=-Math.PI/2;d2.position.set(TEAM.x,.02,TEAM.z);scene.add(d2);
-  bx(scene,11.6,.09,.09,MAT.al,TEAM.x,2.82,TEAM.z);
-  bx(scene,11.6,.02,.02,MAT.led,TEAM.x,2.74,TEAM.z+.06);
+  // Crew is a standalone ID showcase: no display deck, rod, or hanging hardware.
 }
 class Rope{
   constructor(x,y,z,segs,len){
@@ -988,81 +1147,63 @@ class Rope{
     for(let i=0;i<=segs;i++){const yy=y-len*i/segs;this.p.push({x,y:yy,z,px:x,py:yy,pz:z});}
   }
   step(dt){
-    const g=-38*dt*dt;
-    for(let i=1;i<this.p.length;i++){
-      const p=this.p[i];
-      const vx=(p.x-p.px)*.984,vy=(p.y-p.py)*.984,vz=(p.z-p.pz)*.984;
-      p.px=p.x;p.py=p.y;p.pz=p.z;
-      p.x+=vx;p.y+=vy+g;p.z+=vz;
-    }
-    for(let k=0;k<6;k++){
-      this.p[0].x=this.pin.x;this.p[0].y=this.pin.y;this.p[0].z=this.pin.z;
-      for(let i=0;i<this.segs;i++){
-        const a=this.p[i],b=this.p[i+1];
-        let dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z;
-        const d=Math.hypot(dx,dy,dz)||1e-6,diff=(d-this.segLen)/d*.5;
-        dx*=diff;dy*=diff;dz*=diff;
-        if(i===0){b.x-=dx*2;b.y-=dy*2;b.z-=dz*2;}
-        else{a.x+=dx;a.y+=dy;a.z+=dz;b.x-=dx;b.y-=dy;b.z-=dz;}
+    const steps=Math.min(48,Math.max(1,Math.ceil(dt*960))),h=dt/steps,g=-38*h*h;
+    for(let s=0;s<steps;s++){
+      for(let i=1;i<this.p.length;i++){
+        const p=this.p[i];
+        const vx=(p.x-p.px)*Math.pow(.984,h*60),vy=(p.y-p.py)*Math.pow(.984,h*60),vz=(p.z-p.pz)*Math.pow(.984,h*60);
+        p.px=p.x;p.py=p.y;p.pz=p.z;
+        p.x+=vx;p.y+=vy+g;p.z+=vz;
+      }
+      for(let k=0;k<2;k++){
+        this.p[0].x=this.pin.x;this.p[0].y=this.pin.y;this.p[0].z=this.pin.z;
+        for(let i=0;i<this.segs;i++){
+          const a=this.p[i],b=this.p[i+1];
+          let dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z;
+          const d=Math.hypot(dx,dy,dz)||1e-6,diff=(d-this.segLen)/d*.5;
+          dx*=diff;dy*=diff;dz*=diff;
+          if(i===0){b.x-=dx*2;b.y-=dy*2;b.z-=dz*2;}
+          else{a.x+=dx;a.y+=dy;a.z+=dz;b.x-=dx;b.y-=dy;b.z-=dz;}
+        }
       }
     }
   }
 }
-/* crew card faces — white paper, black ink, grayscale photo */
+/* Faces are painted at 1024×1440 and reused by one persistent card. */
 function crewCanvas(m,i,back){
-  const c=document.createElement('canvas');c.width=256;c.height=384;const g=c.getContext('2d');
-  g.fillStyle='#FFFFFF';g.fillRect(0,0,256,384);
-  g.strokeStyle='rgba(0,0,0,.85)';g.lineWidth=3;
-  g.strokeRect(6,6,244,372);
-  /* lanyard slot */
-  g.fillStyle='#FFFFFF';g.fillRect(98,10,60,12);
-  g.strokeStyle='rgba(0,0,0,.6)';g.lineWidth=2;g.strokeRect(98,10,60,12);
-  const rr=(x,y,w,h)=>{g.beginPath();g.roundRect(x,y,w,h,8);};
+  const c=document.createElement('canvas');c.width=1024;c.height=1440;
+  const g=c.getContext('2d');g.scale(4,4);
+  const accent=m.accent||'#C5FF00';
+  const round=(x,y,w,h,r)=>{g.beginPath();g.roundRect(x,y,w,h,r);};
   if(!back){
-    g.textAlign='center';
-    g.font='500 12px "IBM Plex Mono", monospace';g.fillStyle='rgba(0,0,0,.55)';
-    g.fillText('Roboto® — crew',128,44);
-    g.font='500 11px "IBM Plex Mono", monospace';g.fillStyle='#000';
-    g.fillText('mem '+String(i+1).padStart(2,'0'),128,62);
-    rr(56,76,144,144);g.fillStyle='#F2F2F2';g.fill();
-    g.save();g.beginPath();g.roundRect(56,76,144,144,8);g.clip();
-    if(m._img){
-      try{g.filter='grayscale(1) contrast(1.05)';}catch(e){}
-      g.drawImage(m._img,56,76,144,144);
-      g.filter='none';
-    }else{
-      g.fillStyle='#E6E6E6';g.fillRect(56,76,144,144);
-      g.fillStyle='#000';g.font='900 44px Archivo, Arial, sans-serif';g.fillText(m[0][0],128,158);
-    }
-    g.restore();
-    g.strokeStyle='rgba(0,0,0,.5)';g.lineWidth=1.5;rr(56,76,144,144);g.stroke();
-    g.fillStyle='#000';g.font='900 22px Archivo, Arial, sans-serif';g.fillText(m[0],128,252);
-    g.font='400 10px "IBM Plex Mono", monospace';g.fillStyle='rgba(0,0,0,.55)';g.fillText(m[1],128,272);
-    /* barcode — black */
-    const r=mul32(i*77+3);let bx2=52;
-    for(let k=0;k<34;k++){const w=1+r()*3;g.fillStyle='#000';if(r()>.25)g.fillRect(bx2,320,w,22);bx2+=w+1+r()*2;}
-    g.font='400 9px "IBM Plex Mono", monospace';g.fillStyle='rgba(0,0,0,.55)';g.fillText('RB-25-'+String(i+1).padStart(2,'0'),128,362);
+    g.fillStyle=m.cardColor;g.fillRect(0,0,256,360);
+    g.strokeStyle=accent;g.lineWidth=1;round(7,7,242,346,11);g.stroke();
+    g.strokeStyle='rgba(255,255,255,.28)';g.lineWidth=1;g.strokeRect(98,8,60,12);
+    g.textAlign='center';g.fillStyle='rgba(255,255,255,.66)';g.font='500 8px "IBM Plex Mono",monospace';g.fillText('Roboto® — crew',128,37);
+    g.fillStyle=accent;g.font='500 7px "IBM Plex Mono",monospace';g.fillText('MEM '+m.id,128,51);
+    round(52,65,152,152,8);g.save();g.clip();g.fillStyle='#303030';g.fillRect(52,65,152,152);
+    if(m._img){g.filter='grayscale(1) contrast(1.07)';const side=Math.min(m._img.width,m._img.height);g.drawImage(m._img,(m._img.width-side)/2,(m._img.height-side)/2,side,side,52,65,152,152);g.filter='none';}
+    else{g.textAlign='center';g.fillStyle=accent;g.font='900 96px Archivo,Arial,sans-serif';g.fillText(m.name[0],128,174);}
+    g.restore();g.strokeStyle='rgba(255,255,255,.36)';g.lineWidth=1;round(52,65,152,152,8);g.stroke();
+    g.textAlign='center';g.fillStyle='#fff';g.font='900 23px Archivo,Arial,sans-serif';g.fillText(m.name,128,250);
+    g.fillStyle='rgba(255,255,255,.62)';g.font='400 8px "IBM Plex Mono",monospace';g.fillText(m.role,128,266);
+    const random=mul32(i*77+3);let x=30;
+    while(x<226){const w=1+random()*1.5;if(random()>.22){g.fillStyle='rgba(255,255,255,.8)';g.fillRect(x,302,Math.min(w,226-x),17);}x+=w+1+random();}
+    g.fillStyle='rgba(255,255,255,.55)';g.font='400 7px "IBM Plex Mono",monospace';g.fillText('RB-25-'+m.id,128,337);
+    g.fillStyle=accent;g.fillRect(10,344,236,6);
   }else{
-    g.fillStyle='#000';g.fillRect(6,6,244,5);
-    g.textAlign='center';
-    g.font='500 10px "IBM Plex Mono", monospace';g.fillStyle='rgba(0,0,0,.55)';
-    g.fillText('Roboto® — crew · contact',128,44);
-    g.fillStyle='#000';g.font='900 22px Archivo, Arial, sans-serif';g.fillText(m[0],128,76);
-    g.font='500 10px "IBM Plex Mono", monospace';g.fillText(m[1],128,96);
-    const rows=[['IG','@'+m[2]],['GH',m[3]],['Mail',m[4]]];
-    rows.forEach((r2,k)=>{
-      const y=132+k*52;
-      rr(24,y,208,40);g.fillStyle='#FFFFFF';g.fill();
-      g.strokeStyle='rgba(0,0,0,.3)';g.lineWidth=1;g.stroke();
-      g.textAlign='left';
-      g.fillStyle='rgba(0,0,0,.55)';g.font='500 9px "IBM Plex Mono", monospace';g.fillText(r2[0],36,y+17);
-      let fs=11;g.font='500 '+fs+'px "IBM Plex Mono", monospace';
-      while(g.measureText(r2[1]).width>150&&fs>7){fs--;g.font='500 '+fs+'px "IBM Plex Mono", monospace';}
-      g.fillStyle='#000';g.fillText(r2[1],36,y+32);
-    });
-    g.textAlign='center';
-    g.font='400 9px "IBM Plex Mono", monospace';g.fillStyle='rgba(0,0,0,.45)';
-    g.fillText('tap to flip back',128,352);
+    g.fillStyle='#101010';g.fillRect(0,0,256,360);g.fillStyle=accent;g.fillRect(0,0,256,7);
+    g.strokeStyle='rgba(255,255,255,.18)';g.strokeRect(9,9,238,342);
+    g.textAlign='center';g.fillStyle=accent;g.font='900 64px Archivo,Arial,sans-serif';g.fillText('R®',128,88);
+    g.fillStyle='#fff';g.font='500 8px "IBM Plex Mono",monospace';g.fillText(m.name.toUpperCase()+' · '+m.role.toUpperCase(),128,110);
+    g.fillStyle='rgba(255,255,255,.52)';g.font='500 7px "IBM Plex Mono",monospace';g.fillText('EMERGENCY CONTACT',128,145);
+    g.fillStyle='#fff';g.font='900 17px Archivo,Arial,sans-serif';g.fillText(m.emergency,128,171);
+    const rows=[['MAZE RUNS',String(m.stats.runs)],['UPTIME',m.stats.uptime],['LIVE REPLANS',String(m.stats.replans)]];
+    rows.forEach((row,k)=>{const y=207+k*36;g.strokeStyle='rgba(255,255,255,.18)';g.beginPath();g.moveTo(35,y-13);g.lineTo(221,y-13);g.stroke();
+      g.textAlign='left';g.fillStyle='rgba(255,255,255,.58)';g.font='500 7px "IBM Plex Mono",monospace';g.fillText(row[0],38,y+2);
+      g.textAlign='right';g.fillStyle=accent;g.font='600 10px "IBM Plex Mono",monospace';g.fillText(row[1],218,y+2);});
+    g.textAlign='center';g.fillStyle='rgba(255,255,255,.5)';g.font='400 7px "IBM Plex Mono",monospace';g.fillText('TAP TO FLIP BACK',128,334);
+    g.fillStyle=accent;g.fillRect(10,347,236,4);
   }
   return c;
 }
@@ -1073,35 +1214,286 @@ function makeRibbon(n){
   for(let i=0;i<n-1;i++){const a=i*2;idx.push(a,a+2,a+1,a+1,a+2,a+3);}
   g.setIndex(idx);return g;
 }
-const lanyards=[];
-CREW.forEach((m,i)=>{
-  const x=TEAM.x+(i-3.5)*1.22;
-  const rope=new Rope(x,2.78,TEAM.z,8,1.32);
-  const ribGeo=makeRibbon(9);
-  const ribbon=new THREE.Mesh(ribGeo,new THREE.MeshBasicMaterial({color:0x161616,side:THREE.DoubleSide}));
-  scene.add(ribbon);
-  const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(new Array(9).fill(0).map(()=>new THREE.Vector3())),
-    new THREE.LineBasicMaterial({color:0x000000,transparent:true,opacity:.3}));
-  scene.add(line);
-  const cg=new THREE.Group();scene.add(cg);
-  const texF=new THREE.CanvasTexture(crewCanvas(m,i,false));
-  const texB=new THREE.CanvasTexture(crewCanvas(m,i,true));
-  texF.colorSpace=texB.colorSpace=THREE.SRGBColorSpace;
-  const side=new THREE.MeshStandardMaterial({color:0xF2F2F2,roughness:.6});
-  const card=new THREE.Mesh(new THREE.BoxGeometry(.62,.92,.03),
-    [side,side,side,side,new THREE.MeshBasicMaterial({map:texF}),new THREE.MeshBasicMaterial({map:texB})]);
-  card.position.y=-.44;cg.add(card);
-  const rec={m,i,rope,ribGeo,ribbon,line,cg,card,flipped:false,grabbed:false,phase:i*.9};
-  m._img=null;
-  const img=new Image();img.crossOrigin='anonymous';
-  img.onload=()=>{m._img=img;texF.image=crewCanvas(m,i,false);texF.needsUpdate=true;};
-  img.src='https://picsum.photos/seed/roboto-crew-'+(i+1)+'/300/300.jpg';
-  rec.redraw=()=>{texF.image=crewCanvas(m,i,false);texF.needsUpdate=true;texB.image=crewCanvas(m,i,true);texB.needsUpdate=true;};
-  card.userData.lanyard=rec;
-  lanyards.push(rec);
+/* One card per frame — Next/Prev buttons (and sideways scroll) cycle the crew.
+   Behaviour ported from the React Bits <Lanyard /> component: the badge hangs
+   from a clamp, swings under gravity, and can be dragged or flipped. */
+const crewRoot=new THREE.Group(); // Legacy badge geometry is not attached to the scene.
+
+const crewRope=new Rope(TEAM.x,2.78,TEAM.z,4,1.32);
+const crewRibGeo=makeRibbon(5);
+const crewRibbon=new THREE.Mesh(crewRibGeo,new THREE.MeshBasicMaterial({color:0x161616,side:THREE.DoubleSide}));
+crewRoot.add(crewRibbon);
+const crewLine=new THREE.Line(new THREE.BufferGeometry().setFromPoints(new Array(5).fill(0).map(()=>new THREE.Vector3())),
+  new THREE.LineBasicMaterial({color:0x000000,transparent:true,opacity:.3}));
+crewRoot.add(crewLine);
+const crewCg=new THREE.Group();crewRoot.add(crewCg);
+
+/* clamp + ring, React Bits style */
+const clampMat=new THREE.MeshStandardMaterial({color:0xd9dce2,metalness:1,roughness:.16});
+const crewRing=new THREE.Mesh(new THREE.TorusGeometry(.09,.012,16,44),clampMat);
+crewRing.position.set(TEAM.x,2.72,TEAM.z);crewRing.rotation.y=Math.PI/2-.7;crewRoot.add(crewRing);
+bx(crewRoot,.19,.06,.03,clampMat,TEAM.x,2.63,TEAM.z);
+
+const crewTexF=new THREE.CanvasTexture(crewCanvas(CREW[0],0,false));
+const crewTexB=new THREE.CanvasTexture(crewCanvas(CREW[0],0,true));
+crewTexF.colorSpace=crewTexB.colorSpace=THREE.SRGBColorSpace;
+const crewWidth=.64,crewHeight=.90,crewDepth=.018;
+function roundedSlotCard(){
+  const shape=new THREE.Shape(),x=-crewWidth/2,y=-crewHeight/2,r=.035;
+  shape.moveTo(x+r,y);shape.lineTo(-x-r,y);shape.quadraticCurveTo(-x,y,-x,y+r);shape.lineTo(-x,y+crewHeight-r);shape.quadraticCurveTo(-x,y+crewHeight,-x-r,y+crewHeight);shape.lineTo(x+r,y+crewHeight);shape.quadraticCurveTo(x,y+crewHeight,x,y+crewHeight-r);shape.lineTo(x,y+r);shape.quadraticCurveTo(x,y,x+r,y);
+  const slot=new THREE.Path(),sw=.16,sh=.026,sy=crewHeight/2-.095,sr=sh/2;
+  slot.moveTo(-sw/2+sr,sy-sh/2);slot.lineTo(sw/2-sr,sy-sh/2);slot.quadraticCurveTo(sw/2,sy-sh/2,sw/2,sy-sh/2+sr);slot.lineTo(sw/2,sy+sh/2-sr);slot.quadraticCurveTo(sw/2,sy+sh/2,sw/2-sr,sy+sh/2);slot.lineTo(-sw/2+sr,sy+sh/2);slot.quadraticCurveTo(-sw/2,sy+sh/2,-sw/2,sy+sh/2-sr);slot.lineTo(-sw/2,sy-sh/2+sr);slot.quadraticCurveTo(-sw/2,sy-sh/2,-sw/2+sr,sy-sh/2);
+  shape.holes.push(slot);
+  const body=new THREE.ExtrudeGeometry(shape,{depth:crewDepth,bevelEnabled:true,bevelThickness:.006,bevelSize:.006,bevelSegments:3,curveSegments:8});body.translate(0,0,-crewDepth/2);
+  const face=new THREE.ShapeGeometry(shape,16),pos=face.getAttribute('position'),uv=face.getAttribute('uv');
+  for(let n=0;n<pos.count;n++)uv.setXY(n,(pos.getX(n)+crewWidth/2)/crewWidth,(pos.getY(n)+crewHeight/2)/crewHeight);
+  uv.needsUpdate=true;return{body,face};
+}
+const crewGeo=roundedSlotCard();
+const crewEdge=new THREE.MeshPhysicalMaterial({color:0xdddddd,roughness:.3,metalness:.18,clearcoat:.8});
+const crewFrontMat=new THREE.MeshBasicMaterial({map:crewTexF,side:THREE.DoubleSide});
+const crewBackMat=new THREE.MeshBasicMaterial({map:crewTexB,side:THREE.DoubleSide});
+const crewBodyMesh=new THREE.Mesh(crewGeo.body,crewEdge);
+const crewFront=new THREE.Mesh(crewGeo.face,crewFrontMat);crewFront.position.z=crewDepth/2+.0065;
+const crewBack=new THREE.Mesh(crewGeo.face.clone(),crewBackMat);crewBack.position.z=-crewDepth/2-.0065;crewBack.rotation.y=Math.PI;
+const crewCard=new THREE.Group();crewCard.add(crewBodyMesh,crewFront,crewBack);crewCard.position.y=-.44;crewCg.add(crewCard);
+crewCard.userData.lanyard=null;
+const lanyard={rope:crewRope,ribGeo:crewRibGeo,line:crewLine,cg:crewCg,card:crewCard,flipped:false,grabbed:false,phase:0};
+crewCard.userData.lanyard=lanyard;
+crewBodyMesh.userData.lanyard=crewFront.userData.lanyard=crewBack.userData.lanyard=lanyard;
+const lanyards=[lanyard];
+
+function paintCrew(){
+  const m=CREW[crewIndex];
+  document.getElementById('badgeFront').getContext('2d').drawImage(crewCanvas(m,crewIndex,false),0,0);
+  document.getElementById('badgeBack').getContext('2d').drawImage(crewCanvas(m,crewIndex,true),0,0);
+  document.getElementById('crewName').textContent=m.name;
+  document.getElementById('crewRole').textContent=m.role;
+  document.getElementById('crewBadge').setAttribute('aria-label','Flip '+m.name+' ID card');
+  document.documentElement.style.setProperty('--acid',m.accent);
+}
+const crewCountEl=document.getElementById('crewCount');
+const crewDotsEl=document.getElementById('crewDots');
+const crewPrevBtn=document.getElementById('crewPrev');
+const crewNextBtn=document.getElementById('crewNext');
+const crewProgressEl=document.querySelector('#crewProgress span');
+const printingEl=document.getElementById('printing');
+let crewPrintToken=0,crewSlideToken=0;
+function syncCrewControls(){
+  if(crewCountEl)crewCountEl.textContent=String(crewIndex+1).padStart(2,'0')+' / '+String(CREW.length).padStart(2,'0');
+  if(crewPrevBtn)crewPrevBtn.disabled=crewIndex===0;
+  if(crewNextBtn)crewNextBtn.disabled=crewIndex===CREW.length-1;
+  if(crewDotsEl)[...crewDotsEl.children].forEach((dot,i)=>{dot.setAttribute('aria-selected',String(i===crewIndex));dot.tabIndex=i===crewIndex?0:-1;});
+}
+if(crewDotsEl){
+  CREW.forEach((member,i)=>{
+    const dot=document.createElement('button');dot.type='button';dot.setAttribute('role','tab');dot.setAttribute('aria-label','Show '+member.name+' ID card');dot.setAttribute('aria-selected',String(i===0));dot.tabIndex=i===0?0:-1;
+    dot.addEventListener('click',()=>scrollToCrewIndex(i));crewDotsEl.appendChild(dot);
+  });
+}
+const crewPage=document.getElementById('crewPage');
+const crewBadge=document.getElementById('crewBadge');
+let crewTransition=null;
+// A freely draggable rigid-looking ID with a damped spring and release momentum.
+// Green woven strap: four Verlet segments attached to the moving card clip.
+const badgeMotion={x:0,y:0,vx:0,vy:0,angle:0,spin:0,twist:0,twistFrom:0,twistTarget:0,flipTime:0,drag:null,raf:0,last:0,visible:true};
+const ribbonSlices=Array.from({length:72},()=>{
+  const face=document.createElementNS('http://www.w3.org/2000/svg','path');
+  face.style.pointerEvents='none';document.getElementById('strapRibbon').appendChild(face);
+  return face;
 });
+let suppressBadgeClick=false;
+const strapNodes=Array.from({length:5},()=>({x:0,y:0,px:0,py:0}));
+let strapPlaced=false;
+const badgeStage=document.getElementById('badgeStage');
+function updateBadgeStrap(dt){
+  const w=badgeStage.clientWidth,top=crewBadge.offsetTop;
+  const ax=w/2,ay=0,angle=badgeMotion.angle*Math.PI/180;
+  const ex=ax+badgeMotion.x+Math.sin(angle)*29,ey=top+badgeMotion.y-Math.cos(angle)*29;
+  const length=(top-29)/4;
+  if(!strapPlaced){strapNodes.forEach((p,i)=>Object.assign(p,{x:ax,y:ay+i*length,px:ax,py:ay+i*length}));strapPlaced=true;}
+  const steps=Math.max(1,Math.ceil(dt*960)),h=dt/steps;
+  for(let s=0;s<steps;s++){
+    for(let i=1;i<4;i++){const p=strapNodes[i],vx=(p.x-p.px)*Math.exp(-4*h),vy=(p.y-p.py)*Math.exp(-4*h);p.px=p.x;p.py=p.y;p.x+=vx;p.y+=vy+1200*h*h;}
+    for(let k=0;k<4;k++){
+      Object.assign(strapNodes[0],{x:ax,y:ay});Object.assign(strapNodes[4],{x:ex,y:ey});
+      for(let i=0;i<4;i++){const a=strapNodes[i],b=strapNodes[i+1],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,f=(d-length)/d;
+        const wa=i===0?0:1,wb=i===3?0:1,total=wa+wb;
+        a.x+=dx*f*wa/total;a.y+=dy*f*wa/total;b.x-=dx*f*wb/total;b.y-=dy*f*wb/total;
+      }
+    }
+  }
+  strapNodes[0].x=ax;strapNodes[0].y=ay;strapNodes[4].x=ex;strapNodes[4].y=ey;
+  const p=strapNodes;let path=`M ${p[0].x} ${p[0].y}`;
+  for(let i=0;i<4;i++){const a=p[Math.max(0,i-1)],b=p[i],c=p[i+1],d=p[Math.min(4,i+2)];path+=` C ${b.x+(c.x-a.x)/6} ${b.y+(c.y-a.y)/6},${c.x-(d.x-b.x)/6} ${c.y-(d.y-b.y)/6},${c.x} ${c.y}`;}
+  // Project a ribbon whose cross-section rotates continuously from the fixed
+  // anchor to the clip. A half-turn pinches at its middle, like woven fabric.
+  document.getElementById('strapBand').setAttribute('d',path);
+  document.getElementById('strapBand').style.stroke='transparent';
+  document.getElementById('strapTexture').style.display='none';
+  const sample=t=>{
+    const f=Math.min(t*4,3.999999),i=Math.floor(f),u=f-i;
+    const a=p[Math.max(0,i-1)],b=p[i],c=p[i+1],d=p[Math.min(4,i+2)];
+    const coordinate=k=>.5*((2*b[k])+(-a[k]+c[k])*u+(2*a[k]-5*b[k]+4*c[k]-d[k])*u*u+(-a[k]+3*b[k]-3*c[k]+d[k])*u*u*u);
+    const x=coordinate('x'),y=coordinate('y');
+    const dx=c.x-b.x,dy=c.y-b.y,l=Math.hypot(dx,dy)||1;
+    const width=21*Math.cos(badgeMotion.twist*t);
+    return {left:[x-dy/l*width,y+dx/l*width],right:[x+dy/l*width,y-dx/l*width]};
+  };
+  ribbonSlices.forEach((face,i)=>{
+    const a=sample(i/72),b=sample((i+1)/72);
+    face.setAttribute('d',`M ${a.left} L ${a.right} L ${b.right} L ${b.left} Z`);
+    face.setAttribute('fill','var(--acid)');
+    // Darker edge-on fibers make the twist legible, including its back side.
+    face.style.filter=`brightness(${.55+.45*Math.abs(Math.cos(badgeMotion.twist*(i+.5)/72))})`;
+    face.setAttribute('stroke','#181717');face.setAttribute('stroke-opacity','.13');face.setAttribute('stroke-width','.5');
+  });
+  document.querySelector('.badge-clip').style.transform=`rotateY(${badgeMotion.twist}rad)`;
+  document.querySelector('.badge-ring').style.transform=`rotateY(${badgeMotion.twist*.65}rad)`;
+}
+function renderBadgeMotion(){
+  crewBadge.style.transform=`translate3d(${badgeMotion.x}px,${badgeMotion.y}px,0) rotateZ(${badgeMotion.angle}deg) rotateX(${clamp(-badgeMotion.y*.07,-12,12)}deg)`;
+}
+function runBadgePhysics(now){
+  badgeMotion.raf=0;
+  if(!badgeMotion.visible||document.hidden)return;
+  const dt=Math.min(.032,Math.max(0,(now-badgeMotion.last)/1000));badgeMotion.last=now;
+  if(!badgeMotion.drag){
+    const steps=Math.max(1,Math.ceil(dt*240)),h=dt/steps;
+    for(let i=0;i<steps;i++){
+      const breeze=REDUCE?0:Math.sin(now*.0011)*4;
+      badgeMotion.vx+=(-22*badgeMotion.x-5.8*badgeMotion.vx+breeze)*h;
+      badgeMotion.vy+=(-28*badgeMotion.y-6.4*badgeMotion.vy)*h;
+      badgeMotion.spin+=(-18*badgeMotion.angle-5.2*badgeMotion.spin+badgeMotion.vx*.06)*h;
+      badgeMotion.x+=badgeMotion.vx*h;badgeMotion.y+=badgeMotion.vy*h;badgeMotion.angle+=badgeMotion.spin*h;
+    }
+    renderBadgeMotion();
+  }
+  const flipProgress=REDUCE?1:clamp((now-badgeMotion.flipTime)/650,0,1);
+  badgeMotion.twist=lerp(badgeMotion.twistFrom,badgeMotion.twistTarget,1-Math.pow(1-flipProgress,3));
+  updateBadgeStrap(dt);
+  const moving=Math.abs(badgeMotion.x)+Math.abs(badgeMotion.y)+Math.abs(badgeMotion.vx)+Math.abs(badgeMotion.vy)+Math.abs(badgeMotion.spin)>.1;
+  if(!REDUCE||moving||badgeMotion.drag||flipProgress<1)badgeMotion.raf=requestAnimationFrame(runBadgePhysics);
+}
+function startBadgePhysics(){if(!badgeMotion.raf&&badgeMotion.visible&&!document.hidden){badgeMotion.last=performance.now();badgeMotion.raf=requestAnimationFrame(runBadgePhysics);}}
+function resetBadgeMotion(){strapPlaced=false;Object.assign(badgeMotion,{x:0,y:0,vx:0,vy:0,angle:0,spin:0,twist:0,twistFrom:0,twistTarget:0,flipTime:0,drag:null});renderBadgeMotion();updateBadgeStrap(0);}
+function grabBadge(e){
+  if(e.button>0||crewTransition)return;
+  suppressBadgeClick=false;
+  badgeMotion.drag={id:e.pointerId,x:e.clientX,y:e.clientY,ox:badgeMotion.x,oy:badgeMotion.y,lastX:e.clientX,lastY:e.clientY,time:performance.now(),start:performance.now(),moved:0};
+  crewBadge.style.cursor='grabbing';startBadgePhysics();
+}
+crewBadge.addEventListener('pointerdown',grabBadge);
+document.getElementById('strapBand').addEventListener('pointerdown',grabBadge);
+addEventListener('pointermove',e=>{
+  const d=badgeMotion.drag;if(!d||d.id!==e.pointerId)return;
+  const dx=e.clientX-d.x,dy=e.clientY-d.y;
+  d.moved=Math.max(d.moved,Math.hypot(dx,dy));
+  // Leave vertical touch gestures to browser scrolling; capture horizontal drags.
+  if(e.pointerType==='touch'&&d.moved>7&&Math.abs(dy)>Math.abs(dx)&&!crewBadge.hasPointerCapture(e.pointerId)){badgeMotion.drag=null;return;}
+  if(d.moved>7&&!crewBadge.hasPointerCapture(e.pointerId))crewBadge.setPointerCapture(e.pointerId);
+  const now=performance.now(),dt=Math.max(.008,(now-d.time)/1000);
+  badgeMotion.vx=clamp((e.clientX-d.lastX)/dt,-900,900);badgeMotion.vy=clamp((e.clientY-d.lastY)/dt,-900,900);
+  badgeMotion.x=clamp(d.ox+dx,-innerWidth*.25,innerWidth*.25);badgeMotion.y=clamp(d.oy+dy,-100,100);
+  badgeMotion.angle=clamp(dx*.08,-22,22);badgeMotion.spin=badgeMotion.vx*.08;
+  d.lastX=e.clientX;d.lastY=e.clientY;d.time=now;renderBadgeMotion();
+});
+function releaseBadge(e){
+  const d=badgeMotion.drag;if(!d||d.id!==e.pointerId)return;
+  suppressBadgeClick=d.moved>=7||performance.now()-d.start>=450||e.type==='pointercancel';
+  if(performance.now()-d.time>100){badgeMotion.vx=0;badgeMotion.vy=0;}
+  badgeMotion.drag=null;crewBadge.style.cursor='grab';
+  if(crewBadge.hasPointerCapture(e.pointerId))crewBadge.releasePointerCapture(e.pointerId);
+  startBadgePhysics();
+}
+addEventListener('pointerup',releaseBadge);addEventListener('pointercancel',releaseBadge);
+crewBadge.addEventListener('click',e=>{
+  if(e.detail&&suppressBadgeClick){suppressBadgeClick=false;return;}
+  if(crewTransition)return;
+  const flipped=crewBadge.getAttribute('aria-pressed')!=='true';
+  crewBadge.setAttribute('aria-pressed',String(flipped));
+  badgeMotion.twistFrom=badgeMotion.twist;
+  badgeMotion.twistTarget=flipped?Math.PI:0;
+  badgeMotion.flipTime=performance.now();
+  startBadgePhysics();
+});
+const badgeObserver=new IntersectionObserver(([entry])=>{badgeMotion.visible=entry.isIntersecting;if(badgeMotion.visible)startBadgePhysics();else{cancelAnimationFrame(badgeMotion.raf);badgeMotion.raf=0;}},{threshold:.01});
+badgeObserver.observe(crewBadge);
+document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(badgeMotion.raf);badgeMotion.raf=0;}else startBadgePhysics();});
+addEventListener('pagehide',()=>{cancelAnimationFrame(badgeMotion.raf);badgeMotion.raf=0;});
+addEventListener('pageshow',startBadgePhysics);
+function scrollToCrewIndex(i){
+  const target=clamp(Math.round(i),0,CREW.length-1);
+  if(target===crewIndex||crewTransition||badgeMotion.drag)return;
+  const direction=target>crewIndex?1:-1;
+  const activate=()=>{
+    crewIndex=target;crewNavTarget=target;
+    resetBadgeMotion();
+    crewBadge.setAttribute('aria-pressed','false');
+    paintCrew();syncCrewControls();
+    crewProgressEl.style.transform='scaleX('+(target/(CREW.length-1))+')';
+  };
+  if(REDUCE){activate();return;}
+  crewTransition=crewPage.animate([{transform:'translateX(0)',opacity:1},{transform:'translateX('+(-direction*innerWidth)+'px)',opacity:0}],{duration:240,easing:'cubic-bezier(.55,0,1,.45)',fill:'forwards'});
+  crewTransition.onfinish=()=>{
+    crewTransition.cancel();activate();
+    crewTransition=crewPage.animate([{transform:'translateX('+(direction*innerWidth)+'px)',opacity:0},{transform:'translateX(0)',opacity:1}],{duration:460,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'});
+    crewTransition.onfinish=()=>{crewTransition.cancel();crewTransition=null;};
+  };
+}
+if(crewNextBtn)crewNextBtn.addEventListener('click',()=>scrollToCrewIndex(Math.max(crewIndex,crewNavTarget)+1));
+if(crewPrevBtn)crewPrevBtn.addEventListener('click',()=>scrollToCrewIndex(Math.min(crewIndex,crewNavTarget)-1));
+addEventListener('keydown',e=>{if(state.mode!=='team'||e.target.closest?.('input,textarea'))return;if(e.key==='ArrowRight'){e.preventDefault();scrollToCrewIndex(crewIndex+1);}else if(e.key==='ArrowLeft'){e.preventDefault();scrollToCrewIndex(crewIndex-1);}});
+let swipeStart=null,swipeLocked=false;
+const swipeStage=document.getElementById('crewPage');
+if(swipeStage){
+  swipeStage.addEventListener('pointerdown',e=>{swipeStart={x:e.clientX,y:e.clientY,id:e.pointerId};swipeLocked=!!badgeMotion.drag||e.target.closest('#crewBadge')!==null;});
+  swipeStage.addEventListener('pointerup',e=>{if(!swipeStart)return;const dx=e.clientX-swipeStart.x,dy=e.clientY-swipeStart.y;if(!swipeLocked&&Math.abs(dx)>=70&&Math.abs(dx)>Math.abs(dy)*1.25)scrollToCrewIndex(crewIndex+(dx<0?1:-1));swipeStart=null;swipeLocked=false;});
+  swipeStage.addEventListener('pointercancel',()=>{swipeStart=null;swipeLocked=false;});
+}
+function syncSectionWheel(index){
+  if(!sectionWheel)return;
+  const bounded=clamp(index,0,wheelItems.length-1);
+  if(bounded===wheelTarget)return;
+  wheelItems.forEach((item,i)=>{item.setAttribute('aria-selected',String(i===bounded));item.tabIndex=i===bounded?0:-1;});
+  wheelTarget=bounded;
+  startWheelAnimation();
+}
+function startWheelAnimation(){
+  if(sectionWheelRAF==null)sectionWheelRAF=requestAnimationFrame(updateSectionWheel);
+}
+function updateSectionWheel(now){
+  sectionWheelRAF=null;
+  const dt=Math.min(.05,Math.max(.001,(now-wheelLast)/1000));wheelLast=now;
+  wheelPosition+=(wheelTarget-wheelPosition)*(1-Math.exp(-dt/.18));
+  if(Math.abs(wheelTarget-wheelPosition)<.001)wheelPosition=wheelTarget;
+  wheelItems.forEach((el,i)=>{
+    const d=i-wheelPosition,dist=Math.abs(d),angle=clamp(d*8*Math.PI/180,-Math.PI/2,Math.PI/2),radius=wheelRow/(8*Math.PI/180);
+    const x=-radius*(1-Math.cos(angle)),y=radius*Math.sin(angle);
+    el.style.transform='translate('+x.toFixed(1)+'px,calc('+y.toFixed(1)+'px - 50%)) rotate('+(angle*180/Math.PI).toFixed(2)+'deg)';
+    el.style.opacity=String(Math.max(.12,1-dist*.29));el.style.filter=REDUCE?'none':'blur('+(Math.min(dist*1.1,3)).toFixed(1)+'px)';
+  });
+  if(Math.abs(wheelTarget-wheelPosition)>.001)sectionWheelRAF=requestAnimationFrame(updateSectionWheel);
+}
+function setCrew(i,dir,animate=true){
+  /* Keep every input in sync by routing it to the matching scroll stop. */
+  const next=clamp(Math.round(i),0,CREW.length-1);
+  if(next!==crewIndex)scrollToCrewIndex(next);
+}
+/* preload every member's face so cycling is instant */
+CREW.forEach((m,i)=>{
+  m._img=null;
+  const img=new Image();img.decoding='async';
+  img.onload=()=>{m._img=img;if(i===crewIndex)paintCrew();};
+  img.onerror=()=>{m._img=null;if(i===crewIndex)paintCrew();};
+  img.src=m.photo;
+});
+if(crewCountEl)crewCountEl.textContent='01 / '+String(CREW.length).padStart(2,'0');
+syncCrewControls();paintCrew();
 /* redraw card textures once webfonts arrive */
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>lanyards.forEach(L=>L.redraw&&L.redraw()));
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>paintCrew());
+
+/* Crew controls are wired to the section scroll position below: one state source. */
 function flip(rec){
   rec.flipped=!rec.flipped;
   const from=rec.card.rotation.y,to=rec.flipped?Math.PI:0;
@@ -1112,10 +1504,10 @@ function updateTeam(dt){
     const r=L.rope;
     if(L.grabbed&&grab&&grab.L===L){
       const e=r.p[r.p.length-1];
-      e.x=grab.w.x;e.y=Math.min(r.pin.y-.2,grab.w.y);e.z=grab.w.z;
+      e.x=grab.w.x-crewRoot.position.x;e.y=Math.min(r.pin.y-.2,grab.w.y);e.z=grab.w.z;
       e.px=e.x;e.py=e.y;e.pz=e.z;
     }else{
-      const m=r.p[4];m.x+=Math.sin(state.time*1.1+L.phase)*.0009;
+      const m=r.p[4];m.x+=Math.sin(state.time*1.1)*.0009;
     }
     r.step(dt);r.step(dt);
     const p=r.p,pe=p[p.length-1],pp=p[p.length-2];
@@ -1133,6 +1525,9 @@ function updateTeam(dt){
     L.ribGeo.attributes.position.needsUpdate=true;
     L.line.geometry.setFromPoints(p.map(q=>new THREE.Vector3(q.x,q.y,q.z)));
   });
+  const progress=crewScroll.t||0, fractional=progress-Math.round(progress);
+  const worldPerPixel=(2*camera.position.distanceTo(curLook)*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))/Math.max(innerHeight,1);
+  crewRoot.position.x=crewX-fractional*140*worldPerPixel;
 }
 
 /* ============ POINTER ============ */
@@ -1162,15 +1557,14 @@ canvas.addEventListener('pointermove',e=>{
     const hit=raycaster2.intersectObjects(lanyards.map(L=>L.card))[0];
     canvas.style.cursor=hit?'grab':'default';
   }else canvas.style.cursor='default';
-});
-canvas.addEventListener('pointerdown',e=>{
-  setNDC(e);downInfo={x:e.clientX,y:e.clientY,t:performance.now()};
+});  canvas.addEventListener('pointerdown',e=>{
+  setNDC(e);downInfo={x:e.clientX,y:e.clientY,t:performance.now(),mode:state.mode};
   if(state.mode==='team'){
     const hit=raycaster2.intersectObjects(lanyards.map(L=>L.card))[0];
     if(hit){
       const L=hit.object.userData.lanyard;
       if(raycaster2.ray.intersectPlane(teamPlane,wv)){
-        grab={L,w:wv.clone(),moved:0,lx:e.clientX,ly:e.clientY};
+        grab={L,w:wv.clone(),moved:0,lx:e.clientX,ly:e.clientY,last:wv.clone(),lastTime:performance.now(),vx:0,vy:0,vz:0};
         L.grabbed=true;canvas.style.cursor='grabbing';
         e.preventDefault();
       }
@@ -1182,13 +1576,23 @@ canvas.addEventListener('pointermove',e=>{
   grab.moved+=Math.abs(e.clientX-grab.lx)+Math.abs(e.clientY-grab.ly);
   grab.lx=e.clientX;grab.ly=e.clientY;
   setNDC(e);
-  if(raycaster2.ray.intersectPlane(teamPlane,wv))grab.w.copy(wv);
+  if(raycaster2.ray.intersectPlane(teamPlane,wv)){
+    const now=performance.now(),dt=Math.max(.008,(now-grab.lastTime)/1000);
+    grab.vx=(wv.x-grab.last.x)/dt;grab.vy=(wv.y-grab.last.y)/dt;grab.vz=(wv.z-grab.last.z)/dt;
+    grab.last.copy(wv);grab.lastTime=now;grab.w.copy(wv);
+  }
 });
 addEventListener('pointerup',e=>{
   if(grab){
-    grab.L.grabbed=false;
-    if(grab.moved<8&&performance.now()-downInfo.t<450)flip(grab.L);
+    const activeGrab=grab;activeGrab.L.grabbed=false;
+    if(activeGrab.moved<7&&performance.now()-downInfo.t<450)flip(activeGrab.L);
+    else{
+      const end=activeGrab.L.rope.p.at(-1);end.px=end.x-activeGrab.vx*.016;end.py=end.y-activeGrab.vy*.016;end.pz=end.z-activeGrab.vz*.016;
+    }
     grab=null;canvas.style.cursor='grab';
+  }else if(downInfo?.mode==='team'&&state.mode==='team'){
+    const dx=e.clientX-downInfo.x,dy=e.clientY-downInfo.y;
+    if(Math.abs(dx)>=70&&Math.abs(dx)>Math.abs(dy)*1.25)scrollToCrewIndex(crewIndex+(dx<0?1:-1));
   }else if(state.mode==='game'&&downInfo){
     const d=Math.hypot(e.clientX-downInfo.x,e.clientY-downInfo.y);
     if(d<6&&state.hoverCell)toggleWall(state.hoverCell.x,state.hoverCell.y);
@@ -1201,11 +1605,12 @@ const camT=new THREE.Vector3(),lookT=new THREE.Vector3(),curLook=new THREE.Vecto
 function cameraTarget(){
   const t=state.time;
   switch(state.mode){
+    case 'landing':camT.set(0,2.55,12.6);lookT.set(0,2.3,-.5);break;
     case 'hardware':camT.set(4.4-state.e*.6,2.3+state.e*2.1,5.6-state.e*.5);lookT.set(0,.9+state.e*1.25,0);break;
     case 'math':camT.set(13,6.5,16);lookT.set(0,.6,0);break;   /* lonely wide shot while reading */
     case 'game':camT.set(GM.x+state.mouse.x*.9,15.4-state.mouse.y*.5,GM.z+8.8);lookT.set(GM.x,0,GM.z+.4);break;
     case 'code':camT.set(GM.x+11,7.5,GM.z+13);lookT.set(GM.x,.5,GM.z);break;
-    case 'team':camT.set(TEAM.x+(state.teamE-.5)*3.2+state.mouse.x*.5,1.55-state.mouse.y*.3,TEAM.z+6.6);lookT.set(TEAM.x,1.35,TEAM.z);break;
+    case 'team':camT.set(TEAM.x+state.mouse.x*.5,1.55-state.mouse.y*.3,TEAM.z+6.6);lookT.set(TEAM.x,1.35,TEAM.z);break;
     case 'footer':camT.set(TEAM.x+7,4.5,TEAM.z+11);lookT.set(TEAM.x,1.2,TEAM.z);break;
     default:{
       const a=t*.06;
@@ -1216,20 +1621,43 @@ function cameraTarget(){
 }
 
 /* ============ MODE / SCROLL ============ */
-const modeSecs=$$('[data-mode]');
+function scrollToSectionId(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:REDUCE?'instant':'smooth',block:'start'});}
+function currentSectionIndex(){
+  const y=innerHeight/2;let active=0;
+  wheelItems.forEach((item,i)=>{const section=document.getElementById(item.dataset.target);if(section){const r=section.getBoundingClientRect();if(r.top<=y&&r.bottom>=y)active=i;}});
+  return active;
+}
+if(sectionWheel){
+  wheelItems.forEach((item,i)=>item.addEventListener('click',()=>scrollToSectionId(item.dataset.target)));
+  sectionWheel.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'||e.key==='ArrowRight'){e.preventDefault();scrollToSectionId(wheelItems[Math.min(wheelItems.length-1,currentSectionIndex()+1)].dataset.target);}
+    else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();scrollToSectionId(wheelItems[Math.max(0,currentSectionIndex()-1)].dataset.target);}
+    else if(e.key==='Home'){e.preventDefault();scrollToSectionId(wheelItems[0].dataset.target);}
+    else if(e.key==='End'){e.preventDefault();scrollToSectionId(wheelItems[wheelItems.length-1].dataset.target);}
+  });
+  sectionWheel.addEventListener('wheel',e=>{
+    e.preventDefault();const now=performance.now();if(now<wheelScrollLock)return;wheelScrollLock=now+320;
+    const step=e.deltaY||e.deltaX;if(step)scrollToSectionId(wheelItems[clamp(currentSectionIndex()+(step>0?1:-1),0,wheelItems.length-1)].dataset.target);
+  },{passive:false});
+}
 let lastMode='';
 function computeMode(){
   const y=innerHeight/2;let m='explore';
   for(const s of modeSecs){const r=s.getBoundingClientRect();if(r.top<=y&&r.bottom>=y){m=s.dataset.mode;break;}}
+  const activeSection=currentSectionIndex();
+  if(wheelItems.length)syncSectionWheel(activeSection);
   if(m!==lastMode){
     lastMode=m;state.mode=m;
+    document.body.classList.toggle('crew-active',m==='team');
+    robot.visible=m!=='landing';
     pinsEl.classList.toggle('on',m==='hardware');
     $('#explodeTag').classList.toggle('on',m==='hardware');
+    if(m==='team')document.documentElement.style.setProperty('--acid',CREW[crewIndex].accent);
   }
   const hw=$('#hardware').getBoundingClientRect();
   state.e=clamp01(-hw.top/Math.max(1,hw.height-innerHeight));
-  const tm=$('#team').getBoundingClientRect();
-  state.teamE=clamp01(-tm.top/Math.max(1,tm.height-innerHeight));
+  // Crew member selection is button-driven, independent of vertical page scrolling.
+  if(sectionWheelRAF==null)startWheelAnimation();
 }
 addEventListener('scroll',()=>requestAnimationFrame(computeMode),{passive:true});
 computeMode();
@@ -1383,6 +1811,10 @@ const clock=new THREE.Clock();
 function loop(){
   const dt=Math.min(.05,clock.getDelta());
   state.time+=dt;
+  const teamScene=state.mode==='team';
+  const sceneTone=teamScene?0x181717:0xffffff;
+  scene.background.setHex(sceneTone);
+  if(scene.fog)scene.fog.color.setHex(sceneTone);
   cameraTarget();
   camera.position.lerp(camT,.07);
   curLook.lerp(lookT,.07);
@@ -1421,18 +1853,18 @@ function loop(){
     });
   }
   updateGame(dt);
-  updateTeam(dt);
+  // Standalone crew cards do not run rope physics.
+
   state._pts.rotation.y+=dt*.01;
   renderer.render(scene,camera);
   requestAnimationFrame(loop);
 }
-loop();
-
-addEventListener('resize',()=>{
+loop();  addEventListener('resize',()=>{
   camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
   renderer.setSize(innerWidth,innerHeight);
   computeMode();
 });
+window.__crewDebug=()=>({mode:state.mode,index:crewIndex,motion:{x:badgeMotion.x,y:badgeMotion.y,vx:badgeMotion.vx,vy:badgeMotion.vy,dragging:!!badgeMotion.drag},sliding:!!crewTransition,memory:renderer.info.memory});
 window.__ok=true;
 setStage('Live — RB/25 online');
 
