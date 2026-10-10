@@ -319,6 +319,7 @@ body.crew-active #crewNav,body.crew-active #teamHint,body.crew-active #printing,
 footer{position:relative;z-index:2;background:var(--paper);border-top:1px solid var(--line2);padding:var(--s18) var(--pad) var(--s12)}
 footer .giant{font-weight:900;font-size:clamp(var(--t-3xl),9.5vw,var(--t-9));line-height:.94;letter-spacing:-.035em}
 footer .giant .stroke{color:transparent;-webkit-text-stroke:1.5px var(--ink)}
+.ticket-block{background:#0c0c0c;border:1px solid #232323;border-radius:24px;padding:56px 24px;max-width:720px;margin:56px auto 8px}
 footer .mail{display:inline-flex;align-items:center;gap:var(--s6);margin-top:var(--s12);font-family:var(--mono);font-size:var(--t-sm);border:1px solid var(--ink);border-radius:var(--r-8);padding:var(--s7) var(--s9);background:var(--ink);color:var(--paper);transition:color .25s ease-in-out,background-color .25s ease-in-out}
 footer .mail:hover{background:var(--paper);color:var(--ink)}
 footer .mail:active{transform:scale(.98)}
@@ -579,6 +580,7 @@ footer .mail:active{transform:scale(.98)}
   <h2 class="giant">Put us in <span class="stroke">a maze.</span></h2>
   <a class="mail" href="mailto:hello@roboto.team">hello@roboto.team
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+  <div class="ticket-block"><div id="ticketMount"></div></div>
   <div class="fbot">
     <span>© 2025 Roboto® — field unit RB/25</span>
     <span>Single-file WebGL · monochrome build</span>
@@ -787,6 +789,21 @@ function toast(m){
         mount.dataset.ready='1';
       })
       .catch(err=>{console.warn('DocsStrip island failed to load:',err);mount.remove();});
+  }
+}
+
+/* ============ VISITOR TICKET (React Bits TearTicket · footer souvenir) ============ */
+/* Name input is state-only (never stored/sent); minutes aboard come from
+   performance.timeOrigin; PDF is rendered on-device via html2canvas+jsPDF. */
+{
+  const mount=document.getElementById('ticketMount');
+  if(mount){
+    Promise.all([import('react'),import('react-dom/client'),import('./src/components/TicketIsland')])
+      .then(([React,ReactDOM,Ticket])=>{
+        ReactDOM.createRoot(mount).render(React.createElement(Ticket.default));
+        mount.dataset.ready='1';
+      })
+      .catch(err=>{console.warn('TicketIsland failed to load:',err);mount.remove();});
   }
 }
 
