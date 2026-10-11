@@ -2000,6 +2000,27 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>paintCrew(
   init();
   addEventListener('load',init);
   if('ResizeObserver' in window)new ResizeObserver(()=>{const li=items[activeIndex];if(li)updateEffect(li);}).observe(container);
+  /* Scroll-spy: the pill follows whichever section sits under the viewport middle. */
+  const spyMap=new Map();
+  items.forEach((li,idx)=>{
+    const a=li.querySelector('a');
+    const href=a&&a.getAttribute('href');
+    if(href&&href.charAt(0)==='#'){
+      const sec=document.getElementById(href.slice(1));
+      if(sec)spyMap.set(sec,idx);
+    }
+  });
+  if(spyMap.size&&'IntersectionObserver' in window){
+    const spy=new IntersectionObserver(es=>{
+      es.forEach(en=>{
+        if(en.isIntersecting){
+          const idx=spyMap.get(en.target);
+          if(idx!=null&&idx!==activeIndex)activate(items[idx],idx,false);
+        }
+      });
+    },{rootMargin:'-45% 0px -50% 0px',threshold:0});
+    spyMap.forEach((idx,sec)=>spy.observe(sec));
+  }
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(init);
 })();
 
