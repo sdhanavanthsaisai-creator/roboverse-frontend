@@ -498,7 +498,7 @@ footer .mail:active{transform:scale(.98)}
   <div class="gallery-block" id="gallery">
     <p class="kick" data-reveal>Gallery — the build so far</p>
     <h2 data-reveal>Shot <span class="ol">by shot.</span></h2>
-    <p class="sub" data-reveal>Sample frames for now — the real build photos slot in tomorrow, one item per photo. Drag the sphere, scroll it, or use arrow keys; it also strolls on its own until you grab it.</p>
+    <p class="sub" data-reveal>Real build photos — drag the sphere, scroll it, or use arrow keys; it also strolls on its own until you grab it.</p>
     <div id="gallerySphere" data-reveal></div>
   </div>
   <div class="docs-block" id="docs">
@@ -786,17 +786,19 @@ function toast(m){
   const mount=document.getElementById('gallerySphere');
   if(mount){
     const ITEMS=[
-      {image:'https://picsum.photos/seed/rat-chassis/600/600?grayscale',title:'Chassis',description:'Twin 270 × 270 mm plywood decks on ally channels — the top deck carries the load.'},
-      {image:'https://picsum.photos/seed/rat-drive/600/600?grayscale',title:'Drivetrain',description:'PG36 24 V gearmotors on 98 mm rubber traction wheels, flange PCD 47.5.'},
-      {image:'https://picsum.photos/seed/rat-boards/600/600?grayscale',title:'Electronics',description:'ESP32 brain, MDDS30 muscle, XL4005 5 V rail, one common GND.'},
-      {image:'https://picsum.photos/seed/rat-maze/600/600?grayscale',title:'Maze',description:'300 × 300 cm, 6 × 6 cells of 50 cm. Never seen, never stored.'},
-      {image:'https://picsum.photos/seed/rat-runs/600/600?grayscale',title:'Field runs',description:'Run 1 hugs the wall and records; Run 2 replays it shorter, faster.'},
+      {image:'./gallery/gal1.png',title:'Chassis',description:'Twin plywood decks on ally channels and standoffs — the top deck carries the load.'},
+      {image:'./gallery/gal2.jpg',title:'Top deck',description:'Perfboard brain, Cytron MDDS30 muscle, battery with XT60 — wired and waiting.'},
+      {image:'./gallery/gal3.png',title:'Crew on the stairs',description:'Code on the laptop, wiring on the steps — build day in full swing.'},
+      {image:'./gallery/gal4.png',title:'Floor assembly',description:'Chassis, parts box and tape — the whole lab fits on one staircase.'},
+      {image:'./gallery/gal5.jpg',title:'Wiring session',description:'Screwdriver out, jumpers everywhere — bringing the bot to life.'},
+      {image:'./gallery/gal6.jpg',title:'First prototype',description:'Cardboard chassis, breadboard and gear motors — where it all started.'},
+      {image:'./gallery/gal7.png',title:'Crew + bot',description:'Three builders, one robot — Team Roboto at work.'},
     ];
     Promise.all([import('react'),import('react-dom/client'),import('./src/components/InfiniteMenu')])
       .then(([React,ReactDOM,Menu])=>{
         ReactDOM.createRoot(mount).render(React.createElement(Menu.default,{
           items:ITEMS,count:120,tileSize:.59,roundness:.12,zoom:1.8,pullBack:1.15,
-          stretch:.6,inertia:.6,autoplay:3,grayscale:true,dim:.5,intro:true,
+          stretch:.6,inertia:.6,autoplay:1.2,grayscale:false,dim:.5,intro:true,
           showInfo:true,theme:'light',accentColor:'#111111',
         }));
         mount.dataset.ready='1';
