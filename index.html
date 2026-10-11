@@ -151,7 +151,14 @@ main{position:relative;z-index:2}
 .gallery-block,.docs-block{margin:var(--s19) 0 var(--s8)}
 .gallery-block .sub,.docs-block .sub{max-width:62ch;margin-bottom:var(--s10)}
 #gallerySphere{position:relative;height:600px;border:1px solid var(--line);background:#ececec;overflow:hidden}
-#docsMount{position:relative}
+.docs-view{border:1px solid var(--line);border-radius:18px;background:#fff;overflow:hidden}
+.docs-view-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;flex-wrap:wrap}
+.docs-view-head .docs-code{margin:0;font-family:var(--mono);font-size:12px;letter-spacing:.1em;opacity:.65}
+.docs-view-head h3{margin:6px 0 0;font-size:clamp(20px,2.4vw,28px)}
+.docs-open-btn{display:inline-block;padding:12px 22px;border-radius:999px;background:var(--acid);color:#181717;font-weight:700;text-decoration:none}
+.docs-open-btn:hover{transform:translateY(-2px)}
+.docs-frame{display:block;width:100%;height:min(78vh,860px);min-height:520px;border:0;background:#fff}
+@media(max-width:760px){.docs-frame{min-height:60vh}}
 @media(max-width:760px){#gallerySphere{height:440px}}
 
 /* ================= HAMBURGER + OVERLAY MENU ================= */
@@ -497,8 +504,17 @@ footer .mail:active{transform:scale(.98)}
   <div class="docs-block" id="docs">
     <p class="kick" data-reveal>Documentation — papers &amp; logs</p>
     <h2 data-reveal>Read <span class="ol">the receipts.</span></h2>
-    <p class="sub" data-reveal>Card 01 shows the live PDF right inside it — hit Open PDF for fullscreen. Hover or tap a spine to expand it.</p>
-    <div id="docsMount" data-reveal></div>
+    <p class="sub" data-reveal>Our design document, straight from the team — preview it below or open the full PDF in a new tab.</p>
+    <div class="docs-view" data-reveal>
+      <div class="docs-view-head">
+        <div>
+          <p class="docs-code"># 01 — LIVE DOCUMENT</p>
+          <h3>Digital Design Document — Team 3</h3>
+        </div>
+        <a class="docs-open-btn" href="./docs/digital-design-document-team3.pdf" target="_blank" rel="noopener">Open PDF ↗</a>
+      </div>
+      <iframe class="docs-frame" src="./docs/digital-design-document-team3.pdf" title="Digital Design Document — Team 3"></iframe>
+    </div>
   </div>
   <div class="eqs">
     <div class="eq border-glow-card wide"><span class="tag">EQ 01 — Drive · top speed</span><h3>98 mm wheels at a rated 430 rpm</h3>
@@ -786,20 +802,6 @@ function toast(m){
         mount.dataset.ready='1';
       })
       .catch(err=>{console.warn('InfiniteMenu island failed to load:',err);mount.remove();});
-  }
-}
-
-/* ============ DOCS STRIP (Skiper HoverExpand · sample entries) ============ */
-/* Tomorrow: pass real {src, alt, code, title} per PDF via DocsStrip images prop. */
-{
-  const mount=document.getElementById('docsMount');
-  if(mount){
-    Promise.all([import('react'),import('react-dom/client'),import('./src/components/DocsStrip')])
-      .then(([React,ReactDOM,Docs])=>{
-        ReactDOM.createRoot(mount).render(React.createElement(Docs.default));
-        mount.dataset.ready='1';
-      })
-      .catch(err=>{console.warn('DocsStrip island failed to load:',err);mount.remove();});
   }
 }
 
