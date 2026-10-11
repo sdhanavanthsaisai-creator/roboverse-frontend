@@ -562,15 +562,26 @@ footer .mail:active{transform:scale(.98)}
 <section class="sec" id="code" data-mode="code">
   <p class="kick">05 — Firmware</p>
   <h2>Open the <span class="ol">source.</span></h2>
-  <p class="sub" style="margin-bottom:var(--s12)">Real ESP32 / Arduino structure — Motor, Encoder, Ultrasonic, IMU and Robot classes, the WallFollower solver, and the PathRecorder. Copy whatever you need.</p>
+  <p class="sub" style="margin-bottom:var(--s12)">The actual Integrated_Maze_Robot firmware running on the bot — .ino plus 12 headers and the README. Copy whatever you need, or grab the ZIP below.</p>
   <div class="term">
     <div class="tbar"><span class="td t1" aria-hidden="true"></span><span class="td t2" aria-hidden="true"></span><span class="td t3" aria-hidden="true"></span>
       <span class="ttitle">rb25@esp32:~/firmware</span>
       <button id="copyBtn">Copy file</button></div>
     <div class="ttabs">
-      <button class="ttab active" data-file="main">main.cpp</button>
-      <button class="ttab" data-file="kin">kinematics.cpp</button>
-      <button class="ttab" data-file="plan">planner.cpp</button>
+<button class="ttab active" data-file="ino">Integrated_Maze_Robot.ino</button>
+      <button class="ttab" data-file="maze">MazeRunner.h</button>
+      <button class="ttab" data-file="robot">Robot.h</button>
+      <button class="ttab" data-file="solver">Solver.h</button>
+      <button class="ttab" data-file="wall">WallFollower.h</button>
+      <button class="ttab" data-file="replayer">PathReplayer.h</button>
+      <button class="ttab" data-file="recorder">PathRecorder.h</button>
+      <button class="ttab" data-file="motor">Motor.h</button>
+      <button class="ttab" data-file="enc">Encoder.h</button>
+      <button class="ttab" data-file="imu">Imu.h</button>
+      <button class="ttab" data-file="ultra">Ultrasonic.h</button>
+      <button class="ttab" data-file="pins">pins.h</button>
+      <button class="ttab" data-file="start">StartTrigger.h</button>
+      <button class="ttab" data-file="readme">README.md</button>
     </div>
     <pre class="tbody"><code id="codeBox" class="language-cpp"></code></pre>
   </div>
@@ -2251,102 +2262,958 @@ if(window.katex){
 
 /* ============ CODE VIEWER ============ */
 const FILES={
-main:`// RB/25 - ESP32 firmware entry (Arduino IDE, ESP32 flash)
-#include <Arduino.h>
-#include "robot.h"
-#include "solver.h"
+ino:`#include "pins.h"
+#include "Motor.h"
+#include "Encoder.h"
+#include "Ultrasonic.h"
+#include "Imu.h"
+#include "Solver.h"
+#include "WallFollower.h"
+#include "PathRecorder.h"
+#include "Robot.h"
+#include "MazeRunner.h"
+#include "PathReplayer.h"
+#include "StartTrigger.h"
 
-// Pins live in one file. Echo/encoder inputs: GPIO 34-39
-// (input-only). GPIO 12 avoided - it can block boot.
+// Motors: the "reversed" flags are set in pins.h (one side of the robot is mirrored)
+Motor leftMotor(LEFT_MOTOR_PWM_PIN, LEFT_MOTOR_DIR_PIN, LEFT_MOTOR_REVERSED);
+Motor rightMotor(RIGHT_MOTOR_PWM_PIN, RIGHT_MOTOR_DIR_PIN, RIGHT_MOTOR_REVERSED);
+
+Encoder leftEncoder(LEFT_ENCODER_PIN_A, LEFT_ENCODER_PIN_B, LEFT_ENCODER_REVERSED);
+Encoder rightEncoder(RIGHT_ENCODER_PIN_A, RIGHT_ENCODER_PIN_B, RIGHT_ENCODER_REVERSED);
+
+Ultrasonic frontUltrasonic(FRONT_ULTRASONIC_TRIG_PIN, FRONT_ULTRASONIC_ECHO_PIN);
+Ultrasonic leftUltrasonic(LEFT_ULTRASONIC_TRIG_PIN, LEFT_ULTRASONIC_ECHO_PIN);
+Ultrasonic rightUltrasonic(RIGHT_ULTRASONIC_TRIG_PIN, RIGHT_ULTRASONIC_ECHO_PIN);
+
+Imu imu;
+
+Robot robot(leftMotor, rightMotor, leftEncoder, rightEncoder, imu);
+
 WallFollower solver;
-PathRecorder recorder;
+PathRecorder path;
 
-void senseTask(void *arg) {     // CORE 0 - sensing
-  for (;;) {
-    walls.read();               // 3x HC-SR04, one at a time,
-                                // 60 ms apart, no crosstalk
-    imu.update();               // MPU-6050 yaw (GPIO 21/22)
-    vTaskDelay(pdMS_TO_TICKS(20));
-  }
-}
+MazeRunner runner(
+    robot,
+    solver,
+    path,
+    leftUltrasonic,
+    frontUltrasonic,
+    rightUltrasonic
+);
 
-void driveTask(void *arg) {     // CORE 1 - motion
-  for (;;) {
-    char move = solver.next(walls);   // left > front > right > U
-    robot.doMove(move);               // encoders + IMU close it
-    recorder.push(move);              // Run 1 log for Run 2
-    if (walls.goalGap()) robot.stop();// front reads 300 cm+
-    vTaskDelay(pdMS_TO_TICKS(10));
-  }
-}
+PathReplayer replayer(
+    robot,
+    solver,
+    path,
+    leftUltrasonic,
+    frontUltrasonic,
+    rightUltrasonic
+);
+
+StartTrigger trigger(leftUltrasonic, rightUltrasonic);
+
+enum MazeState {
+    RUN_1,
+    WAITING,
+    RUN_2,
+    FINISHED,
+    FAILED
+};
+
+MazeState currentState = RUN_1;
 
 void setup() {
-  Serial.begin(115200);
-  imu.calibrate();                // rover held still at start-up
-  xTaskCreatePinnedToCore(senseTask, "sense", 4096, NULL, 2, NULL, 0);
-  xTaskCreatePinnedToCore(driveTask, "drive", 4096, NULL, 3, NULL, 1);
+    Serial.begin(115200);
+    delay(1000);
+
+    // The ultrasonic sensors must be started before they are used.
+    frontUltrasonic.begin();
+    leftUltrasonic.begin();
+    rightUltrasonic.begin();
+
+    // Starts motors, encoders and the IMU (the IMU calibrates: keep the robot still).
+    robot.begin();
+    robot.setMoveSpeed(120);
+
+    Serial.println("Maze Robot Ready");
+    Serial.println("Cover both side sensors for 5 seconds to start Run 1");
+
+    trigger.waitForStart();
+
+    Serial.println("Starting in 3 seconds, take your hands away");
+    delay(3000);   // so hands are not read as walls
+    Serial.println("Run 1 started");
 }
 
-void loop() {}    // all work lives in the tasks`,
-kin:`// Differential motion - 2x PG36 24 V + 98 mm traction wheels
-#include "robot.h"
+void loop() {
+    // Safety: if a move or turn timed out, stop for good.
+    if (robot.hasFailed()) {
+        robot.stop();
+        if (currentState != FAILED) {
+            Serial.println("Robot stopped: a move or turn timed out. Check wiring and restart.");
+            currentState = FAILED;
+        }
+        delay(500);
+        return;
+    }
 
-static constexpr float TICKS_PER_CELL = 1.62f * N_COUNTS; // EQ 03
+    if (currentState == RUN_1) {
+        runner.step();
 
-// One cell: reset encoders, run both motors, stop on average count.
-// Side sensors trim drift toward a wall while driving.
-void Robot::moveCell() {
-  encL.reset(); encR.reset();
-  motors.forward(cruisePWM);
-  while (encAvg() < TICKS_PER_CELL) {
-    motors.trim(walls.drift());   // stay off the walls
-    if (encStalled(1000)) break;  // counts frozen 1 s: stuck
-  }
-  motors.stop();
-  front.stopCheck();              // front sensor is the stop
-}
+        if (runner.isFinished()) {
+            robot.stop();
+            Serial.println("Goal reached.");
+            Serial.print("Saved moves: ");
+            Serial.println(path.size());
 
-// Turn: motors opposed until the IMU yaw swings 90 deg
-// (180 at a dead end). Chassis diagonal 382 mm < 470 mm
-// clear width, so it turns in place.
-void Robot::turn(int deg) {
-  float t0 = imu.yaw();
-  motors.opposed(turnPWM);
-  while (imu.delta(t0) < deg) {}
-  motors.stop();
+            Serial.println("Put the robot back at the start, then cover both side sensors for 5 seconds");
+            currentState = WAITING;
+        }
+
+        delay(100);
+    }
+
+    else if (currentState == WAITING) {
+        robot.stop();
+
+        if (trigger.isTriggered()) {
+            Serial.println("Starting in 3 seconds, take your hands away");
+            delay(3000);   // so hands are not read as walls
+            replayer.start();
+            currentState = RUN_2;
+            Serial.println("Run 2 started");
+        }
+
+        delay(100);
+    }
+
+    else if (currentState == RUN_2) {
+        replayer.step();
+
+        if (replayer.isFinished()) {
+            robot.stop();
+            Serial.println("Run 2 finished.");
+            currentState = FINISHED;
+        }
+
+        delay(100);
+    }
+
+    else if (currentState == FINISHED) {
+        robot.stop();
+        delay(500);
+    }
 }`,
-plan:`// Left-hand wall follower + Run 2 path shortening
-#include "solver.h"
+maze:`#pragma once
+#include <Arduino.h>
+#include "Robot.h"
+#include "Ultrasonic.h"
+#include "Solver.h"
+#include "PathRecorder.h"
+#include "pins.h"
 
-// Priority at every junction: left, front, right, else U-turn.
-// No map stored - only what the sensors see at this cell.
-char WallFollower::next(const Walls& w) {
-  if (w.leftOpen())  return 'L';
-  if (w.frontOpen()) return 'S';
-  if (w.rightOpen()) return 'R';
-  return 'U';                       // dead end: 180 deg
-}
+/*
+ * =====================================================================================
+ * Class: MazeRunner (Run 1: Autonomous Exploration & Goal Discovery)
+ * 
+ * Logic from teammate's MazeRunner:
+ *   - Performs one autonomous step: look, decide, filter real choices, record, move.
+ *   - Detects the exit when front sensor reads open space >= 350 cm.
+ *   - Automatically simplifies (prunes) the path upon reaching the goal.
+ * =====================================================================================
+ */
+class MazeRunner {
+private:
+    Robot&        _robot;
+    Solver&       _solver;
+    PathRecorder& _path;
+    Ultrasonic&   _leftSensor;
+    Ultrasonic&   _frontSensor;
+    Ultrasonic&   _rightSensor;
+    bool          _isFinished;
 
-// EQ 04: a U-turn marks a dead end, so each detour
-// collapses to its shortcut. S L U L S R -> S S S R.
-void PathRecorder::shorten() {
-  for (size_t i = 0; i + 2 < path.size(); ++i) {
-    auto t = path.slice(i, 3);
-    if      (t == "LUL") path.replace(i, 3, "S");
-    else if (t == "LUS") path.replace(i, 3, "R");
-    else if (t == "SUL") path.replace(i, 3, "R");
-  }
-}
+    // CALIBRATION: adjust to match the actual maze wall spacing and sensor readings.
+    const float   WALL_DISTANCE_CM = WALL_THRESHOLD_CM;
 
-// Run 2 replays the short path faster. A wall where open
-// space was expected falls back to wall following.
-void run2(const Path& short_) {
-  for (char m : short_) {
-    if (!walls.expectOpen(m)) { followWalls(); return; }
-    robot.doMove(m);
-  }
-}`};
-const codeBox=$('#codeBox');let curFile='main';
+    // CALIBRATION: distance used to recognize the open goal/exit area.
+    const float   GOAL_DISTANCE_CM = 350.0;
+
+    // The goal counts only if 3 front readings in a row agree.
+    // One bad reading (no echo gives 400) cannot end the run by mistake.
+    bool isGoalConfirmed() {
+        for (int i = 0; i < 3; i++) {
+            if (_frontSensor.getDistanceCm() < GOAL_DISTANCE_CM) return false;
+        }
+        return true;
+    }
+
+    // A corridor or single corner has only one way to go, so it is not worth saving.
+    // Only real junctions (>= 2 open sides) and dead ends (MOVE_BACK) are saved.
+    bool isRealChoice(Move move, bool hasLeftWall, bool hasFrontWall, bool hasRightWall) {
+        int openSides = 0;
+        if (!hasLeftWall)  openSides++;
+        if (!hasFrontWall) openSides++;
+        if (!hasRightWall) openSides++;
+        if (openSides >= 2) return true;        // Junction: a real choice
+        if (move == MOVE_BACK) return true;     // Dead end U-turn
+        return false;                           // Forced corridor or corner
+    }
+
+    // Turns if needed, then drives one 50 cm cell.
+    void doMove(Move move) {
+        if (move == MOVE_LEFT)  _robot.turnLeft();
+        if (move == MOVE_RIGHT) _robot.turnRight();
+        if (move == MOVE_BACK)  _robot.turnAround();
+        _robot.moveOneCell();
+    }
+
+public:
+    // Assembles hardware, solver, and path recorder for Run 1 exploration
+    MazeRunner(Robot& robot, Solver& solver, PathRecorder& path,
+               Ultrasonic& leftSensor, Ultrasonic& frontSensor, Ultrasonic& rightSensor)
+        : _robot(robot), _solver(solver), _path(path),
+          _leftSensor(leftSensor), _frontSensor(frontSensor), _rightSensor(rightSensor),
+          _isFinished(false) {}
+
+    // Returns true once the goal/exit has been reached
+    bool isFinished() {
+        return _isFinished;
+    }
+
+    // Executes one exploration step: call continuously from loop()
+    void step() {
+        if (_isFinished) return;
+
+        float frontCm = _frontSensor.getDistanceCm();
+        if (frontCm >= GOAL_DISTANCE_CM && isGoalConfirmed()) { // Goal/exit detected (3 readings agree).
+            _robot.stop();
+            _path.simplify();              // Prune all dead ends for Run 2
+            _isFinished = true;
+            return;
+        }
+
+        bool hasLeftWall  = _leftSensor.getDistanceCm()  < WALL_DISTANCE_CM;
+        bool hasFrontWall = frontCm                      < WALL_DISTANCE_CM;
+        bool hasRightWall = _rightSensor.getDistanceCm() < WALL_DISTANCE_CM;
+
+        Move move = _solver.chooseMove(hasLeftWall, hasFrontWall, hasRightWall);
+        if (isRealChoice(move, hasLeftWall, hasFrontWall, hasRightWall)) {
+            _path.record(move); // Save only junctions and dead ends
+        }
+        doMove(move);
+    }
+};`,
+robot:`#pragma once
+
+#include <Arduino.h>
+#include <math.h>
+#include "Motor.h"
+#include "Encoder.h"
+#include "Imu.h"
+
+// CALIBRATION: tune the values at the bottom of this file on the actual robot.
+class Robot {
+public:
+    Robot(Motor& leftMotor, Motor& rightMotor,
+          Encoder& leftEncoder, Encoder& rightEncoder,
+          Imu& imu)
+        : _leftMotor(leftMotor),
+          _rightMotor(rightMotor),
+          _leftEncoder(leftEncoder),
+          _rightEncoder(rightEncoder),
+          _imu(imu) {}
+
+    void begin() {
+        _leftMotor.begin();
+        _rightMotor.begin();
+        _leftEncoder.begin();
+        _rightEncoder.begin();
+        _imu.begin();
+        stop();
+    }
+
+    // DO NOT RENAME: used by MazeRunner and PathReplayer.
+    void stop() {
+        _leftMotor.stop();
+        _rightMotor.stop();
+    }
+
+    // Set forward movement speed: 0-255.
+    void setMoveSpeed(int speed) {
+        _moveSpeed = constrain(speed, 0, 255);
+    }
+
+    // True if a move or turn took too long (encoder, gyro or motor problem).
+    // Once true, the robot refuses to move until it is restarted.
+    bool hasFailed() {
+        return _hasFailed;
+    }
+
+    // Drives forward one cell. The encoders measure the distance and the gyro keeps it straight.
+    // CALIBRATION: measure encoder ticks for exactly one maze cell (50 cm).
+    void moveOneCell() {
+        if (_hasFailed) return;
+
+        _leftEncoder.reset();
+        _rightEncoder.reset();
+
+        _imu.update();
+        float targetYaw = _imu.getYawDeg();      // heading to hold
+        unsigned long startMs = millis();
+
+        while (averageTicks() < TICKS_PER_CELL) {
+            if (millis() - startMs > MOVE_TIMEOUT_MS) {
+                fail("Move timeout");
+                return;
+            }
+
+            _imu.update();
+
+            // Drifting left makes the yaw rise, so the error is negative:
+            // the left wheel speeds up and the right wheel slows down, steering back right.
+            float headingError = targetYaw - _imu.getYawDeg();
+            int correction = constrain((int)(headingError * HEADING_KP), -HEADING_LIMIT, HEADING_LIMIT);
+
+            int leftSpeed = _moveSpeed - correction;
+            int rightSpeed = _moveSpeed + correction;
+
+            _leftMotor.forward(leftSpeed);
+            _rightMotor.forward(rightSpeed);
+        }
+
+        stop();
+    }
+
+    // DO NOT RENAME: used by MazeRunner and PathReplayer.
+    void turnLeft() {
+        turnBy(90);
+    }
+
+    // DO NOT RENAME: used by MazeRunner and PathReplayer.
+    void turnRight() {
+        turnBy(-90);
+    }
+
+    // DO NOT RENAME: used by MazeRunner and PathReplayer.
+    void turnAround() {
+        turnBy(180);
+    }
+
+private:
+    long averageTicks() {
+        return (_leftEncoder.getTicks() + _rightEncoder.getTicks()) / 2;
+    }
+
+    // Stops everything and remembers that something went wrong.
+    void fail(const char* message) {
+        stop();
+        _hasFailed = true;
+        Serial.println(message);
+    }
+
+    // Spins in place until the gyro says we have turned the wanted angle.
+    void turnBy(float angleDeg) {
+        if (_hasFailed) return;
+
+        _imu.update();
+
+        float target = _imu.getYawDeg() + angleDeg;
+        unsigned long startMs = millis();
+
+        while (fabs(target - _imu.getYawDeg()) > TURN_TOLERANCE_DEG) {
+            if (millis() - startMs > TURN_TIMEOUT_MS) {
+                fail("Turn timeout");
+                return;
+            }
+
+            _imu.update();
+
+            float error = target - _imu.getYawDeg();
+            int speed = TURN_SPEED;
+
+            // Slow down near the target to reduce overshoot.
+            if (fabs(error) < SLOWDOWN_ANGLE_DEG) {
+                speed = TURN_SLOW_SPEED;
+            }
+
+            if (error > 0) {
+                _leftMotor.backward(speed);
+                _rightMotor.forward(speed);
+            } else {
+                _leftMotor.forward(speed);
+                _rightMotor.backward(speed);
+            }
+        }
+
+        stop();
+    }
+
+    // CALIBRATION
+    const long TICKS_PER_CELL = 1000;          // placeholder: measure 50 cm on the robot
+    const float TURN_TOLERANCE_DEG = 2.0;
+    const float SLOWDOWN_ANGLE_DEG = 20.0;
+    const int TURN_SPEED = 100;
+    const int TURN_SLOW_SPEED = 60;            // raise it if the robot stalls just before the target
+
+    // Safety limits: give up if a move or turn takes longer than this
+    const unsigned long MOVE_TIMEOUT_MS = 5000;
+    const unsigned long TURN_TIMEOUT_MS = 3000;
+
+    // Straight-line correction
+    const float HEADING_KP = 2.0;              // lower it if the robot wiggles
+    const int HEADING_LIMIT = 25;
+
+    int _moveSpeed = 120;
+    bool _hasFailed = false;
+
+    Motor& _leftMotor;
+    Motor& _rightMotor;
+    Encoder& _leftEncoder;
+    Encoder& _rightEncoder;
+    Imu& _imu;
+};`,
+solver:`#pragma once
+
+/*
+ * =====================================================================================
+ * Class: Solver
+ * Abstract interface for all maze-solving algorithms
+ * =====================================================================================
+ */
+
+// The four fundamental navigation decisions at any cell
+enum Move {
+    MOVE_LEFT,
+    MOVE_STRAIGHT,
+    MOVE_RIGHT,
+    MOVE_BACK
+};
+
+class Solver {
+public:
+    virtual ~Solver() {}   // lets the right cleanup run for child classes
+
+    // Decides the next move based on wall detections around the robot
+    virtual Move chooseMove(bool hasLeftWall, bool hasFrontWall, bool hasRightWall) = 0;
+};`,
+wall:`#pragma once
+#include "Solver.h"
+
+/*
+ * =====================================================================================
+ * Class: WallFollower (Coder 2 - Friend's Module)
+ * Implements the classic Left-Hand Rule exploration algorithm
+ * =====================================================================================
+ */
+class WallFollower : public Solver {
+public:
+    // Selects the next action prioritizing Left -> Straight -> Right -> Back (U-turn)
+    Move chooseMove(bool hasLeftWall, bool hasFrontWall, bool hasRightWall) override {
+        if (!hasLeftWall)  return MOVE_LEFT;       // Left is open -> prioritize left turn
+        if (!hasFrontWall) return MOVE_STRAIGHT;   // Else if front is open -> drive straight
+        if (!hasRightWall) return MOVE_RIGHT;      // Else if right is open -> turn right
+        return MOVE_BACK;                          // Trapped on three sides -> U-turn
+    }
+};`,
+replayer:`#pragma once
+#include <Arduino.h>
+#include "Robot.h"
+#include "Ultrasonic.h"
+#include "Solver.h"
+#include "PathRecorder.h"
+#include "pins.h"
+
+/*
+ * =====================================================================================
+ * Class: PathReplayer (Run 2: Optimized High-Speed Replay)
+ * 
+ * Logic from teammate's PathReplayer:
+ *   - Replays the shortened pruned path from Run 1 at higher speed.
+ *   - Follows saved moves at junctions (openSides >= 2).
+ *   - Has dynamic obstacle fallback: if a saved move is blocked by an unexpected dynamic
+ *     obstacle, it smoothly falls back to the WallFollower rule to keep navigating!
+ * =====================================================================================
+ */
+class PathReplayer {
+private:
+    Robot&        _robot;
+    Solver&       _solver;
+    PathRecorder& _path;
+    Ultrasonic&   _leftSensor;
+    Ultrasonic&   _frontSensor;
+    Ultrasonic&   _rightSensor;
+    int           _nextIndex;
+    bool          _isFinished;
+    bool          _isFallback;
+
+    // CALIBRATION: must match the wall detection used during Run 1.
+    const float   WALL_DISTANCE_CM = WALL_THRESHOLD_CM;
+
+    // CALIBRATION: distance used to recognize the open goal/exit area.
+    const float   GOAL_DISTANCE_CM = 350.0;
+
+    // CALIBRATION: Run 2 speed. Lower this if the robot overshoots or becomes unstable.
+    const int     FAST_MOVE_SPEED  = 150;
+
+    // The goal counts only if 3 front readings in a row agree.
+    // One bad reading (no echo gives 400) cannot end the run by mistake.
+    bool isGoalConfirmed() {
+        for (int i = 0; i < 3; i++) {
+            if (_frontSensor.getDistanceCm() < GOAL_DISTANCE_CM) return false;
+        }
+        return true;
+    }
+
+    // Checks if the planned move direction is blocked by a wall or obstacle
+    bool isBlocked(Move move, bool hasLeftWall, bool hasFrontWall, bool hasRightWall) {
+        if (move == MOVE_LEFT)     return hasLeftWall;
+        if (move == MOVE_STRAIGHT) return hasFrontWall;
+        if (move == MOVE_RIGHT)    return hasRightWall;
+        return false;
+    }
+
+    // Turns if needed, then drives one 50 cm cell.
+    void doMove(Move move) {
+        if (move == MOVE_LEFT)  _robot.turnLeft();
+        if (move == MOVE_RIGHT) _robot.turnRight();
+        if (move == MOVE_BACK)  _robot.turnAround();
+        _robot.moveOneCell();
+    }
+
+public:
+    // Initializes the speed run replayer
+    PathReplayer(Robot& robot, Solver& solver, PathRecorder& path,
+                 Ultrasonic& leftSensor, Ultrasonic& frontSensor, Ultrasonic& rightSensor)
+        : _robot(robot), _solver(solver), _path(path),
+          _leftSensor(leftSensor), _frontSensor(frontSensor), _rightSensor(rightSensor),
+          _nextIndex(0), _isFinished(false), _isFallback(false) {}
+
+    // Configures the robot for high-speed Run 2 execution
+    void start() {
+        _robot.setMoveSpeed(FAST_MOVE_SPEED);
+        _nextIndex = 0;
+        _isFinished = false;
+        _isFallback = false;
+    }
+
+    // Returns true once the goal/exit has been reached on Run 2
+    bool isFinished() {
+        return _isFinished;
+    }
+
+    // Executes one speed-run step: call continuously from loop()
+    void step() {
+        if (_isFinished) return;
+
+        float frontCm = _frontSensor.getDistanceCm();
+        if (frontCm >= GOAL_DISTANCE_CM && isGoalConfirmed()) { // Goal/exit detected (3 readings agree).
+            _robot.stop();
+            _isFinished = true;
+            return;
+        }
+
+        bool hasLeftWall  = _leftSensor.getDistanceCm()  < WALL_DISTANCE_CM;
+        bool hasFrontWall = frontCm                      < WALL_DISTANCE_CM;
+        bool hasRightWall = _rightSensor.getDistanceCm() < WALL_DISTANCE_CM;
+
+        int openSides = 0;
+        if (!hasLeftWall)  openSides++;
+        if (!hasFrontWall) openSides++;
+        if (!hasRightWall) openSides++;
+
+        Move move;
+        // At junctions: replay saved pruned move
+        if (!_isFallback && openSides >= 2 && _nextIndex < _path.size()) {
+            move = _path.get(_nextIndex);
+            if (isBlocked(move, hasLeftWall, hasFrontWall, hasRightWall)) {
+                _isFallback = true; // Dynamic obstacle detected -> switch to WallFollower!
+                move = _solver.chooseMove(hasLeftWall, hasFrontWall, hasRightWall);
+            } else {
+                _nextIndex++;
+            }
+        } else {
+            // In a corridor or fallback mode: follow normal rule
+            move = _solver.chooseMove(hasLeftWall, hasFrontWall, hasRightWall);
+        }
+
+        doMove(move);
+    }
+};`,
+recorder:`#pragma once
+#include "Solver.h"
+
+/*
+ * =====================================================================================
+ * Class: PathRecorder (Coder 2 - Friend's Module)
+ * Records Attempt 1 moves and simplifies out dead ends for Attempt 2
+ * =====================================================================================
+ */
+class PathRecorder {
+private:
+    static const int MAX_MOVES = 100;
+    Move _moves[MAX_MOVES];
+    int _count;
+
+    // Combines move before a dead end and move after into a direct shortcut
+    Move combine(Move before, Move after) {
+        if (before == MOVE_LEFT     && after == MOVE_LEFT)     return MOVE_STRAIGHT;
+        if (before == MOVE_LEFT     && after == MOVE_STRAIGHT) return MOVE_RIGHT;
+        if (before == MOVE_LEFT     && after == MOVE_RIGHT)    return MOVE_BACK;
+        if (before == MOVE_STRAIGHT && after == MOVE_LEFT)     return MOVE_RIGHT;
+        if (before == MOVE_STRAIGHT && after == MOVE_STRAIGHT) return MOVE_BACK;
+        if (before == MOVE_RIGHT    && after == MOVE_LEFT)     return MOVE_BACK;
+        return MOVE_BACK;
+    }
+
+    // Shifts subsequent moves left by 2 positions to delete the pruned dead end
+    void removeTwo(int index) {
+        for (int k = index; k + 2 < _count; k++) {
+            _moves[k] = _moves[k + 2];
+        }
+        _count -= 2;
+    }
+
+public:
+    // Initializes empty path recorder
+    PathRecorder() : _count(0) {}
+
+    // Appends a move to the recorded path history
+    void record(Move move) {
+        if (_count < MAX_MOVES) {
+            _moves[_count] = move;
+            _count++;
+        }
+    }
+
+    // Returns the number of currently saved moves
+    int size() {
+        return _count;
+    }
+
+    // Returns the saved move at a given index
+    Move get(int index) {
+        return _moves[index];
+    }
+
+    // Iteratively removes dead ends (U-turns) until only the optimal route remains
+    void simplify() {
+        bool changed = true;
+        while (changed) {
+            changed = false;
+            for (int i = 1; i < _count - 1; i++) {
+                if (_moves[i] == MOVE_BACK) {
+                    _moves[i - 1] = combine(_moves[i - 1], _moves[i + 1]);
+                    removeTwo(i);
+                    changed = true;
+                    break;
+                }
+            }
+        }
+    }
+};`,
+motor:`#pragma once
+#include <Arduino.h>
+
+class Motor {
+private:
+    int _pwmPin;
+    int _dirPin;
+    bool _isReversed;
+
+public:
+    Motor(int pwmPin, int dirPin, bool isReversed = false)
+        : _pwmPin(pwmPin), _dirPin(dirPin), _isReversed(isReversed) {}
+
+    void begin() {
+        pinMode(_pwmPin, OUTPUT);
+        pinMode(_dirPin, OUTPUT);
+        stop();
+    }
+
+    void forward(int speed) {
+        digitalWrite(_dirPin, _isReversed ? LOW : HIGH);
+        analogWrite(_pwmPin, constrain(speed, 0, 255));
+    }
+
+    void backward(int speed) {
+        digitalWrite(_dirPin, _isReversed ? HIGH : LOW);
+        analogWrite(_pwmPin, constrain(speed, 0, 255));
+    }
+
+    void stop() {
+        analogWrite(_pwmPin, 0);
+    }
+};`,
+enc:`#pragma once
+#include <Arduino.h>
+
+class Encoder {
+private:
+    int _pinA;
+    int _pinB;
+    volatile long _ticks;
+    bool _isReversed;      // flips the counting direction for a mirrored wheel
+
+    // Interrupt handler: runs on every rising edge of channel A
+    static void IRAM_ATTR isrHandler(void* arg) {
+        Encoder* self = static_cast<Encoder*>(arg);
+
+        // Channel B decides the direction
+        bool isForward = (digitalRead(self->_pinB) == HIGH);
+        if (self->_isReversed) {
+            isForward = !isForward;
+        }
+
+        if (isForward) {
+            self->_ticks++;
+        } else {
+            self->_ticks--;
+        }
+    }
+
+public:
+    Encoder(int pinA, int pinB, bool isReversed = false)
+        : _pinA(pinA), _pinB(pinB), _ticks(0), _isReversed(isReversed) {}
+
+    void begin() {
+        pinMode(_pinA, INPUT_PULLUP);   // no effect on pins 34-39: add external pull-ups if counts are noisy
+        pinMode(_pinB, INPUT_PULLUP);
+
+        attachInterruptArg(
+            digitalPinToInterrupt(_pinA),
+            isrHandler,
+            this,
+            RISING
+        );
+
+        reset();
+    }
+
+    // Positive = forward, negative = backward
+    long getTicks() {
+        return _ticks;
+    }
+
+    void reset() {
+        _ticks = 0;
+    }
+};`,
+imu:`#pragma once
+
+#include <Wire.h>
+#include <MPU6050_tockn.h>
+#include "pins.h"          // for IMU_YAW_SIGN
+
+class Imu {
+public:
+    Imu() : _mpu(Wire) {}
+
+    void begin() {
+        Wire.begin(21, 22);            // I2C: SDA = 21, SCL = 22
+        _mpu.begin();
+        _mpu.calcGyroOffsets(true);    // calibration: keep the robot still
+    }
+
+    void update() {
+        _mpu.update();
+    }
+
+    // Angle turned around the vertical axis, in degrees.
+    // Positive = left turn (set IMU_YAW_SIGN in pins.h if it is the other way round).
+    float getYawDeg() {
+        return IMU_YAW_SIGN * _mpu.getAngleZ();
+    }
+
+private:
+    MPU6050 _mpu;
+};`,
+ultra:`#pragma once
+#include <Arduino.h>
+
+class Ultrasonic {
+private:
+    int _trigPin;
+    int _echoPin;
+
+public:
+    Ultrasonic(int trigPin, int echoPin)
+        : _trigPin(trigPin), _echoPin(echoPin) {}
+
+    void begin() {
+        pinMode(_trigPin, OUTPUT);
+        pinMode(_echoPin, INPUT);
+    }
+
+    float getDistanceCm() {
+        digitalWrite(_trigPin, LOW);
+        delayMicroseconds(2);
+
+        digitalWrite(_trigPin, HIGH);
+        delayMicroseconds(10);
+        digitalWrite(_trigPin, LOW);
+
+        long durationUs = pulseIn(_echoPin, HIGH, 25000);
+
+        if (durationUs == 0) {
+            return 400.0;
+        }
+
+        return (durationUs * 0.034) / 2.0;
+    }
+};`,
+pins:`#pragma once
+
+// Left motor
+const int LEFT_MOTOR_DIR_PIN = 18;
+const int LEFT_MOTOR_PWM_PIN = 19;
+
+// Right motor
+const int RIGHT_MOTOR_DIR_PIN = 23;
+const int RIGHT_MOTOR_PWM_PIN = 5;
+
+// Left encoder (pins 34-39 are input-only and have no internal pull-up)
+const int LEFT_ENCODER_PIN_A = 34;
+const int LEFT_ENCODER_PIN_B = 35;
+
+// Right encoder
+const int RIGHT_ENCODER_PIN_A = 36;
+const int RIGHT_ENCODER_PIN_B = 39;
+
+// Front ultrasonic sensor (TRIG moved from GPIO12 to GPIO4: GPIO12 is a boot-strapping pin)
+const int FRONT_ULTRASONIC_TRIG_PIN = 4;
+const int FRONT_ULTRASONIC_ECHO_PIN = 13;   // echo is 5 V: use a voltage divider
+
+// Left ultrasonic sensor
+const int LEFT_ULTRASONIC_TRIG_PIN = 14;
+const int LEFT_ULTRASONIC_ECHO_PIN = 27;    // voltage divider needed
+
+// Right ultrasonic sensor
+const int RIGHT_ULTRASONIC_TRIG_PIN = 25;
+const int RIGHT_ULTRASONIC_ECHO_PIN = 26;   // voltage divider needed
+
+// Wall detection: a wall closer than this distance (cm) counts as present.
+const float WALL_THRESHOLD_CM = 25.0;
+
+// Mirrored motors and encoders. On a two-wheel robot one side is mirrored.
+// After the first wheel test, flip a value if a wheel drives backwards when
+// the robot should go forward, or if an encoder counts down while driving forward.
+const bool LEFT_MOTOR_REVERSED    = false;
+const bool RIGHT_MOTOR_REVERSED   = true;
+const bool LEFT_ENCODER_REVERSED  = false;
+const bool RIGHT_ENCODER_REVERSED = true;
+
+// Gyro direction: +1.0 if the yaw INCREASES when the robot turns left,
+// -1.0 if it DECREASES. One flip fixes both the turns and the straight driving.
+const float IMU_YAW_SIGN = 1.0;`,
+start:`#pragma once
+#include <Arduino.h>
+#include "Ultrasonic.h"
+
+/*
+ * =====================================================================================
+ * Class: StartTrigger (Hands-free start)
+ * Starts a run when both side sensors are covered for 5 seconds.
+ * =====================================================================================
+ */
+class StartTrigger {
+private:
+    Ultrasonic&   _leftSensor;
+    Ultrasonic&   _rightSensor;
+    unsigned long _holdStartMs;
+    bool          _isHolding;
+
+    const float   TRIGGER_DISTANCE_CM = 5.0;
+    const float   MIN_DISTANCE_CM     = 1.0;
+    const unsigned long HOLD_TIME_MS  = 5000; // 5 seconds hold
+
+    // Checks whether an object (e.g. hand) is held within 5 cm of the sensor
+    bool isClose(float distanceCm) {
+        return distanceCm > MIN_DISTANCE_CM && distanceCm < TRIGGER_DISTANCE_CM;
+    }
+
+public:
+    StartTrigger(Ultrasonic& leftSensor, Ultrasonic& rightSensor)
+        : _leftSensor(leftSensor), _rightSensor(rightSensor),
+          _holdStartMs(0), _isHolding(false) {}
+
+    // Checks continuously if the hold time has passed
+    bool isTriggered() {
+        bool isCovered = isClose(_leftSensor.getDistanceCm()) &&
+                         isClose(_rightSensor.getDistanceCm());
+
+        if (!isCovered) {
+            _isHolding = false;
+            return false;
+        }
+        if (!_isHolding) {
+            _isHolding = true;
+            _holdStartMs = millis();
+        }
+        if (millis() - _holdStartMs >= HOLD_TIME_MS) {
+            _isHolding = false;
+            return true;
+        }
+        return false;
+    }
+
+    // Blocks execution until both side sensors are held for 5 seconds
+    // (no delay needed: reading the sensors already takes some time)
+    void waitForStart() {
+        while (!isTriggered()) {}
+    }
+};`,
+readme:`# Maze Robot (final integrated sketch)
+
+Arduino IDE sketch for the ESP32. Open \`Integrated_Maze_Robot.ino\`; all other files are in the same folder.
+
+## Files
+
+- Integrated_Maze_Robot.ino (state machine: RUN_1, WAITING, RUN_2, FINISHED, FAILED)
+- pins.h (all pins, wall threshold, reverse flags, gyro sign)
+- Motor.h, Encoder.h, Ultrasonic.h, Imu.h (hardware)
+- Robot.h (moveOneCell, turnLeft, turnRight, turnAround)
+- Solver.h, WallFollower.h (left-hand rule)
+- PathRecorder.h (records Run 1 and removes dead ends)
+- MazeRunner.h (Run 1), PathReplayer.h (Run 2), StartTrigger.h (start by covering both side sensors for 5 s)
+
+## How a run works
+
+1. Power on, keep the robot still while the IMU calibrates.
+2. Cover both side sensors (under 5 cm) for 5 seconds. Take your hands away after the 3 second pause.
+3. Run 1: wall following, saves junctions and dead ends, stops when the front sensor reads 350 cm or more (3 readings in a row).
+4. Put the robot back at the start (do NOT switch it off) and cover both side sensors for 5 seconds.
+5. Run 2: replays the shortened path at a higher speed.
+
+## Changes from the test branch
+
+- \`WALL_THRESHOLD_CM\` is now defined in \`pins.h\` (it was missing, so the sketch did not compile).
+- The three ultrasonic sensors are started in \`setup()\`.
+- Run 1 now waits for the start trigger.
+- Reverse flags for the mirrored motor and encoder are in \`pins.h\`.
+- The heading correction sign was fixed, and \`IMU_YAW_SIGN\` in \`pins.h\` flips turns and steering together if needed.
+- \`moveOneCell()\` and \`turnBy()\` stop after a time limit; the robot then enters the FAILED state.
+- The goal needs 3 front readings in a row of 350 cm or more.
+- Front ultrasonic TRIG moved from GPIO12 to GPIO4 (rewire!).
+- Start trigger is 5 cm for 5 seconds, Run 2 speed is 150.
+
+## Calibration (do these on the robot)
+
+1. \`Robot.h\` -> \`TICKS_PER_CELL\` (push the robot exactly 50 cm and read the ticks)
+2. \`pins.h\` -> reverse flags (each wheel must drive forward, each encoder must count up)
+3. \`pins.h\` -> \`IMU_YAW_SIGN\` (turning left must increase the yaw)
+4. \`pins.h\` -> \`WALL_THRESHOLD_CM\`
+5. \`Robot.h\` -> turn speeds, \`HEADING_KP\`
+6. \`PathReplayer.h\` -> Run 2 speed, only if needed
+
+## Hardware checks
+
+- Use a voltage divider on every ultrasonic ECHO pin (5 V to 3.3 V).
+- GPIO 34-39 have no internal pull-up: add external pull-ups to the encoder lines if the counts are noisy.
+- Share a common ground between the motor driver, the ESP32 and the sensors.
+- Set the XL4005 buck converter to 5 V before connecting the ESP32.`,
+};
+const codeBox=$('#codeBox');let curFile='ino';
 function loadFile(k){
   curFile=k;codeBox.className='language-cpp';
   codeBox.removeAttribute('data-highlighted');
@@ -2355,7 +3222,7 @@ function loadFile(k){
   $$('.ttab').forEach(t=>t.classList.toggle('active',t.dataset.file===k));
 }
  $$('.ttab').forEach(t=>t.addEventListener('click',()=>loadFile(t.dataset.file)));
-loadFile('main');
+loadFile('ino');
  $('#copyBtn').addEventListener('click',async()=>{
   try{await navigator.clipboard.writeText(FILES[curFile]);}
   catch(e){
@@ -2480,6 +3347,9 @@ setStage('Live — RB/25 online');
   window.__err=(err&&(err.stack||err.message))||String(err);
   window.__fb('Scene crashed while starting','Stage: '+window.__stage+'\n\n'+window.__err);
 }
+</script>
+<script>
+(function(){var b=document.getElementById("codeBox");if(b&&!b.textContent.trim()){b.textContent="// Viewer did not start — the full source is in the ZIP below.";}})();
 </script>
 </body>
 </html>
