@@ -49,7 +49,8 @@ const SAMPLE_DOCS: DocItem[] = [
 ];
 
 const DocsStrip = ({ images = SAMPLE_DOCS }: { images?: DocItem[] }) => {
-  const [activeImage, setActiveImage] = useState<number | null>(1);
+  /* Card 01 holds the live PDF, so it starts expanded. */
+  const [activeImage, setActiveImage] = useState<number | null>(0);
   /* Phone only — false on laptop, so desktop sizes are byte-identical. */
   const small = useMemo(
     () => typeof window !== 'undefined' && window.matchMedia('(max-width:760px)').matches,
@@ -119,6 +120,9 @@ const DocsStrip = ({ images = SAMPLE_DOCS }: { images?: DocItem[] }) => {
                 )}
               </AnimatePresence>
               <img src={image.src} className="docs-img" alt={image.alt} loading="lazy" />
+              {activeImage === index && image.href?.endsWith('.pdf') && (
+                <iframe src={image.href} className="docs-pdf" title={image.alt} loading="lazy" />
+              )}
             </motion.div>
           ))}
         </div>
