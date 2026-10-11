@@ -9,16 +9,18 @@ export interface DocItem {
   alt: string;
   code: string;
   title: string;
+  href?: string;
 }
 
-/* SAMPLE entries — swap src/alt/code/title for the real 4–5 PDFs + covers
-   when they land tomorrow. Layout keys off array order, nothing else. */
+/* Entry #01 is live (real PDF); #02–#05 stay samples until their PDFs land.
+   Layout keys off array order, nothing else. */
 const SAMPLE_DOCS: DocItem[] = [
   {
     src: 'https://picsum.photos/seed/rat-doc1/600/600?grayscale',
-    alt: 'RAT design document cover',
+    alt: 'Digital Design Document Team 3 cover',
     code: '# 01',
-    title: 'Design Document — Draft 3',
+    title: 'Digital Design Document — Team 3',
+    href: './docs/digital-design-document-team3.pdf',
   },
   {
     src: 'https://picsum.photos/seed/rat-doc2/600/600?grayscale',
@@ -73,7 +75,13 @@ const DocsStrip = ({ images = SAMPLE_DOCS }: { images?: DocItem[] }) => {
                 height: small ? '18rem' : '24rem',
               }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              onClick={() => setActiveImage(index)}
+              onClick={() => {
+                if (activeImage === index && image.href) {
+                  window.open(image.href, '_blank', 'noopener');
+                  return;
+                }
+                setActiveImage(index);
+              }}
               onHoverStart={() => setActiveImage(index)}
             >
               <AnimatePresence>
@@ -96,6 +104,17 @@ const DocsStrip = ({ images = SAMPLE_DOCS }: { images?: DocItem[] }) => {
                   >
                     <p className="docs-code">{image.code}</p>
                     <p className="docs-title">{image.title}</p>
+                    {image.href && (
+                      <a
+                        className="docs-open"
+                        href={image.href}
+                        target="_blank"
+                        rel="noopener"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Open PDF ↗
+                      </a>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
